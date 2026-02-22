@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-const UserAccount = createContext(null);
+export const UserAccount = createContext({});
 const AccountInfoWrapper = ({ children }) => {
   const [AccountInfo, setAccountInfo] = useState({});
   return (
