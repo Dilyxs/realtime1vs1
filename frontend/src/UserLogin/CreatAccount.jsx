@@ -23,33 +23,40 @@ const CreateAccount = () => {
   const Navigate = useNavigate();
   const { AccountInfo, setAccountInfo } = useContext(UserAccount);
   const [userInfo, setuserInfo] = useState({});
+  const [displayMessage, setdisplayMessage] = useState({});
   return (
     <div>
       <h1>Enter Your desired username!</h1>
       <input
         type="text"
-        value={userInfo.username}
+        value={userInfo?.username ?? ""}
         onChange={(e) => {
-          setuserInfo(e.target.value);
+          setuserInfo((prev) => ({
+            ...prev,
+            username: e.target.value,
+          }));
         }}
       ></input>
       <h1>Enter Your desired Password!</h1>
       <input
         type="text"
-        value={userInfo?.password}
+        value={userInfo?.password ?? ""}
         onChange={(e) => {
-          setuserInfo(e.target.value);
+          setuserInfo((prev) => ({
+            ...prev,
+            password: e.target.value,
+          }));
         }}
       ></input>
       <button
         onClick={() => {
           const action = async () => {
-            const status = await submitNewUser({ userInfo });
+            const status = await submitNewUser(userInfo);
             if (status >= 200 && status < 300) {
               setAccountInfo(userInfo);
               Navigate("/home");
-            } else {
-              console.log(status);
+            } else if (status == 409) {
+              setdisplayMessage({ message: "Username Already In Use" });
             }
           };
           action();
@@ -57,6 +64,9 @@ const CreateAccount = () => {
       >
         Create Account!
       </button>
+      {Object.keys(displayMessage).length > 0 && (
+        <div>Error : {displayMessage.message}</div>
+      )}
     </div>
   );
 };

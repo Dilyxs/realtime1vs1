@@ -47,7 +47,7 @@ func CreateNewPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager 
 		return
 	}
 	select {
-	case <-time.After(2 * time.Second):
+	case <-time.After(4 * time.Second):
 		w.WriteHeader(http.StatusInternalServerError)
 		jsonmsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "took too much time!"})
 		w.Write(jsonmsg)
@@ -135,7 +135,7 @@ func LoginPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager *db.
 		return
 	}
 	select {
-	case <-time.After(2 * time.Second):
+	case <-time.After(4 * time.Second):
 		w.WriteHeader(http.StatusInternalServerError)
 		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "took too much time!"})
 		w.Write(jsonMsg)

@@ -2,11 +2,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AccountInfoWrapper from "./UserLogin/AccountInfoWrapper";
 import CreateAccount from "./UserLogin/CreatAccount";
 import Homepage from "./Home/Homepage";
+import LoginAccount from "./UserLogin/LoginAccount";
 function App() {
   return (
     <AccountInfoWrapper>
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<LoginAccount></LoginAccount>}></Route>
           <Route path="/home" element={<Homepage></Homepage>}></Route>
           <Route
             path="/newaccount"
