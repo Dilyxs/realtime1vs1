@@ -13,6 +13,13 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+type ErrorMessageJSON struct {
+	ErrorMessageJSON string `json:"error_message"`
+}
+type GenericOKResponse struct {
+	Valid bool `json:"valid"`
+}
+
 func CreateNewPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager *db.PoolManager) {
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadGateway)
@@ -35,17 +42,15 @@ func CreateNewPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager 
 	case poolManager.Chan <- message:
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
-		if _, err := w.Write([]byte("server overloaded, try again later!")); err != nil {
-			return
-		}
+		jsonmsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "server overloaded, try again later!"})
+		w.Write(jsonmsg)
 		return
 	}
 	select {
 	case <-time.After(2 * time.Second):
 		w.WriteHeader(http.StatusInternalServerError)
-		if _, err := w.Write([]byte("took too much time!")); err != nil {
-			return
-		}
+		jsonmsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "took too much time!"})
+		w.Write(jsonmsg)
 	case response := <-localchan:
 		if response.Err != nil {
 			//:TODO: Handle this bettter depending on the pgTag -> if for example duplicate, convey that information to the backend
@@ -64,9 +69,9 @@ func CreateNewPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager 
 			}
 
 			w.WriteHeader(http.StatusInternalServerError)
-			if _, err := fmt.Fprintf(w, "cannot fufill SQL request, err:%v and pgTag: %v", response.Err, response.Pgtag); err != nil {
-				return
-			}
+			jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: fmt.Sprintf("cannot fufill SQL request, err:%v and pgTag: %v", response.Err, response.Pgtag)})
+			w.Write(jsonMsg)
+			return
 		} else {
 			w.WriteHeader(http.StatusAccepted)
 		}
@@ -125,17 +130,16 @@ func LoginPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager *db.
 	case poolManager.Chan <- message:
 	default:
 		w.WriteHeader(http.StatusInternalServerError)
-		if _, err := w.Write([]byte("server overloaded, try again later!")); err != nil {
-			return
-		}
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "server overloaded, try again later!"})
+		w.Write(jsonMsg)
 		return
 	}
 	select {
 	case <-time.After(2 * time.Second):
 		w.WriteHeader(http.StatusInternalServerError)
-		if _, err := w.Write([]byte("took too much time!")); err != nil {
-			return
-		}
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "took too much time!"})
+		w.Write(jsonMsg)
+		return
 	case response := <-localchan:
 		if response.Err != nil {
 			switch response.Err.(type) {
@@ -147,21 +151,19 @@ func LoginPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager *db.
 
 			default:
 				w.WriteHeader(http.StatusInternalServerError)
-				if _, err := fmt.Fprintf(w, "cannot fufill SQL request, err:%v and pgTag: %v", response.Err, response.Pgtag); err != nil {
-					return
-				}
+				jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: fmt.Sprintf("cannot fufill SQL request, err:%v and pgTag: %v", response.Err, response.Pgtag)})
+				w.Write(jsonMsg)
+				return
 			}
 		} else {
 			if playerdetails.Password == response.Results {
 				w.WriteHeader(http.StatusOK)
-				if _, err := w.Write([]byte("correct password")); err != nil {
-					return
-				}
+				jsonMsg, _ := json.Marshal(GenericOKResponse{Valid: true})
+				w.Write(jsonMsg)
 			} else {
 				w.WriteHeader(http.StatusUnauthorized)
-				if _, err := w.Write([]byte("bad password")); err != nil {
-					return
-				}
+				jsonMsg, _ := json.Marshal(GenericOKResponse{Valid: false})
+				w.Write(jsonMsg)
 			}
 		}
 	}
