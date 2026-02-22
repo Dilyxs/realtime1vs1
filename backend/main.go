@@ -29,6 +29,7 @@ func main() {
 	Manager := lib.NewManager()
 
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/newroom", func(w http.ResponseWriter, r *http.Request) {
 		handlers.NewRoomHandler(w, r, &Manager)
 	})
@@ -39,7 +40,9 @@ func main() {
 		handlers.LoginPlayerHandler(w, r, poolManager)
 	})
 
-	if err := http.ListenAndServe(":3002", mux); err != nil {
+	// cors setup
+	handler := randomhelper.CorsMiddleware(mux)
+	if err := http.ListenAndServe(":3002", handler); err != nil {
 		log.Fatalf("error happened: %v", err)
 	}
 }
