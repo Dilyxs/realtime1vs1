@@ -39,6 +39,9 @@ func main() {
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		handlers.LoginPlayerHandler(w, r, poolManager)
 	})
+	mux.HandleFunc("/addplayer", func(w http.ResponseWriter, r *http.Request) {
+		handlers.AddNewPlayerHandler(w, r, &Manager)
+	})
 
 	// cors setup
 	handler := randomhelper.CorsMiddleware(mux)
