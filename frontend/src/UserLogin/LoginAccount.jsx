@@ -49,12 +49,9 @@ const LoginAccount = () => {
         onClick={() => {
           const action = async () => {
             const response = await logIn(loginInfo);
-            console.log(loginInfo);
-            console.log(response);
             if (response?.valid == true) {
               setAccountInfo(loginInfo);
               setloginInfo({});
-              console.log("here");
               Navigate("/home");
             } else if (response?.valid == false) {
               setErrorMessage({ message: "Wrong Password!" });

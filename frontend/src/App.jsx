@@ -3,6 +3,7 @@ import AccountInfoWrapper from "./UserLogin/AccountInfoWrapper";
 import CreateAccount from "./UserLogin/CreatAccount";
 import Homepage from "./Home/Homepage";
 import LoginAccount from "./UserLogin/LoginAccount";
+import MainPage from "./Game/MainPage";
 function App() {
   return (
     <AccountInfoWrapper>
@@ -10,6 +11,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginAccount></LoginAccount>}></Route>
           <Route path="/home" element={<Homepage></Homepage>}></Route>
+          <Route path="/game/:roomID" element={<MainPage></MainPage>}></Route>
           <Route
             path="/newaccount"
             element={<CreateAccount></CreateAccount>}
