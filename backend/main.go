@@ -39,8 +39,12 @@ func main() {
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
 		handlers.LoginPlayerHandler(w, r, poolManager)
 	})
+	// TODO: MORE EXTENSIVE TESTING ON THESE HANDLERS
 	mux.HandleFunc("/addplayer", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AddNewPlayerHandler(w, r, &Manager)
+	})
+	mux.HandleFunc("/WebsocketConn", func(w http.ResponseWriter, r *http.Request) {
+		handlers.AddPlayerToWebsocketHandler(w, r, &Manager)
 	})
 
 	// cors setup

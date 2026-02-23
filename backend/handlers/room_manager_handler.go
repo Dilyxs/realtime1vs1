@@ -17,9 +17,10 @@ type PlayerUsername struct {
 	Username string `json:"username"`
 }
 
-func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManger) {
-	if r.Method != "GET" {
+func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager) {
+	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadGateway)
+		return
 	}
 	var GameMaster PlayerUsername
 	err := json.NewDecoder(r.Body).Decode(&GameMaster)
@@ -35,9 +36,10 @@ func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 	w.Write(roomJSON)
 }
 
-func AddNewPlayerHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManger) {
+func AddNewPlayerHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager) {
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadGateway)
+		return
 	}
 	var NewPlayer PlayerUsername
 	err := json.NewDecoder(r.Body).Decode(&NewPlayer)
@@ -87,4 +89,35 @@ func AddNewPlayerHandler(w http.ResponseWriter, r *http.Request, roomManager *li
 	case <-OutChan:
 		w.WriteHeader(http.StatusOK)
 	}
+}
+
+type PlayerAndRoom struct {
+	Username string `json:"username"`
+	RoomID   int    `json:"roomid"`
+}
+
+func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager) {
+	if r.Method != "POST" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "method not allowed"})
+		w.Write(jsonMsg)
+		return
+	}
+	var info PlayerAndRoom
+	err := json.NewDecoder(r.Body).Decode(&info)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid request body"})
+		w.Write(jsonMsg)
+		return
+	}
+
+	// Check if RoomID and Plauer actually got filled
+	if info.Username == "" || info.RoomID == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid request body, missing username or roomid"})
+		w.Write(jsonMsg)
+		return
+	}
+	lib.AddPlayerToWebsocketConn(w, r, roomManager, info.RoomID, info.Username)
 }
