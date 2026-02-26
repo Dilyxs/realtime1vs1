@@ -11,6 +11,7 @@ import (
 	"realtime1vs1/lib"
 	"realtime1vs1/randomhelper"
 
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
 
@@ -28,7 +29,7 @@ func main() {
 
 	Manager := lib.NewManager()
 
-	mux := http.NewServeMux()
+	mux := mux.NewRouter()
 
 	mux.HandleFunc("/newroom", func(w http.ResponseWriter, r *http.Request) {
 		handlers.NewRoomHandler(w, r, &Manager)
@@ -45,6 +46,9 @@ func main() {
 	})
 	mux.HandleFunc("/WebsocketConn", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AddPlayerToWebsocketHandler(w, r, &Manager)
+	})
+	mux.HandleFunc("/game/{id}", func(w http.ResponseWriter, r *http.Request) {
+		handlers.PreGameHandler(w, r, &Manager)
 	})
 
 	// cors setup

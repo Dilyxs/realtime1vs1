@@ -3,6 +3,7 @@ package lib
 import (
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -12,13 +13,18 @@ type RoomCommandType int
 const (
 	AddPlayerToRoom = iota
 	AddPlayerToWebsocket
-	RemovePlayerToWebsocket
+	RemovePlayerToWebsocket //:TODO: This is not utilized, WebsocketDisconnectMessage needs this as a future param
 )
 
+const DefaultTimeout = 10 * time.Second
+
 type RoomCommandResult struct {
-	OK  bool
-	Err error
+	OK    bool
+	Err   error
+	Extra any
 }
+type IsGameOwner bool
+
 type AddPlayerCommand struct {
 	CommandType    RoomCommandType
 	OutChan        chan RoomCommandResult
@@ -43,12 +49,18 @@ func (command AddPlayerToWebsocketCommand) basic() (RoomCommandType, chan RoomCo
 type RoomCommand interface {
 	basic() (RoomCommandType, chan RoomCommandResult)
 }
-type HubMessage interface {
-	error_code() int
-}
 type UserWritingJSON struct {
-	Username string `json:"username"`
-	Content  string `json:"content"`
+	Main any `json:"main,omitempty"`
+}
+
+type CheckIfUserAllowedToJoin struct {
+	CommandType    RoomCommandType
+	OutChan        chan RoomCommandResult
+	PlayerUsername string
+}
+
+func (command CheckIfUserAllowedToJoin) basic() (RoomCommandType, chan RoomCommandResult) {
+	return command.CommandType, command.OutChan
 }
 
 func (mesg UserWritingJSON) error_code() int {
@@ -72,26 +84,6 @@ type Room struct {
 	HubWebsocketChan chan HubMessage
 	SocketConns      map[string]chan UserWritingJSON
 }
-
-func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUsernanme string) {
-	for {
-		var msg UserWritingJSON
-		if err := conn.ReadJSON(&msg); err != nil {
-			HubChan <- WebsocketDisconnectMessage{Username: playerUsernanme}
-			return
-		}
-		HubChan <- msg
-	}
-}
-
-func WriteToWebsocket(conn *websocket.Conn, localChan chan UserWritingJSON) {
-	for msg := range localChan {
-		if err := conn.WriteJSON(&msg); err != nil {
-			return
-		}
-	}
-}
-
 type Player struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -114,12 +106,31 @@ func NewManager() RoomManager {
 func (r *Room) Run() {
 	select {
 	case websocketMsg := <-r.HubWebsocketChan:
+		//:NOTE: This is the internal room Request
 		switch cmd := websocketMsg.(type) {
 		case WebsocketDisconnectMessage:
-			delete(r.SocketConns, cmd.Username)
+			delete(r.SocketConns, cmd.Username) // only 1 possible remove condition could happen!
+		case UserWritingJSON:
+			for _, socketChan := range r.SocketConns {
+				socketChan <- cmd
+			}
 		}
 	case command := <-r.Chan:
 		switch cmd := command.(type) {
+		case CheckIfUserAllowedToJoin:
+			if r.IsClosed {
+				cmd.OutChan <- RoomCommandResult{OK: false, Err: RoomError{ErrorCode: GameFull, Description: "game is full"}}
+				break
+			}
+			if r.Players[cmd.PlayerUsername] {
+				if r.GameMaster == cmd.PlayerUsername {
+					cmd.OutChan <- RoomCommandResult{OK: true, Err: nil, Extra: true}
+				}
+				cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
+			} else {
+				cmd.OutChan <- RoomCommandResult{OK: false, Err: RoomError{ErrorCode: UserNotAllowedToJoinGame, Description: "not allowed to join"}}
+			}
+
 		case AddPlayerCommand:
 			r.Players[cmd.PlayerUsername] = true
 			cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
@@ -129,6 +140,7 @@ func (r *Room) Run() {
 			go WriteToWebsocket(cmd.Conn, localChan)
 			r.SocketConns[cmd.PlayerUsername] = localChan
 			cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
+
 		}
 	}
 }
@@ -156,6 +168,8 @@ type RoomErrorCode int
 
 const (
 	RoomDoesNotExist = iota
+	GameFull
+	UserNotAllowedToJoinGame
 )
 
 type RoomError struct {

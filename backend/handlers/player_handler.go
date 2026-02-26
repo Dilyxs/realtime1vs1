@@ -82,6 +82,10 @@ type SQLError struct {
 	ErrorCode    int    `json:"error_code"`
 	Descripition string `json:"description"`
 }
+type RoomError struct {
+	ErrorCode   int    `json:"error_code`
+	Description string `json:"description"`
+}
 
 const (
 	DuplicateUser = iota
