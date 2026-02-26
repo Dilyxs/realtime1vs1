@@ -54,8 +54,6 @@ func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUser
 			case UserIsReadyJSON:
 				HubChan <- UserIsReadyJSON{username: customMsg.username, isReady: customMsg.isReady}
 			}
-
-			HubChan <- msg
 		}
 	}()
 	for {

@@ -160,6 +160,7 @@ func (r *RoomManager) CreateNewRoom(GameMaster string) int {
 	val := r.RoomIDsoFar
 	r.RoomIDsoFar += 1
 	r.Mu.Unlock()
+	room.Players[GameMaster] = true
 	go room.Run()
 	return val
 }
