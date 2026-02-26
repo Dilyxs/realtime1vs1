@@ -119,5 +119,6 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 		w.Write(jsonMsg)
 		return
 	}
+	// This upgrades then from http to websocket
 	lib.AddPlayerToWebsocketConn(w, r, roomManager, info.RoomID, info.Username)
 }

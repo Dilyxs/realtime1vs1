@@ -44,7 +44,7 @@ func main() {
 	mux.HandleFunc("/addplayer", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AddNewPlayerHandler(w, r, &Manager)
 	})
-	mux.HandleFunc("/WebsocketConn", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/websocketconn", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AddPlayerToWebsocketHandler(w, r, &Manager)
 	})
 	mux.HandleFunc("/game/{id}", func(w http.ResponseWriter, r *http.Request) {

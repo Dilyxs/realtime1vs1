@@ -115,6 +115,7 @@ func (r *Room) Run() {
 				socketChan <- cmd
 			}
 		}
+	//:NOTE: this is the request coming from outside, http request most likely
 	case command := <-r.Chan:
 		switch cmd := command.(type) {
 		case CheckIfUserAllowedToJoin:

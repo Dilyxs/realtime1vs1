@@ -13,9 +13,22 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+type InternalError int
+
+const (
+	ServerOverloaded = iota
+	ServerTookTooMuchTime
+)
+
 type ErrorMessageJSON struct {
-	ErrorMessageJSON string `json:"error_message"`
+	ErrorCode        InternalError `json"error_code`
+	ErrorMessageJSON string        `json:"error_message"`
 }
+
+func (e ErrorMessageJSON) Error() string {
+	return e.ErrorMessageJSON
+}
+
 type GenericOKResponse struct {
 	Valid bool `json:"valid"`
 }
@@ -96,16 +109,7 @@ func (e SQLError) Error() string {
 	return fmt.Sprintf("errorcode: %d, description: %s", e.ErrorCode, e.Descripition)
 }
 
-func LoginPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager *db.PoolManager) {
-	if r.Method != "POST" {
-		w.WriteHeader(http.StatusBadGateway)
-		return
-	}
-	var playerdetails lib.Player
-	if err := json.NewDecoder(r.Body).Decode(&playerdetails); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
+func verifyUserPassword(playerdetails lib.Player, poolManager *db.PoolManager) (GenericOKResponse, error, db.SQLResult) {
 	localchan := make(chan db.SQLResult, 1)
 	message := db.SQLMessage{
 		Query:   "SELECT(password) FROM users WHERE username=($1)",
@@ -132,43 +136,62 @@ func LoginPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager *db.
 	}
 	select {
 	case poolManager.Chan <- message:
-	default:
-		w.WriteHeader(http.StatusInternalServerError)
-		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "server overloaded, try again later!"})
-		w.Write(jsonMsg)
+	case <-time.After(lib.DefaultTimeout):
+		return GenericOKResponse{Valid: false}, ErrorMessageJSON{ErrorMessageJSON: "server overloaded, try again later!", ErrorCode: ServerOverloaded}, db.SQLResult{}
+	}
+
+	select {
+	case <-time.After(lib.DefaultTimeout):
+		return GenericOKResponse{Valid: false}, ErrorMessageJSON{ErrorMessageJSON: "server overloaded, try again later!", ErrorCode: ServerTookTooMuchTime}, db.SQLResult{}
+
+	case res := <-localchan:
+		if res.Err != nil {
+			return GenericOKResponse{Valid: false}, res.Err, res
+		}
+		if playerdetails.Password == res.Results {
+			return GenericOKResponse{Valid: true}, nil, res
+		} else {
+			return GenericOKResponse{Valid: false}, nil, res
+		}
+
+	}
+}
+
+func LoginPlayerHandler(w http.ResponseWriter, r *http.Request, poolManager *db.PoolManager) {
+	if r.Method != "POST" {
+		w.WriteHeader(http.StatusBadGateway)
 		return
 	}
-	select {
-	case <-time.After(4 * time.Second):
-		w.WriteHeader(http.StatusInternalServerError)
-		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "took too much time!"})
-		w.Write(jsonMsg)
+	var playerdetails lib.Player
+	if err := json.NewDecoder(r.Body).Decode(&playerdetails); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		return
-	case response := <-localchan:
-		if response.Err != nil {
-			switch response.Err.(type) {
-			case SQLError:
-				w.WriteHeader(http.StatusConflict)
-				jsonerr, _ := json.Marshal(&response.Err)
-				w.Write(jsonerr)
-				return
-
-			default:
-				w.WriteHeader(http.StatusInternalServerError)
-				jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: fmt.Sprintf("cannot fufill SQL request, err:%v and pgTag: %v", response.Err, response.Pgtag)})
-				w.Write(jsonMsg)
-				return
-			}
+	}
+	res, err, dbres := verifyUserPassword(playerdetails, poolManager)
+	if err != nil {
+		switch errorType := err.(type) {
+		case ErrorMessageJSON:
+			w.WriteHeader(http.StatusInternalServerError)
+			jsonMsg, _ := json.Marshal(&errorType)
+			w.Write(jsonMsg)
+		case SQLError:
+			w.WriteHeader(http.StatusConflict)
+			jsonerr, _ := json.Marshal(&errorType)
+			w.Write(jsonerr)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+			jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: fmt.Sprintf("cannot fufill SQL request, err:%v and pgTag: %v", dbres.Err, dbres.Pgtag)})
+			w.Write(jsonMsg)
+		}
+	} else {
+		if res.Valid {
+			w.WriteHeader(http.StatusOK)
+			jsonMsg, _ := json.Marshal(&res)
+			w.Write(jsonMsg)
 		} else {
-			if playerdetails.Password == response.Results {
-				w.WriteHeader(http.StatusOK)
-				jsonMsg, _ := json.Marshal(GenericOKResponse{Valid: true})
-				w.Write(jsonMsg)
-			} else {
-				w.WriteHeader(http.StatusUnauthorized)
-				jsonMsg, _ := json.Marshal(GenericOKResponse{Valid: false})
-				w.Write(jsonMsg)
-			}
+			w.WriteHeader(http.StatusUnauthorized)
+			jsonMsg, _ := json.Marshal(&res)
+			w.Write(jsonMsg)
 		}
 	}
 }
