@@ -9,6 +9,7 @@ import (
 
 	"realtime1vs1/db"
 	"realtime1vs1/lib"
+	"realtime1vs1/randomhelper"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -19,6 +20,61 @@ const (
 	ServerOverloaded = iota
 	ServerTookTooMuchTime
 )
+
+type TokenType int
+
+const (
+	AddNewToken = iota
+	ValidateToken
+)
+
+type TokenMessage interface {
+	core() TokenType
+}
+type AddNewUserTokenCommand struct {
+	TokenType  TokenType
+	PlayerInfo PlayerAndRoom
+	OutChan    chan string
+}
+type ValidateTokenCommand struct {
+	TokenType    TokenType
+	TokenContent string
+	OutChan      chan struct {
+		PlayerInfo PlayerAndRoom
+		Valid      bool
+	}
+}
+
+func (command ValidateTokenCommand) core() TokenType {
+	return command.TokenType
+}
+
+func (command AddNewUserTokenCommand) core() TokenType {
+	return command.TokenType
+}
+
+type TokenManager struct {
+	Tokens  map[string]PlayerAndRoom
+	HubChan chan TokenMessage
+}
+
+func (manager TokenManager) Run() {
+	for req := range manager.HubChan {
+		switch cmd := req.(type) {
+		case AddNewUserTokenCommand:
+			//:TODO: limit the user to atmost 1 token
+			newtoken := randomhelper.Generate(randomhelper.DefaultTokenLength)
+			manager.Tokens[newtoken] = cmd.PlayerInfo
+			cmd.OutChan <- newtoken
+		case ValidateTokenCommand:
+			info, ok := manager.Tokens[cmd.TokenContent]
+			cmd.OutChan <- struct {
+				PlayerInfo PlayerAndRoom
+				Valid      bool
+			}{info, ok}
+		}
+	}
+}
 
 type ErrorMessageJSON struct {
 	ErrorCode        InternalError `json"error_code`

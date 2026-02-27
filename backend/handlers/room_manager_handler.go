@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"time"
 
+	"realtime1vs1/db"
 	"realtime1vs1/lib"
 )
 
@@ -93,14 +94,13 @@ func AddNewPlayerHandler(w http.ResponseWriter, r *http.Request, roomManager *li
 
 type PlayerAndRoom struct {
 	Username string `json:"username"`
+	Password string `json:"password"`
 	RoomID   int    `json:"roomid"`
 }
 
-func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager) {
+func TokenReturnHandler(w http.ResponseWriter, r *http.Request, poolManager *db.PoolManager, tokenManager *TokenManager) {
 	if r.Method != "POST" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "method not allowed"})
-		w.Write(jsonMsg)
+		w.WriteHeader(http.StatusBadGateway)
 		return
 	}
 	var info PlayerAndRoom
@@ -112,13 +112,85 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 		return
 	}
 
-	// Check if RoomID and Plauer actually got filled
-	if info.Username == "" || info.RoomID == 0 {
+	res, _, _ := verifyUserPassword(lib.Player{Username: info.Username, Password: info.Password}, poolManager)
+	if !res.Valid {
+		w.WriteHeader(http.StatusNotAcceptable)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{
+			ErrorMessageJSON: "incorrect, pls verify /login",
+		})
+		w.Write(jsonMsg)
+		return
+	}
+	localChan := make(chan string, 1)
+	tokenReq := AddNewUserTokenCommand{
+		TokenType:  AddNewToken,
+		PlayerInfo: info,
+		OutChan:    localChan,
+	}
+	tokenManager.HubChan <- tokenReq
+	select {
+	case <-time.After(lib.DefaultTimeout):
+		w.WriteHeader(http.StatusRequestTimeout)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "request timed out"})
+		w.Write(jsonMsg)
+	case result := <-localChan:
+		w.WriteHeader(http.StatusAccepted)
+		jsonMsg, _ := json.Marshal(TokenJSON{Token: result})
+		w.Write(jsonMsg)
+	}
+}
+
+type TokenJSON struct {
+	Token string `json:"token"`
+}
+
+func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager, tkmanager *TokenManager) {
+	if r.Method != "GET" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "method not allowed"})
+		w.Write(jsonMsg)
+		return
+	}
+	token := r.URL.Query().Get("token")
+	if token == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid request body, missing username or roomid"})
 		w.Write(jsonMsg)
 		return
 	}
-	// This upgrades then from http to websocket
-	lib.AddPlayerToWebsocketConn(w, r, roomManager, info.RoomID, info.Username)
+	localChan := make(chan struct {
+		PlayerInfo PlayerAndRoom
+		Valid      bool
+	}, 1)
+	tokenReq := ValidateTokenCommand{
+		TokenType:    ValidateToken,
+		TokenContent: token,
+		OutChan:      localChan,
+	}
+	select {
+	case <-time.After(lib.DefaultTimeout):
+		w.WriteHeader(http.StatusRequestTimeout)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "request timed out"})
+		w.Write(jsonMsg)
+		return
+	case tkmanager.HubChan <- tokenReq:
+	}
+	var PlayerInfo *PlayerAndRoom
+	select {
+	case <-time.After(lib.DefaultTimeout):
+		w.WriteHeader(http.StatusRequestTimeout)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "request timed out"})
+		w.Write(jsonMsg)
+		return
+	case valid := <-localChan:
+		if !valid.Valid {
+			w.WriteHeader(http.StatusUnauthorized)
+			jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid token"})
+			w.Write(jsonMsg)
+			return
+		} else {
+			PlayerInfo = &valid.PlayerInfo
+		}
+	}
+	lib.AddPlayerToWebsocketConn(w, r, roomManager, PlayerInfo.RoomID, PlayerInfo.Username)
 }

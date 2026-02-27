@@ -29,6 +29,13 @@ func main() {
 
 	Manager := lib.NewManager()
 
+	// SETUP HELPER BACKGROUND WORKERS //:TODO: Eventually setup a function with all helper go functions
+	TokManager := handlers.TokenManager{
+		Tokens:  make(map[string]handlers.PlayerAndRoom),
+		HubChan: make(chan handlers.TokenMessage, 100),
+	}
+	go TokManager.Run()
+
 	mux := mux.NewRouter()
 
 	mux.HandleFunc("/newroom", func(w http.ResponseWriter, r *http.Request) {
@@ -43,6 +50,10 @@ func main() {
 	// TODO: MORE EXTENSIVE TESTING ON THESE HANDLERS
 	mux.HandleFunc("/addplayer", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AddNewPlayerHandler(w, r, &Manager)
+	})
+
+	mux.HandleFunc("/tokenforws", func(w http.ResponseWriter, r *http.Request) {
+		handlers.TokenReturnHandler(w, r, poolManager, &TokManager)
 	})
 	mux.HandleFunc("/websocketconn", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AddPlayerToWebsocketHandler(w, r, &Manager)

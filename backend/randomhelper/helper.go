@@ -4,6 +4,8 @@ Package randomhelper that has helper functions that doesn't belong to a particul
 package randomhelper
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"log"
 	"net/http"
 )
@@ -27,4 +29,13 @@ func CorsMiddleware(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(w, r)
 	})
+}
+
+const DefaultTokenLength = 32
+
+func Generate(length int) string {
+	bytes := make([]byte, length)
+	//:NOTE: this almost never errors, it reads from /dev/urandom
+	rand.Read(bytes)
+	return base64.URLEncoding.EncodeToString(bytes)[:length]
 }
