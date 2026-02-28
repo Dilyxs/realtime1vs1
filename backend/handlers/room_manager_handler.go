@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -18,7 +19,7 @@ type PlayerUsername struct {
 	Username string `json:"username"`
 }
 
-func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager) {
+func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager, tokenDis *lib.TokenDistributer) {
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadGateway)
 		return
@@ -29,7 +30,7 @@ func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	roomID := roomManager.CreateNewRoom(GameMaster.Username)
+	roomID := roomManager.CreateNewRoom(GameMaster.Username, tokenDis)
 	room := RooomID{
 		ID: roomID,
 	}
@@ -98,7 +99,7 @@ type PlayerAndRoom struct {
 	RoomID   int    `json:"roomid"`
 }
 
-func TokenReturnHandler(w http.ResponseWriter, r *http.Request, poolManager *db.PoolManager, tokenManager *TokenManager) {
+func TokenReturnHandler(w http.ResponseWriter, r *http.Request, poolManager *db.PoolManager, roomM *lib.RoomManager, tokenDis *lib.TokenDistributer) {
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusBadGateway)
 		return
@@ -121,13 +122,22 @@ func TokenReturnHandler(w http.ResponseWriter, r *http.Request, poolManager *db.
 		w.Write(jsonMsg)
 		return
 	}
+
+	if !roomM.CheckIfRoomValid(info.RoomID) {
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorCode: RoomDoesNotExist, ErrorMessageJSON: "invalid room id"})
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(jsonMsg)
+		return
+	}
+
 	localChan := make(chan string, 1)
-	tokenReq := AddNewUserTokenCommand{
-		TokenType:  AddNewToken,
-		PlayerInfo: info,
+	tokenReq := lib.AddNewUserTokenCommand{
+		TokenType:  lib.AddNewToken,
+		PlayerInfo: lib.PlayerUsernameRoom{Username: info.Username, RoomID: info.RoomID},
 		OutChan:    localChan,
 	}
-	tokenManager.HubChan <- tokenReq
+	tokenDis.Chans[info.RoomID] <- tokenReq
+
 	select {
 	case <-time.After(lib.DefaultTimeout):
 		w.WriteHeader(http.StatusRequestTimeout)
@@ -144,7 +154,7 @@ type TokenJSON struct {
 	Token string `json:"token"`
 }
 
-func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager, tkmanager *TokenManager) {
+func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.RoomManager, tkmanager *lib.TokenDistributer) {
 	if r.Method != "GET" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "method not allowed"})
@@ -158,14 +168,27 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 		w.Write(jsonMsg)
 		return
 	}
+	roomId := r.URL.Query().Get("roomid")
+	if roomId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid request body, missing username or roomid"})
+		w.Write(jsonMsg)
+		return
+	}
+	roomID, err := strconv.Atoi(roomId)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid request body, missing username or roomid"})
+		w.Write(jsonMsg)
+		return
+	}
 	localChan := make(chan struct {
-		PlayerInfo PlayerAndRoom
+		PlayerInfo lib.PlayerUsernameRoom
 		Valid      bool
 	}, 1)
-	tokenReq := ValidateTokenCommand{
-		TokenType:    ValidateToken,
-		TokenContent: token,
-		OutChan:      localChan,
+	tokenReq := lib.ValidateTokenCommand{
+		TokenType: lib.ValidateToken, TokenContent: token,
+		OutChan: localChan,
 	}
 	select {
 	case <-time.After(lib.DefaultTimeout):
@@ -173,9 +196,9 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "request timed out"})
 		w.Write(jsonMsg)
 		return
-	case tkmanager.HubChan <- tokenReq:
+	case tkmanager.Chans[roomID] <- tokenReq:
 	}
-	var PlayerInfo *PlayerAndRoom
+	var PlayerInfo *lib.PlayerUsernameRoom
 	select {
 	case <-time.After(lib.DefaultTimeout):
 		w.WriteHeader(http.StatusRequestTimeout)
@@ -192,5 +215,6 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 			PlayerInfo = &valid.PlayerInfo
 		}
 	}
+	fmt.Printf("PlayerInfo: %+v\n", PlayerInfo)
 	lib.AddPlayerToWebsocketConn(w, r, roomManager, PlayerInfo.RoomID, PlayerInfo.Username)
 }

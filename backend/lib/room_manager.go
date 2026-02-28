@@ -14,15 +14,12 @@ const (
 	AddPlayerToRoom = iota
 	AddPlayerToWebsocket
 	RemovePlayerToWebsocket //:TODO: This is not utilized, WebsocketDisconnectMessage needs this as a future param
+	AddNewToken
+	ValidateToken
 )
 
 const DefaultTimeout = 10 * time.Second
 
-type RoomCommandResult struct {
-	OK    bool
-	Err   error
-	Extra any
-}
 type IsGameOwner bool
 
 type AddPlayerCommand struct {
@@ -83,6 +80,7 @@ type Room struct {
 	Chan             chan RoomCommand
 	HubWebsocketChan chan HubMessage
 	SocketConns      map[string]chan UserWritingJSON
+	TokenManager     *TokenManager
 }
 type Player struct {
 	Username string `json:"username"`
@@ -146,7 +144,8 @@ func (r *Room) Run() {
 	}
 }
 
-func (r *RoomManager) CreateNewRoom(GameMaster string) int {
+func (r *RoomManager) CreateNewRoom(GameMaster string, tookenDis *TokenDistributer) int {
+	tookenChannel := make(chan TokenMessage, 10)
 	r.Mu.Lock()
 	room := &Room{
 		IsClosed:         false,
@@ -156,6 +155,10 @@ func (r *RoomManager) CreateNewRoom(GameMaster string) int {
 		Chan:             make(chan RoomCommand, 100),
 		HubWebsocketChan: make(chan HubMessage, 100),
 		SocketConns:      make(map[string]chan UserWritingJSON),
+		TokenManager: &TokenManager{
+			Tokens:  make(map[string]PlayerUsernameRoom),
+			HubChan: tookenChannel,
+		},
 	}
 	r.Rooms[r.RoomIDsoFar] = room
 	val := r.RoomIDsoFar
@@ -163,13 +166,21 @@ func (r *RoomManager) CreateNewRoom(GameMaster string) int {
 	r.Mu.Unlock()
 	room.Players[GameMaster] = true
 	go room.Run()
+	go room.TokenManager.Run()
+	tookenDis.Chans[room.ID] = tookenChannel
 	return val
+}
+
+func (r *RoomManager) CheckIfRoomValid(roomID int) bool {
+	r.Mu.RLock()
+	defer r.Mu.RUnlock()
+	return roomID < r.RoomIDsoFar
 }
 
 type RoomErrorCode int
 
 const (
-	RoomDoesNotExist = iota
+	RoomDoesNotExist = iota + 1
 	GameFull
 	UserNotAllowedToJoinGame
 )

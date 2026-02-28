@@ -30,16 +30,13 @@ func main() {
 	Manager := lib.NewManager()
 
 	// SETUP HELPER BACKGROUND WORKERS //:TODO: Eventually setup a function with all helper go functions
-	TokManager := handlers.TokenManager{
-		Tokens:  make(map[string]handlers.PlayerAndRoom),
-		HubChan: make(chan handlers.TokenMessage, 100),
+	TkDistrib := lib.TokenDistributer{
+		Chans: make(map[int]chan lib.TokenMessage),
 	}
-	go TokManager.Run()
-
 	mux := mux.NewRouter()
 
 	mux.HandleFunc("/newroom", func(w http.ResponseWriter, r *http.Request) {
-		handlers.NewRoomHandler(w, r, &Manager)
+		handlers.NewRoomHandler(w, r, &Manager, &TkDistrib)
 	})
 	mux.HandleFunc("/createuser", func(w http.ResponseWriter, r *http.Request) {
 		handlers.CreateNewPlayerHandler(w, r, poolManager)
@@ -53,10 +50,10 @@ func main() {
 	})
 
 	mux.HandleFunc("/tokenforws", func(w http.ResponseWriter, r *http.Request) {
-		handlers.TokenReturnHandler(w, r, poolManager, &TokManager)
+		handlers.TokenReturnHandler(w, r, poolManager, &Manager, &TkDistrib)
 	})
 	mux.HandleFunc("/websocketconn", func(w http.ResponseWriter, r *http.Request) {
-		handlers.AddPlayerToWebsocketHandler(w, r, &Manager)
+		handlers.AddPlayerToWebsocketHandler(w, r, &Manager, &TkDistrib)
 	})
 	mux.HandleFunc("/game/{id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.PreGameHandler(w, r, &Manager)
