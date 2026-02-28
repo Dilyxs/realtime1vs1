@@ -8,7 +8,7 @@ const requestANewgame = async ({ username }) => {
     const response = await fetch(fetchurl, {
       method: "POST",
       headers: {
-        "Content-Type": "application-json",
+        "Content-Type": "application/json",
       },
       body: jsondata,
     });
@@ -46,7 +46,7 @@ const CreateGame = ({ username, Navigate }) => {
           <p>Ready to Join the Lobby? </p>
           <button
             onClick={(e) => {
-              Navigate("/login");
+              Navigate("/game/" + gameID);
             }}
           >
             Join The Lobby!

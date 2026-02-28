@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserAccount } from "./AccountInfoWrapper";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +9,7 @@ const logIn = async (logindata) => {
   try {
     const response = await fetch(fetchurl, {
       method: "POST",
-      headers: { "Content-Type": "application-json" },
+      headers: { "Content-Type": "application/json" },
       body: jsonData,
     });
     return await response.json();
@@ -19,11 +19,18 @@ const logIn = async (logindata) => {
   }
 };
 
+//:TODO: check with localStorage if we already rememeber if user had logged in!
 const LoginAccount = () => {
   const Navigate = useNavigate();
   const [loginInfo, setloginInfo] = useState({});
-  const { AccountInfo, setAccountInfo } = useContext(UserAccount);
+  const { AccountInfo, setAccountInfo, isLoaded } = useContext(UserAccount);
   const [ErrorMessage, setErrorMessage] = useState({});
+  useEffect(() => {
+    if (isLoaded && AccountInfo?.username) {
+      console.log("detected");
+      Navigate("/home");
+    }
+  }, [AccountInfo, isLoaded]);
   return (
     <div>
       <h1>Enter Your Username</h1>

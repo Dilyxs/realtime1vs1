@@ -15,7 +15,7 @@ const Homepage = () => {
     ) {
       setisLogedin(true);
     }
-  }, []);
+  }, [AccountInfo]);
 
   if (!isLogedIn) {
     return (

@@ -7,7 +7,7 @@ const joingame = async ({ username, gameID }) => {
     const response = await fetch(fetchurl, {
       method: "POST",
       headers: {
-        "Content-Type": "application-json",
+        "Content-Type": "application/json",
       },
       body: jsondata,
     });
@@ -34,7 +34,7 @@ const JoinGame = ({ setgameID, gameID, username, Navigate }) => {
             const data = await joingame({ username, gameID });
             if (data == 200) {
               console.log("move player to game!");
-              Navigate("/login");
+              Navigate("/game/" + gameID);
             }
           };
           action();

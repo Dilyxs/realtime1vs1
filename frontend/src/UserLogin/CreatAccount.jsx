@@ -9,7 +9,7 @@ const submitNewUser = async (logindata) => {
   try {
     const response = await fetch(fetchurl, {
       method: "POST",
-      headers: { "Content-Type": "application-json" },
+      headers: { "Content-Type": "application/json" },
       body: jsonData,
     });
     return response.status;
@@ -19,6 +19,7 @@ const submitNewUser = async (logindata) => {
   }
 };
 
+//:TODO: check with localStorage if we already rememeber if user had logged in!
 const CreateAccount = () => {
   const Navigate = useNavigate();
   const { AccountInfo, setAccountInfo } = useContext(UserAccount);
