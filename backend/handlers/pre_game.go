@@ -75,7 +75,15 @@ func PreGameHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 			fmt.Fprint(w, string(jsonErr))
 			return
 		}
-		cmd := result.Extra.(bool)
+
+		var cmd bool
+		switch result.Extra.(type) {
+		case bool:
+			res := result.Extra.(bool)
+			cmd = res
+		default:
+			cmd = false
+		}
 		if cmd {
 			response := IsPlayerAlloedToJoinAndGameMasterJSON{
 				IsAllowedToJoin: true,
