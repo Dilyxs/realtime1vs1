@@ -69,7 +69,6 @@ func PreGameHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 		fmt.Fprint(w, string(jsonErr))
 		return
 	case result := <-outchan:
-		fmt.Println(result)
 		if !result.OK {
 			w.WriteHeader(http.StatusForbidden)
 			jsonErr, _ := json.Marshal(ErrorMessageJSON{ErrorMessageJSON: fmt.Sprintf("user %s is not allowed to join the game", plauserusername)})
