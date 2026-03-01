@@ -29,12 +29,6 @@ func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if GameMaster.Username == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid request body, missing username"})
-		w.Write(jsonMsg)
-		return
-	}
 	roomID := roomManager.CreateNewRoom(GameMaster.Username, tokenDis)
 	room := RooomID{
 		ID: roomID,

@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -34,16 +35,44 @@ func AddPlayerToWebsocketConn(w http.ResponseWriter, r *http.Request, roomManage
 	}
 }
 
+type GamePhase int
+
+const (
+	PreGame = iota
+)
+
 type HubMessage interface {
-	error_code() int
+	ToJSON() []byte
 }
-type UserIsReadyJSON struct {
-	username string
-	isReady  bool
+type UserWantsToJoin struct {
+	ID        string    `json:"id"`
+	GamePhase GamePhase `json:"gamePhase"`
+	Username  string    `json:"username"`
 }
 
-func (msg UserIsReadyJSON) error_code() int {
-	return 0
+func (msg UserWantsToJoin) ToJSON() []byte {
+	jsonMsg, _ := json.Marshal(msg)
+	return jsonMsg
+}
+
+type UserIsReadyJSON struct {
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	IsReady  bool   `json:"isReady"`
+}
+
+func (msg UserIsReadyJSON) ToJSON() []byte {
+	jsonMsg, _ := json.Marshal(msg)
+	return jsonMsg
+}
+
+type UserWritingJSON struct {
+	Main any `json:"main,omitempty"`
+}
+
+func (msg UserWritingJSON) ToJSON() []byte {
+	jsonMsg, _ := json.Marshal(msg)
+	return jsonMsg
 }
 
 func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUsernanme string) {
@@ -52,7 +81,7 @@ func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUser
 		for msg := range intermidiatechan {
 			switch customMsg := msg.Main.(type) {
 			case UserIsReadyJSON:
-				HubChan <- UserIsReadyJSON{username: customMsg.username, isReady: customMsg.isReady}
+				HubChan <- UserIsReadyJSON{Username: customMsg.Username, IsReady: customMsg.IsReady}
 			}
 		}
 	}()
@@ -66,10 +95,19 @@ func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUser
 	}
 }
 
-func WriteToWebsocket(conn *websocket.Conn, localChan chan UserWritingJSON) {
+func WriteToWebsocket(conn *websocket.Conn, localChan chan HubMessage) {
 	for msg := range localChan {
 		if err := conn.WriteJSON(&msg); err != nil {
 			return
+		}
+	}
+}
+
+func WritePreviousMessagesToWebsocket(websocketChan chan HubMessage, previousMessages []HubMessage) {
+	for _, msg := range previousMessages {
+		select {
+		case websocketChan <- msg:
+		default:
 		}
 	}
 }

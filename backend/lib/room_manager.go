@@ -1,9 +1,12 @@
 package lib
 
 import (
+	"encoding/json"
 	"fmt"
 	"sync"
 	"time"
+
+	"realtime1vs1/randomhelper"
 
 	"github.com/gorilla/websocket"
 )
@@ -47,9 +50,6 @@ func (command AddPlayerToWebsocketCommand) basic() (RoomCommandType, chan RoomCo
 type RoomCommand interface {
 	basic() (RoomCommandType, chan RoomCommandResult)
 }
-type UserWritingJSON struct {
-	Main any `json:"main,omitempty"`
-}
 
 type CheckIfUserAllowedToJoin struct {
 	CommandType    RoomCommandType
@@ -61,27 +61,26 @@ func (command CheckIfUserAllowedToJoin) basic() (RoomCommandType, chan RoomComma
 	return command.CommandType, command.OutChan
 }
 
-func (mesg UserWritingJSON) error_code() int {
-	return 0
-}
-
 type WebsocketDisconnectMessage struct {
-	Username string
+	ID       string `json:"id"`
+	Username string `json:"username"`
 }
 
-func (mesg WebsocketDisconnectMessage) error_code() int {
-	return 1
+func (msg WebsocketDisconnectMessage) ToJSON() []byte {
+	jsonMsg, _ := json.Marshal(msg)
+	return jsonMsg
 }
 
 type Room struct {
-	IsClosed         bool
-	ID               int
-	Players          map[string]bool
-	GameMaster       string
-	Chan             chan RoomCommand
-	HubWebsocketChan chan HubMessage
-	SocketConns      map[string]chan UserWritingJSON
-	TokenManager     *TokenManager
+	IsClosed           bool
+	ID                 int
+	Players            map[string]bool
+	GameMaster         string
+	Chan               chan RoomCommand
+	HubWebsocketChan   chan HubMessage
+	SocketConns        map[string]chan HubMessage
+	TokenManager       *TokenManager
+	AllPreiousMessages []HubMessage
 }
 type Player struct {
 	Username string `json:"username"`
@@ -102,22 +101,28 @@ func NewManager() RoomManager {
 	}
 }
 
+func dropMessageOff(cmd HubMessage, chans map[string]chan HubMessage) {
+	for _, socketChan := range chans {
+		select {
+		case socketChan <- cmd:
+		default:
+		}
+	}
+}
+
 func (r *Room) Run() {
 	for {
 		select {
 		case websocketMsg := <-r.HubWebsocketChan:
 			//:NOTE: This is the internal room Request
+			r.AllPreiousMessages = append(r.AllPreiousMessages, websocketMsg)
 			switch cmd := websocketMsg.(type) {
 			case WebsocketDisconnectMessage:
-				delete(r.SocketConns, cmd.Username) // only 1 possible remove condition could happen!
-			case UserWritingJSON:
-				for _, socketChan := range r.SocketConns {
-					select {
-					case socketChan <- cmd:
-					default:
-					}
-				}
+				delete(r.SocketConns, cmd.Username)
+			default:
+				dropMessageOff(cmd, r.SocketConns)
 			}
+
 		//:NOTE: this is the request coming from outside, http request most likely
 		case command := <-r.Chan:
 			switch cmd := command.(type) {
@@ -139,10 +144,16 @@ func (r *Room) Run() {
 				r.Players[cmd.PlayerUsername] = true
 				cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
 			case AddPlayerToWebsocketCommand:
-				localChan := make(chan UserWritingJSON, 10)
+				localChan := make(chan HubMessage, 1000)
 				go ReadFromWebsocket(cmd.Conn, r.HubWebsocketChan, cmd.PlayerUsername)
 				go WriteToWebsocket(cmd.Conn, localChan)
 				r.SocketConns[cmd.PlayerUsername] = localChan
+				go WritePreviousMessagesToWebsocket(localChan, r.AllPreiousMessages)
+				// simply drop off a new message in which we add a Ping that a NewUserHasCome
+				select {
+				case r.HubWebsocketChan <- UserWantsToJoin{ID: randomhelper.GetMessageID(), GamePhase: PreGame, Username: cmd.PlayerUsername}:
+				default:
+				}
 				select {
 				case cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}:
 				default:
@@ -162,11 +173,12 @@ func (r *RoomManager) CreateNewRoom(GameMaster string, tookenDis *TokenDistribut
 		GameMaster:       GameMaster,
 		Chan:             make(chan RoomCommand, 100),
 		HubWebsocketChan: make(chan HubMessage, 100),
-		SocketConns:      make(map[string]chan UserWritingJSON),
+		SocketConns:      make(map[string]chan HubMessage),
 		TokenManager: &TokenManager{
 			Tokens:  make(map[string]PlayerUsernameRoom),
 			HubChan: tookenChannel,
 		},
+		AllPreiousMessages: []HubMessage{},
 	}
 	r.Rooms[r.RoomIDsoFar] = room
 	val := r.RoomIDsoFar

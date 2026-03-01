@@ -8,6 +8,8 @@ import (
 	"encoding/base64"
 	"log"
 	"net/http"
+
+	"github.com/gofrs/uuid/v5"
 )
 
 func CheckIfAllEnvValid(variables ...string) {
@@ -38,4 +40,9 @@ func Generate(length int) string {
 	//:NOTE: this almost never errors, it reads from /dev/urandom
 	rand.Read(bytes)
 	return base64.URLEncoding.EncodeToString(bytes)[:length]
+}
+
+func GetMessageID() string {
+	id, _ := uuid.NewV7()
+	return id.String()
 }

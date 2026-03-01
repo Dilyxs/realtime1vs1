@@ -3,6 +3,8 @@ module realtime1vs1
 go 1.25.5
 
 require (
+	github.com/gofrs/uuid/v5 v5.4.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
