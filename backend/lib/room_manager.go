@@ -14,6 +14,7 @@ const (
 	AddPlayerToRoom = iota
 	AddPlayerToWebsocket
 	RemovePlayerToWebsocket //:TODO: This is not utilized, WebsocketDisconnectMessage needs this as a future param
+	CanUserJoin
 	AddNewToken
 	ValidateToken
 )
@@ -102,44 +103,51 @@ func NewManager() RoomManager {
 }
 
 func (r *Room) Run() {
-	select {
-	case websocketMsg := <-r.HubWebsocketChan:
-		//:NOTE: This is the internal room Request
-		switch cmd := websocketMsg.(type) {
-		case WebsocketDisconnectMessage:
-			delete(r.SocketConns, cmd.Username) // only 1 possible remove condition could happen!
-		case UserWritingJSON:
-			for _, socketChan := range r.SocketConns {
-				socketChan <- cmd
-			}
-		}
-	//:NOTE: this is the request coming from outside, http request most likely
-	case command := <-r.Chan:
-		switch cmd := command.(type) {
-		case CheckIfUserAllowedToJoin:
-			if r.IsClosed {
-				cmd.OutChan <- RoomCommandResult{OK: false, Err: RoomError{ErrorCode: GameFull, Description: "game is full"}}
-				break
-			}
-			if r.Players[cmd.PlayerUsername] {
-				if r.GameMaster == cmd.PlayerUsername {
-					cmd.OutChan <- RoomCommandResult{OK: true, Err: nil, Extra: true}
+	for {
+		select {
+		case websocketMsg := <-r.HubWebsocketChan:
+			//:NOTE: This is the internal room Request
+			switch cmd := websocketMsg.(type) {
+			case WebsocketDisconnectMessage:
+				delete(r.SocketConns, cmd.Username) // only 1 possible remove condition could happen!
+			case UserWritingJSON:
+				for _, socketChan := range r.SocketConns {
+					select {
+					case socketChan <- cmd:
+					default:
+					}
 				}
-				cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
-			} else {
-				cmd.OutChan <- RoomCommandResult{OK: false, Err: RoomError{ErrorCode: UserNotAllowedToJoinGame, Description: "not allowed to join"}}
 			}
-
-		case AddPlayerCommand:
-			r.Players[cmd.PlayerUsername] = true
-			cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
-		case AddPlayerToWebsocketCommand:
-			localChan := make(chan UserWritingJSON, 10)
-			go ReadFromWebsocket(cmd.Conn, r.HubWebsocketChan, cmd.PlayerUsername)
-			go WriteToWebsocket(cmd.Conn, localChan)
-			r.SocketConns[cmd.PlayerUsername] = localChan
-			cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
-
+		//:NOTE: this is the request coming from outside, http request most likely
+		case command := <-r.Chan:
+			switch cmd := command.(type) {
+			case CheckIfUserAllowedToJoin:
+				if r.IsClosed {
+					cmd.OutChan <- RoomCommandResult{OK: false, Err: RoomError{ErrorCode: GameFull, Description: "game is full"}}
+					continue
+				}
+				if r.Players[cmd.PlayerUsername] {
+					if r.GameMaster == cmd.PlayerUsername {
+						cmd.OutChan <- RoomCommandResult{OK: true, Err: nil, Extra: true}
+						continue
+					}
+					cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
+				} else {
+					cmd.OutChan <- RoomCommandResult{OK: false, Err: RoomError{ErrorCode: UserNotAllowedToJoinGame, Description: "not allowed to join"}}
+				}
+			case AddPlayerCommand:
+				r.Players[cmd.PlayerUsername] = true
+				cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}
+			case AddPlayerToWebsocketCommand:
+				localChan := make(chan UserWritingJSON, 10)
+				go ReadFromWebsocket(cmd.Conn, r.HubWebsocketChan, cmd.PlayerUsername)
+				go WriteToWebsocket(cmd.Conn, localChan)
+				r.SocketConns[cmd.PlayerUsername] = localChan
+				select {
+				case cmd.OutChan <- RoomCommandResult{OK: true, Err: nil}:
+				default:
+				}
+			}
 		}
 	}
 }
@@ -163,8 +171,8 @@ func (r *RoomManager) CreateNewRoom(GameMaster string, tookenDis *TokenDistribut
 	r.Rooms[r.RoomIDsoFar] = room
 	val := r.RoomIDsoFar
 	r.RoomIDsoFar += 1
-	r.Mu.Unlock()
 	room.Players[GameMaster] = true
+	r.Mu.Unlock()
 	go room.Run()
 	go room.TokenManager.Run()
 	tookenDis.Chans[room.ID] = tookenChannel

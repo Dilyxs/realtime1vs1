@@ -25,7 +25,7 @@ func AddPlayerToWebsocketConn(w http.ResponseWriter, r *http.Request, roomManage
 		w.WriteHeader(http.StatusUpgradeRequired)
 		return
 	}
-	outChan := make(chan RoomCommandResult, 1)
+	outChan := make(chan RoomCommandResult, 3)
 	roomchan <- AddPlayerToWebsocketCommand{
 		CommandType:    AddPlayerToWebsocket,
 		OutChan:        outChan,

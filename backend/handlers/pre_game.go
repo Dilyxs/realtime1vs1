@@ -31,6 +31,7 @@ func PreGameHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 		w.WriteHeader(http.StatusBadRequest)
 		jsonerr, _ := json.Marshal(ErrorMessageJSON{ErrorMessageJSON: fmt.Sprintf("invalid game id: %s", roomID)})
 		fmt.Fprint(w, jsonerr)
+		return
 	}
 	plauserusername := r.URL.Query().Get("username")
 	if plauserusername == "" {
@@ -49,7 +50,7 @@ func PreGameHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 	}
 	outchan := make(chan lib.RoomCommandResult, 1)
 	command := lib.CheckIfUserAllowedToJoin{
-		CommandType:    lib.AddPlayerToRoom,
+		CommandType:    lib.CanUserJoin,
 		OutChan:        outchan,
 		PlayerUsername: plauserusername,
 	}
@@ -68,6 +69,7 @@ func PreGameHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 		fmt.Fprint(w, string(jsonErr))
 		return
 	case result := <-outchan:
+		fmt.Println(result)
 		if !result.OK {
 			w.WriteHeader(http.StatusForbidden)
 			jsonErr, _ := json.Marshal(ErrorMessageJSON{ErrorMessageJSON: fmt.Sprintf("user %s is not allowed to join the game", plauserusername)})

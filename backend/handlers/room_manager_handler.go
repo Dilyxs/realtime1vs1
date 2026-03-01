@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -28,6 +27,12 @@ func NewRoomHandler(w http.ResponseWriter, r *http.Request, roomManager *lib.Roo
 	err := json.NewDecoder(r.Body).Decode(&GameMaster)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if GameMaster.Username == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		jsonMsg, _ := json.Marshal(&ErrorMessageJSON{ErrorMessageJSON: "invalid request body, missing username"})
+		w.Write(jsonMsg)
 		return
 	}
 	roomID := roomManager.CreateNewRoom(GameMaster.Username, tokenDis)
@@ -67,7 +72,7 @@ func AddNewPlayerHandler(w http.ResponseWriter, r *http.Request, roomManager *li
 		w.Write([]byte(err.Error()))
 		return
 	}
-	OutChan := make(chan lib.RoomCommandResult, 1)
+	OutChan := make(chan lib.RoomCommandResult, 3)
 	RoomCommand := lib.AddPlayerCommand{
 		CommandType:    lib.AddPlayerToRoom,
 		PlayerUsername: NewPlayer.Username,
@@ -130,7 +135,7 @@ func TokenReturnHandler(w http.ResponseWriter, r *http.Request, poolManager *db.
 		return
 	}
 
-	localChan := make(chan string, 1)
+	localChan := make(chan string, 2)
 	tokenReq := lib.AddNewUserTokenCommand{
 		TokenType:  lib.AddNewToken,
 		PlayerInfo: lib.PlayerUsernameRoom{Username: info.Username, RoomID: info.RoomID},
@@ -161,6 +166,7 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 		w.Write(jsonMsg)
 		return
 	}
+
 	token := r.URL.Query().Get("token")
 	if token == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -185,7 +191,7 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 	localChan := make(chan struct {
 		PlayerInfo lib.PlayerUsernameRoom
 		Valid      bool
-	}, 1)
+	}, 2)
 	tokenReq := lib.ValidateTokenCommand{
 		TokenType: lib.ValidateToken, TokenContent: token,
 		OutChan: localChan,
@@ -215,6 +221,5 @@ func AddPlayerToWebsocketHandler(w http.ResponseWriter, r *http.Request, roomMan
 			PlayerInfo = &valid.PlayerInfo
 		}
 	}
-	fmt.Printf("PlayerInfo: %+v\n", PlayerInfo)
 	lib.AddPlayerToWebsocketConn(w, r, roomManager, PlayerInfo.RoomID, PlayerInfo.Username)
 }
