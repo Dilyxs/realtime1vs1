@@ -2,6 +2,7 @@ package lib
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -56,9 +57,10 @@ func (msg UserWantsToJoin) ToJSON() []byte {
 }
 
 type UserIsReadyJSON struct {
-	ID       string `json:"id"`
-	Username string `json:"username"`
-	IsReady  bool   `json:"isReady"`
+	ID        string    `json:"id"`
+	Username  string    `json:"username"`
+	GamePhase GamePhase `json:"gamePhase"`
+	IsReady   bool      `json:"isReady"`
 }
 
 func (msg UserIsReadyJSON) ToJSON() []byte {
@@ -67,7 +69,8 @@ func (msg UserIsReadyJSON) ToJSON() []byte {
 }
 
 type UserWritingJSON struct {
-	Main any `json:"main,omitempty"`
+	Type string          `json:"string"`
+	Main json.RawMessage `json:"main,omitempty"`
 }
 
 func (msg UserWritingJSON) ToJSON() []byte {
@@ -79,9 +82,14 @@ func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUser
 	intermidiatechan := make(chan UserWritingJSON, 20)
 	go func() {
 		for msg := range intermidiatechan {
-			switch customMsg := msg.Main.(type) {
-			case UserIsReadyJSON:
-				HubChan <- UserIsReadyJSON{Username: customMsg.Username, IsReady: customMsg.IsReady}
+			switch msg.Type {
+			case "userIsReady":
+				var customMsg UserIsReadyJSON
+				if err := json.Unmarshal(msg.Main, &customMsg); err != nil {
+					//:TODO: log this later on!
+					continue
+				}
+				HubChan <- customMsg
 			}
 		}
 	}()
@@ -91,6 +99,7 @@ func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUser
 			HubChan <- WebsocketDisconnectMessage{Username: playerUsernanme}
 			return
 		}
+		fmt.Println(msg)
 		intermidiatechan <- msg
 	}
 }
