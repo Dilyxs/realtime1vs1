@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const requestANewgame = async ({ username }) => {
+const requestANewgame = async (username) => {
   const baseurl = import.meta.env.VITE_BACKEND_URL;
   const fetchurl = `${baseurl}/newroom`;
   const jsondata = JSON.stringify({ username: username });

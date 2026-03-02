@@ -1,33 +1,41 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 export const WebsocketHandler = createContext({});
+import { HandleNewMessage } from "./helperfunc.js";
 
-const WebsocketRounder = ({ children, token, roomID, AccountInfo }) => {
+const WebsocketRounder = ({
+  children,
+  token,
+  roomID,
+  AccountInfo,
+  isLoaded,
+}) => {
   const ws = useRef(null);
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState("connecting");
-  const navigate = useNavigate();
+  const seenIds = useRef(new Set());
+  const [gameState, setgameState] = useState({ 0: {}, 1: {}, 2: {} });
 
   useEffect(() => {
-    if (!isLoaded || !AccountInfo?.username) {
-      navigate("/login");
-    }
-  }, [AccountInfo, isLoaded, navigate]);
-
-  useEffect(() => {
-    if (!AccountInfo?.username) return;
+    if (!AccountInfo?.username || !isLoaded) return;
 
     const connect = async () => {
+      const baseurl = import.meta.env.VITE_BACKEND_WS;
+      const ws_url = `${baseurl}/websocketconn?token=${token}&roomid=${roomID}`;
       try {
-        websocket.onopen = () => setStatus("open");
+        const websocket = new WebSocket(ws_url);
+        websocket.onopen = () => {
+          setStatus("open");
+          console.log("connected!");
+        };
         websocket.onmessage = (ev) => {
-          setMessages((prev) => [...prev, ev.data]);
+          HandleNewMessage(ev, setgameState, seenIds, setMessages);
         };
         websocket.onclose = () => {
-          if (!cancelled) setStatus("closed");
+          setStatus("closed");
         };
         websocket.onerror = () => {
-          if (!cancelled) setStatus("error");
+          setStatus("error");
         };
 
         ws.current = websocket;
@@ -42,11 +50,16 @@ const WebsocketRounder = ({ children, token, roomID, AccountInfo }) => {
     return () => {
       ws.current?.close();
     };
-  }, [AccountInfo, roomID]);
+  }, [AccountInfo, roomID, token, isLoaded]);
 
   return (
-    <WebsocketHandler.Provider value={{ messages, ws, status }}>
-      {children}
+    <WebsocketHandler.Provider value={{ messages, ws, status, gameState }}>
+      {React.cloneElement(children, {
+        roomID,
+        AccountInfo,
+        isLoaded,
+        messages,
+      })}
     </WebsocketHandler.Provider>
   );
 };

@@ -18,7 +18,9 @@ function App() {
             element={
               //<WebsocketRounder>
               <TokenFetcher>
-                <MainPage></MainPage>
+                <WebsocketRounder>
+                  <MainPage></MainPage>
+                </WebsocketRounder>
               </TokenFetcher>
               //</WebsocketRounder>
             }
