@@ -2,7 +2,6 @@ package lib
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -69,7 +68,7 @@ func (msg UserIsReadyJSON) ToJSON() []byte {
 }
 
 type UserWritingJSON struct {
-	Type string          `json:"string"`
+	Type string          `json:"type"`
 	Main json.RawMessage `json:"main,omitempty"`
 }
 
@@ -99,7 +98,6 @@ func ReadFromWebsocket(conn *websocket.Conn, HubChan chan HubMessage, playerUser
 			HubChan <- WebsocketDisconnectMessage{Username: playerUsernanme}
 			return
 		}
-		fmt.Println(msg)
 		intermidiatechan <- msg
 	}
 }

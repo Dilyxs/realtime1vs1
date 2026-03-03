@@ -17,10 +17,11 @@ import (
 
 func main() {
 	// Setup SECRET VARIABLES!
+
 	godotenv.Load()
 	postgresConn := os.Getenv("POSTGRES_CONN_STRING")
-	randomhelper.CheckIfAllEnvValid(postgresConn)
-
+	nicheProblems := os.Getenv("PROBLEMS_NICHE")
+	generalProblems := os.Getenv("PROBLEMS_GENERAL")
 	// Setup SQL WORKERS
 	//:TODO: ONCE THE sqlWaiGroup is done, you need to close the pool, need to check os.Sigterm!
 	var sqlWaiGroup sync.WaitGroup
@@ -33,8 +34,9 @@ func main() {
 	TkDistrib := lib.TokenDistributer{
 		Chans: make(map[int]chan lib.TokenMessage),
 	}
-	mux := mux.NewRouter()
+	QDistrub := lib.NewQuestionManager(generalProblems, nicheProblems)
 
+	mux := mux.NewRouter()
 	mux.HandleFunc("/newroom", func(w http.ResponseWriter, r *http.Request) {
 		handlers.NewRoomHandler(w, r, &Manager, &TkDistrib)
 	})
@@ -57,6 +59,9 @@ func main() {
 	})
 	mux.HandleFunc("/game/{id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.PreGameHandler(w, r, &Manager)
+	})
+	mux.HandleFunc("/newquestion", func(w http.ResponseWriter, r *http.Request) {
+		handlers.NewQuestionHandler(w, r, QDistrub)
 	})
 
 	// cors setup

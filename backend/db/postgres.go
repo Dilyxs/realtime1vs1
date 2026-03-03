@@ -1,3 +1,4 @@
+// Package db is where database functions and structs are
 package db
 
 import (
@@ -71,6 +72,7 @@ func Worker(pool *PoolManager) {
 		case Query:
 			rows, err := pool.Pool.Query(context.Background(), request.Query, request.Args.([]any)...)
 			if err != nil {
+				//:TODO: log this
 				fmt.Printf("problem !: %v", err)
 				request.OutChan <- SQLResult{
 					SQLRequestType: request.SQLType,
