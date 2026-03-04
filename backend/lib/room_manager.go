@@ -223,3 +223,13 @@ func (r *RoomManager) GetRoomChan(roomID int) (chan RoomCommand, error) {
 		return val.Chan, nil
 	}
 }
+
+func (r *RoomManager) GetWebsocketChan(roomID int) (chan HubMessage, error) {
+	r.Mu.RLock()
+	defer r.Mu.RUnlock()
+	if val, ok := r.Rooms[roomID]; !ok {
+		return nil, RoomError{ErrorCode: RoomDoesNotExist, Description: "RoomDoesNotExist"}
+	} else {
+		return val.HubWebsocketChan, nil
+	}
+}

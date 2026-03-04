@@ -14,8 +14,9 @@ type NewQuestionHandlerStruct struct {
 	QuestionTopic lib.NicheProblems `json:"question_topic"`
 }
 
-func NewQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.QuestionDistributor) {
+func NewQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.QuestionDistributor, RoomGereur *lib.RoomManager) {
 	if r.Method != http.MethodPost {
+		//:TODO: convert these into json struct sendings
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -25,7 +26,11 @@ func NewQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.Qu
 		http.Error(w, "Bad request", http.StatusBadRequest)
 		return
 	}
-	QDistrub.AddRoom(req.RoomID)
+	if err := QDistrub.AddRoom(req.RoomID, RoomGereur); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+
+	}
 	roomChan := QDistrub.GetRoom(req.RoomID)
 
 	myChan := make(chan lib.QuestionResult, 1)

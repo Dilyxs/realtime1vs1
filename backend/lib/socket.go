@@ -39,6 +39,8 @@ type GamePhase int
 
 const (
 	PreGame = iota
+	DuringGame
+	PostGame
 )
 
 type HubMessage interface {
@@ -48,6 +50,16 @@ type UserWantsToJoin struct {
 	ID        string    `json:"id"`
 	GamePhase GamePhase `json:"gamePhase"`
 	Username  string    `json:"username"`
+}
+type GeneralQuestionUserAnsweredResult struct {
+	ID        string                         `json:"id"`
+	GamePhase GamePhase                      `json:"gamePhase"`
+	Result    QuestionGeneralWebsocketOutput `json:"result"`
+}
+
+func (msg GeneralQuestionUserAnsweredResult) ToJSON() []byte {
+	jsonMsg, _ := json.Marshal(msg)
+	return jsonMsg
 }
 
 func (msg UserWantsToJoin) ToJSON() []byte {

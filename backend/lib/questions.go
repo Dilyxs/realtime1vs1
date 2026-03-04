@@ -7,7 +7,10 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strconv"
+	"strings"
 	"sync"
+	"time"
 
 	"realtime1vs1/randomhelper"
 )
@@ -29,7 +32,7 @@ type ProblemNiche struct {
 	ProblemRubric       []Rubric `json:"problem_rubric"`
 }
 
-func (p ProblemNiche) TOJSON() []byte {
+func (p ProblemNiche) ToJSON() []byte {
 	res, _ := json.Marshal(p)
 	return res
 }
@@ -49,7 +52,20 @@ type ProblemGeneral struct {
 	Difficulty string   `json:"difficulty"`
 }
 
-func (p ProblemGeneral) TOJSON() []byte {
+type ProblemGeneralCoreInfo struct {
+	QuestionID int      `json:"questionID"`
+	Question   string   `json:"question"`
+	Options    []string `json:"options"`
+	Topic      string   `json:"topic"`
+	Difficulty string   `json:"difficulty"`
+}
+
+func (p ProblemGeneralCoreInfo) ToJSON() []byte {
+	jsonMsg, _ := json.Marshal(&p)
+	return jsonMsg
+}
+
+func (p ProblemGeneral) ToJSON() []byte {
 	res, _ := json.Marshal(p)
 	return res
 }
@@ -84,7 +100,11 @@ func NewQuestionManager(pathGeneral, pathNiche string) *QuestionDistributor {
 	}
 }
 
-func (q *QuestionDistributor) AddRoom(roomID int) {
+func (q *QuestionDistributor) AddRoom(roomID int, RoomGereur *RoomManager) error {
+	wsChan, err := RoomGereur.GetWebsocketChan(roomID)
+	if err != nil {
+		return err
+	}
 	Chan := make(chan Question, 100)
 	QuestionMan := QuestionManager{
 		RoomID:             roomID,
@@ -92,11 +112,13 @@ func (q *QuestionDistributor) AddRoom(roomID int) {
 		Topic:              ReactProblem,         // BY default
 		AllNicheProblems:   q.NicheQuestionAll,   // this is always read only
 		AllGeneralProblems: q.GeneralQuestionAll, // this is always read only
+		WebsocketChan:      wsChan,
 	}
 	go QuestionMan.Run()
 	q.Mu.Lock()
 	q.Chans[roomID] = Chan
 	q.Mu.Unlock()
+	return nil
 }
 
 func (q *QuestionDistributor) GetRoom(roomID int) chan Question {
@@ -112,6 +134,7 @@ type QuestionManager struct {
 	ProblemAtHand      ProblemNiche
 	AllNicheProblems   []ProblemNiche
 	AllGeneralProblems []ProblemGeneral
+	WebsocketChan      chan HubMessage
 }
 type QuestionResult interface {
 	hasID() string
@@ -132,7 +155,7 @@ func (command CreateNewQuestionCommand) hasChan() chan QuestionResult {
 type NicheProblems int
 
 type IsAFile interface {
-	TOJSON() []byte
+	ToJSON() []byte
 }
 
 func ReadFileAndReturn[T IsAFile](filpath string) ([]T, error) {
@@ -180,7 +203,30 @@ func (r RoomCreationResult) hasID() string {
 	return r.ID
 }
 
+type UserQuestionResult struct {
+	Username     string `json:"username"`
+	ID           int    `json:"id"`
+	ChosenOption int    `json:"option"`
+	Chan         chan QuestionResult
+}
+
+func (q UserQuestionResult) hasChan() chan QuestionResult {
+	return q.Chan
+}
+
+type GameHasStarted struct {
+	ID         string `json:"ID"`
+	HasStarted bool   `json:"has_started"`
+}
+
+func (msg GameHasStarted) ToJSON() []byte {
+	res, _ := json.Marshal(msg)
+	return res
+}
+
 func (q *QuestionManager) Run() {
+	localChan := make(chan UserQuestionResult, 100)
+	go q.AskQuestions(localChan)
 	for request := range q.Chan {
 		switch cmd := request.(type) {
 		case CreateNewQuestionCommand:
@@ -197,6 +243,91 @@ func (q *QuestionManager) Run() {
 				},
 				Err: nil,
 			}
+			// to let everyone know that the game has started:
+			q.WebsocketChan <- GameHasStarted{
+				ID:         randomhelper.GetMessageID(),
+				HasStarted: true,
+			}
+		case UserQuestionResult:
+			localChan <- cmd
+		}
+	}
+}
+
+type QuestionGeneralAnswerResult struct {
+	ID         string
+	Registered bool
+}
+
+func (q QuestionGeneralAnswerResult) hasID() string {
+	return q.ID
+}
+
+type QuestionGeneralWebsocketOutput struct {
+	SuccessfulPlayers []PlayerAndOption `json:"successful_players"`
+	FailedPlayers     []PlayerAndOption `json:"failed_players"`
+}
+type PlayerAndOption struct {
+	Username string `json:"username"`
+	Option   int    `json:"option"`
+}
+
+func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
+	contentMinute := q.ProblemAtHand.ProblemTimeRequired
+	minString := strings.Split(contentMinute, " ")[0]
+	timeTotal, err := strconv.Atoi(minString)
+	if err != nil {
+		log.Fatalf("could not convert time into minute: %v", err)
+	}
+	totalGeneralQuestions := (timeTotal / 5)
+	for range totalGeneralQuestions {
+		pickedQuestionID := rand.Int31n(100)
+		pickedQuestion := q.AllGeneralProblems[pickedQuestionID]
+
+		// to add some randomness sleep for an unknow time
+		time.Sleep(time.Duration(rand.Int31n(200) * int32(time.Second)))
+		q.WebsocketChan <- ProblemGeneralCoreInfo{
+			QuestionID: pickedQuestion.QuestionID,
+			Question:   pickedQuestion.Question,
+			Options:    pickedQuestion.Options,
+			Topic:      pickedQuestion.Topic,
+			Difficulty: pickedQuestion.Difficulty,
+		}
+		result := make(map[bool][]PlayerAndOption)
+
+		timerChan := time.NewTicker(5 * time.Second)
+	InfiniteLoop:
+		for {
+			select {
+			case <-timerChan.C:
+				break InfiniteLoop
+			case req := <-localChan:
+				if req.ID != int(pickedQuestionID) {
+					req.Chan <- QuestionGeneralAnswerResult{ID: randomhelper.GetMessageID(), Registered: false}
+					continue
+				}
+				if pickedQuestion.Answer == req.ChosenOption {
+					result[true] = append(result[true], PlayerAndOption{
+						Username: req.Username,
+						Option:   req.ChosenOption,
+					})
+				} else {
+					result[false] = append(result[false], PlayerAndOption{
+						Username: req.Username,
+						Option:   req.ChosenOption,
+					})
+				}
+				req.Chan <- QuestionGeneralAnswerResult{ID: randomhelper.GetMessageID(), Registered: true}
+			}
+		}
+		// Now just send it to Websocket AS a final output!
+		var res QuestionGeneralWebsocketOutput
+		res.SuccessfulPlayers = result[true]
+		res.FailedPlayers = result[false]
+		q.WebsocketChan <- GeneralQuestionUserAnsweredResult{
+			ID:        randomhelper.GetMessageID(),
+			GamePhase: DuringGame,
+			Result:    res,
 		}
 	}
 }
