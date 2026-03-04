@@ -51,14 +51,14 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
       },
     }));
   } else if (gamePhase == 1) {
-    const { coreinfo } = newMessage;
-    if (newMessage?.has_started) {
+    const { gameInfo } = newMessage;
+    if (newMessage?.hasStarted) {
       setgameState((prev) => ({
         ...prev,
         [gamePhase]: {
           ...prev[gamePhase],
           hasStarted: true,
-          coreInfo: coreinfo,
+          gameInfo: gameInfo,
         },
       }));
     }

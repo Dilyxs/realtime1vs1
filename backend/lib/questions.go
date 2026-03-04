@@ -16,12 +16,13 @@ import (
 )
 
 type ProblemNicheCoreInfo struct {
-	ProblemTopic        string `json:"problem_topic"`
-	ProblemTimeRequired string `json:"problem_time_required"`
-	ProblemDifficulty   string `json:"problem_difficulty"`
-	ProblemDescription  string `json:"problem_description"`
+	ProblemTopic        string `json:"problemTopic"`
+	ProblemTimeRequired string `json:"problemTimeRequired"`
+	ProblemDifficulty   string `json:"problemDifficulty"`
+	ProblemDescription  string `json:"problemDescription"`
 }
 
+// NOTE: DO NOT CHANGE json struct for this, this is how they are defined in the file, changing this would thus require Changing Also in the .json config file
 type ProblemNiche struct {
 	ProblemID           string   `json:"problem_id"`
 	ProblemTopic        string   `json:"problem_topic"`
@@ -219,7 +220,7 @@ type GameHasStarted struct {
 	ID         string               `json:"ID"`
 	GamePhase  GamePhase            `json:"gamePhase"`
 	HasStarted bool                 `json:"hasStarted"`
-	GameInfo   ProblemNicheCoreInfo `json:"coreinfo"`
+	GameInfo   ProblemNicheCoreInfo `json:"gameInfo"`
 }
 
 func (msg GameHasStarted) ToJSON() []byte {
@@ -252,6 +253,7 @@ func (q *QuestionManager) Run() {
 			q.WebsocketChan <- GameHasStarted{
 				ID:         randomhelper.GetMessageID(),
 				HasStarted: true,
+				GamePhase:  DuringGame,
 				GameInfo:   coreInfo,
 			}
 		case UserQuestionResult:
@@ -270,8 +272,8 @@ func (q QuestionGeneralAnswerResult) hasID() string {
 }
 
 type QuestionGeneralWebsocketOutput struct {
-	SuccessfulPlayers []PlayerAndOption `json:"successful_players"`
-	FailedPlayers     []PlayerAndOption `json:"failed_players"`
+	SuccessfulPlayers []PlayerAndOption `json:"successfulPlayers"`
+	FailedPlayers     []PlayerAndOption `json:"failedPlayers"`
 }
 type PlayerAndOption struct {
 	Username string `json:"username"`
@@ -292,12 +294,11 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 	for range totalGeneralQuestions {
 		pickedQuestionID := rand.Int31n(L)
 		pickedQuestion := q.AllGeneralProblems[pickedQuestionID]
-		fmt.Println(pickedQuestion)
 
-		// to add some randomness sleep for an unknow time
-		time.Sleep(time.Duration(rand.Int31n(200) * int32(time.Second)))
+		time.Sleep(10 * time.Second) // this enough time for the intro to play out!
 		formattedquestion := ProblemGeneralCoreInfo{
 			QuestionID: pickedQuestion.QuestionID,
+			GamePhase:  DuringGame,
 			Question:   pickedQuestion.Question,
 			Options:    pickedQuestion.Options,
 			Topic:      pickedQuestion.Topic,
@@ -309,6 +310,7 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 		timerChan := time.NewTicker(5 * time.Second)
 	InfiniteLoop:
 		for {
+			time.Sleep(DefaultQuestionCoolDownPeriod * time.Second) // can make this random later on!
 			select {
 			case <-timerChan.C:
 				break InfiniteLoop
@@ -342,3 +344,5 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 		}
 	}
 }
+
+const DefaultQuestionCoolDownPeriod = 45

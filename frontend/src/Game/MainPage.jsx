@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { preGameStatusFetcher } from "./helperfunc";
 import PreGame from "../PreGame/PreGame";
 import MidGame from "./DuringGame/MidGame";
@@ -14,7 +14,7 @@ const MainPage = ({ roomID, AccountInfo, isLoaded, messages }) => {
   useEffect(() => {
     if (gameState[1]?.hasStarted) {
       setGamePhase("duringGame");
-      setGameNicheInfo(gameState[1]?.coreInfo);
+      setGameNicheInfo(gameState[1]?.gameInfo);
     }
   }, [gameState]);
   useEffect(() => {
