@@ -42,7 +42,6 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
 
   const { gamePhase, username } = newMessage;
   if (gamePhase == 0) {
-    console.log("deteced");
     setgameState((prev) => ({
       ...prev,
       [gamePhase]: {
@@ -52,7 +51,7 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
     }));
   } else if (gamePhase == 1) {
     const { gameInfo } = newMessage;
-    if (newMessage?.hasStarted) {
+    if (newMessage.hasStarted) {
       setgameState((prev) => ({
         ...prev,
         [gamePhase]: {

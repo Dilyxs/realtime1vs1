@@ -54,6 +54,7 @@ type ProblemGeneral struct {
 }
 
 type ProblemGeneralCoreInfo struct {
+	ID         string    `json:"id"`
 	QuestionID int       `json:"questionID"`
 	GamePhase  GamePhase `"json:gamePhase"`
 	Question   string    `json:"question"`
@@ -217,7 +218,7 @@ func (q UserQuestionResult) hasChan() chan QuestionResult {
 }
 
 type GameHasStarted struct {
-	ID         string               `json:"ID"`
+	ID         string               `json:"id"`
 	GamePhase  GamePhase            `json:"gamePhase"`
 	HasStarted bool                 `json:"hasStarted"`
 	GameInfo   ProblemNicheCoreInfo `json:"gameInfo"`
@@ -297,6 +298,7 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 
 		time.Sleep(10 * time.Second) // this enough time for the intro to play out!
 		formattedquestion := ProblemGeneralCoreInfo{
+			ID:         randomhelper.GetMessageID(),
 			QuestionID: pickedQuestion.QuestionID,
 			GamePhase:  DuringGame,
 			Question:   pickedQuestion.Question,
