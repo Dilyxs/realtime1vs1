@@ -50,5 +50,17 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
         [username]: { isReady: newMessage?.isReady ? true : false },
       },
     }));
+  } else if (gamePhase == 1) {
+    const { coreinfo } = newMessage;
+    if (newMessage?.has_started) {
+      setgameState((prev) => ({
+        ...prev,
+        [gamePhase]: {
+          ...prev[gamePhase],
+          hasStarted: true,
+          coreInfo: coreinfo,
+        },
+      }));
+    }
   }
 };

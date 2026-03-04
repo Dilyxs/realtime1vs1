@@ -53,11 +53,12 @@ type ProblemGeneral struct {
 }
 
 type ProblemGeneralCoreInfo struct {
-	QuestionID int      `json:"questionID"`
-	Question   string   `json:"question"`
-	Options    []string `json:"options"`
-	Topic      string   `json:"topic"`
-	Difficulty string   `json:"difficulty"`
+	QuestionID int       `json:"questionID"`
+	GamePhase  GamePhase `"json:gamePhase"`
+	Question   string    `json:"question"`
+	Options    []string  `json:"options"`
+	Topic      string    `json:"topic"`
+	Difficulty string    `json:"difficulty"`
 }
 
 func (p ProblemGeneralCoreInfo) ToJSON() []byte {
@@ -88,9 +89,9 @@ func NewQuestionManager(pathGeneral, pathNiche string) *QuestionDistributor {
 	if err != nil {
 		log.Fatalf("err reading niche problems: %v", err)
 	}
-	contentGeneral, err := ReadFileAndReturn[ProblemGeneral](pathNiche)
+	contentGeneral, err := ReadFileAndReturn[ProblemGeneral](pathGeneral)
 	if err != nil {
-		log.Fatalf("err reading niche problems: %v", err)
+		log.Fatalf("err reading general problems: %v", err)
 	}
 	return &QuestionDistributor{
 		Chans:              make(map[int]chan Question),
@@ -215,8 +216,10 @@ func (q UserQuestionResult) hasChan() chan QuestionResult {
 }
 
 type GameHasStarted struct {
-	ID         string `json:"ID"`
-	HasStarted bool   `json:"has_started"`
+	ID         string               `json:"ID"`
+	GamePhase  GamePhase            `json:"gamePhase"`
+	HasStarted bool                 `json:"hasStarted"`
+	GameInfo   ProblemNicheCoreInfo `json:"coreinfo"`
 }
 
 func (msg GameHasStarted) ToJSON() []byte {
@@ -232,21 +235,24 @@ func (q *QuestionManager) Run() {
 		case CreateNewQuestionCommand:
 			q.Topic = NicheProblems(cmd.Topic)
 			problem := GetANicheProblem(q.Topic, q.AllNicheProblems)
+
+			coreInfo := ProblemNicheCoreInfo{
+				ProblemTopic:        problem.ProblemTopic,
+				ProblemTimeRequired: problem.ProblemTimeRequired,
+				ProblemDifficulty:   problem.ProblemDifficulty,
+				ProblemDescription:  problem.ProblemDescription,
+			}
 			q.ProblemAtHand = problem
 			cmd.Chan <- RoomCreationResult{
-				ID: randomhelper.GetMessageID(),
-				Info: ProblemNicheCoreInfo{
-					ProblemTopic:        problem.ProblemTopic,
-					ProblemTimeRequired: problem.ProblemTimeRequired,
-					ProblemDifficulty:   problem.ProblemDifficulty,
-					ProblemDescription:  problem.ProblemDescription,
-				},
-				Err: nil,
+				ID:   randomhelper.GetMessageID(),
+				Info: coreInfo,
+				Err:  nil,
 			}
 			// to let everyone know that the game has started:
 			q.WebsocketChan <- GameHasStarted{
 				ID:         randomhelper.GetMessageID(),
 				HasStarted: true,
+				GameInfo:   coreInfo,
 			}
 		case UserQuestionResult:
 			localChan <- cmd
@@ -281,19 +287,23 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 	}
 	totalGeneralQuestions := (timeTotal / 5)
 	L := int32(len(q.AllGeneralProblems))
+	// for testing purposes let's make it 10
+	totalGeneralQuestions = 10
 	for range totalGeneralQuestions {
 		pickedQuestionID := rand.Int31n(L)
 		pickedQuestion := q.AllGeneralProblems[pickedQuestionID]
+		fmt.Println(pickedQuestion)
 
 		// to add some randomness sleep for an unknow time
 		time.Sleep(time.Duration(rand.Int31n(200) * int32(time.Second)))
-		q.WebsocketChan <- ProblemGeneralCoreInfo{
+		formattedquestion := ProblemGeneralCoreInfo{
 			QuestionID: pickedQuestion.QuestionID,
 			Question:   pickedQuestion.Question,
 			Options:    pickedQuestion.Options,
 			Topic:      pickedQuestion.Topic,
 			Difficulty: pickedQuestion.Difficulty,
 		}
+		q.WebsocketChan <- formattedquestion
 		result := make(map[bool][]PlayerAndOption)
 
 		timerChan := time.NewTicker(5 * time.Second)
