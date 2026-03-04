@@ -60,7 +60,7 @@ func main() {
 		handlers.PreGameHandler(w, r, &Manager)
 	})
 	// TODO: MORE EXTENSIVE TESTING ON THESE HANDLERS
-	mux.HandleFunc("/newquestion", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/startgame", func(w http.ResponseWriter, r *http.Request) {
 		handlers.NewQuestionHandler(w, r, QDistrub, &Manager)
 	})
 

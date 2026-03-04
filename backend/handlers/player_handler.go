@@ -13,6 +13,18 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
+const (
+	DuplicateUser = iota
+	UserDoesNotExist
+)
+
+const (
+	ServerOverloaded = iota
+	ServerTookTooMuchTime
+	RoomDoesNotExist
+	WrongFormat
+)
+
 type (
 	InternalError    int
 	ErrorMessageJSON struct {
@@ -95,17 +107,6 @@ type RoomError struct {
 	ErrorCode   int    `json:"error_code`
 	Description string `json:"description"`
 }
-
-const (
-	DuplicateUser = iota
-	UserDoesNotExist
-)
-
-const (
-	ServerOverloaded = iota
-	ServerTookTooMuchTime
-	RoomDoesNotExist
-)
 
 func (e SQLError) Error() string {
 	return fmt.Sprintf("errorcode: %d, description: %s", e.ErrorCode, e.Descripition)

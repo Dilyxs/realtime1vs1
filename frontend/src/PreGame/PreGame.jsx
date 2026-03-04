@@ -6,7 +6,7 @@ import PlayerActive from "./PlayerActive";
 import { UserAccount } from "../UserLogin/AccountInfoWrapper";
 import PlayerReadyOption from "./PlayerReadyOption";
 
-const PreGame = ({ isGameMaster }) => {
+const PreGame = ({ isGameMaster, roomID }) => {
   const { status, gameState, ws } = useContext(WebsocketHandler);
   const { AccountInfo } = useContext(UserAccount);
   const { username } = AccountInfo;
@@ -20,11 +20,11 @@ const PreGame = ({ isGameMaster }) => {
         isGameMaster={isGameMaster}
         username={username}
       ></PlayerActive>
-      <PlayerReadyOption ws={ws}></PlayerReadyOption>
       <div>
-        {isGameMaster && <OwnerPOV></OwnerPOV>}
+        {isGameMaster && <OwnerPOV room_id={roomID}></OwnerPOV>}
         {!isGameMaster && <ClientPOV></ClientPOV>}
       </div>
+      <PlayerReadyOption ws={ws} username={username}></PlayerReadyOption>
     </div>
   );
 };

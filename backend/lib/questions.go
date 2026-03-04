@@ -280,8 +280,9 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 		log.Fatalf("could not convert time into minute: %v", err)
 	}
 	totalGeneralQuestions := (timeTotal / 5)
+	L := int32(len(q.AllGeneralProblems))
 	for range totalGeneralQuestions {
-		pickedQuestionID := rand.Int31n(100)
+		pickedQuestionID := rand.Int31n(L)
 		pickedQuestion := q.AllGeneralProblems[pickedQuestionID]
 
 		// to add some randomness sleep for an unknow time

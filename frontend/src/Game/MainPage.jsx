@@ -34,6 +34,7 @@ const MainPage = ({ roomID, AccountInfo, isLoaded, messages }) => {
       <PreGame
         isGameMaster={status?.isGameMaster}
         messages={messages}
+        roomID={roomID}
       ></PreGame>
     );
   }

@@ -47,7 +47,7 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
       ...prev,
       [gamePhase]: {
         ...prev[gamePhase],
-        [username]: { isReady: false },
+        [username]: { isReady: newMessage?.isReady ? true : false },
       },
     }));
   }

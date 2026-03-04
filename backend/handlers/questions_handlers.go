@@ -14,20 +14,27 @@ type NewQuestionHandlerStruct struct {
 	QuestionTopic lib.NicheProblems `json:"question_topic"`
 }
 
+// :TODO: currently we don't check the validity of the user, later add the token we created to verify this
 func NewQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.QuestionDistributor, RoomGereur *lib.RoomManager) {
 	if r.Method != http.MethodPost {
 		//:TODO: convert these into json struct sendings
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 	var req NewQuestionHandlerStruct
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, "Bad request", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		jsonMsg, _ := json.Marshal(ErrorMessageJSON{
+			ErrorCode:        WrongFormat,
+			ErrorMessageJSON: "wrong format",
+		})
+		w.Write(jsonMsg)
+
 		return
 	}
 	if err := QDistrub.AddRoom(req.RoomID, RoomGereur); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 
 	}
