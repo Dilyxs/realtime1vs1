@@ -11,6 +11,7 @@ const MainPage = ({ roomID, AccountInfo, isLoaded, messages }) => {
   const [GamePhase, setGamePhase] = useState("preGame");
   const { gameState } = useContext(WebsocketHandler);
   const [GameNicheInfo, setGameNicheInfo] = useState({});
+  const [UserWrittenSolution, setUserWrittenSolution] = useState("");
   useEffect(() => {
     if (gameState[1]?.hasStarted) {
       setGamePhase("duringGame");
@@ -56,6 +57,8 @@ const MainPage = ({ roomID, AccountInfo, isLoaded, messages }) => {
         gameState={gameState}
         roomID={roomID}
         username={AccountInfo?.username}
+        UserWrittenSolution={UserWrittenSolution}
+        setUserWrittenSolution={setUserWrittenSolution}
       ></MidGame>
     );
   }

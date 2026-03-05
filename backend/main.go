@@ -59,12 +59,15 @@ func main() {
 	mux.HandleFunc("/game/{id}", func(w http.ResponseWriter, r *http.Request) {
 		handlers.PreGameHandler(w, r, &Manager)
 	})
-	// TODO: MORE EXTENSIVE TESTING ON THESE HANDLERS
 	mux.HandleFunc("/startgame", func(w http.ResponseWriter, r *http.Request) {
 		handlers.NewQuestionHandler(w, r, QDistrub, &Manager)
 	})
+	// TODO: MORE EXTENSIVE TESTING ON THESE HANDLERS
 	mux.HandleFunc("/answergeneralquestion", func(w http.ResponseWriter, r *http.Request) {
 		handlers.AnswerQuestionHandler(w, r, QDistrub)
+	})
+	mux.HandleFunc("/answernichequestion", func(w http.ResponseWriter, r *http.Request) {
+		handlers.AnswerQuestionNicheHandler(w, r, QDistrub)
 	})
 
 	// cors setup

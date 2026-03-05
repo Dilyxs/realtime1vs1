@@ -5,6 +5,7 @@ const GeneralQuestion = ({ gameState, username, roomID }) => {
   const [lastQuestion, setlastQuestion] = useState(null);
   const [hasBeenAnswered, sethasBeenAnswered] = useState(false);
   useEffect(() => {
+    let timeoutID;
     if (gameState[1]?.generalQuestions.length == 0) {
       return;
     }
@@ -19,7 +20,11 @@ const GeneralQuestion = ({ gameState, username, roomID }) => {
         ],
       );
       sethasBeenAnswered(false);
+      timeoutID = setTimeout(() => {
+        sethasBeenAnswered(true);
+      }, 5000);
     }
+    return () => clearTimeout(timeoutID);
   }, [gameState]);
   if (lastQuestion == null || hasBeenAnswered) {
     return;

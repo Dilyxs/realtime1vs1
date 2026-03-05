@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import GeneralQuestion from "./GeneralQuestion";
+import GeneralSolver from "./GeneralSolver";
 
-const MidGame = ({ GameNicheInfo, gameState, roomID, username }) => {
+const MidGame = ({
+  GameNicheInfo,
+  gameState,
+  roomID,
+  username,
+  UserWrittenSolution,
+  setUserWrittenSolution,
+}) => {
   const [problemLoader, setproblemLoader] = useState(true);
   useEffect(() => {
     const timeoutID = setTimeout(() => {
@@ -28,7 +36,11 @@ const MidGame = ({ GameNicheInfo, gameState, roomID, username }) => {
         username={username}
         roomID={roomID}
       ></GeneralQuestion>
-      <p>test</p>
+      <GeneralSolver
+        GameNicheInfo={GameNicheInfo}
+        UserWrittenSolution={UserWrittenSolution}
+        setUserWrittenSolution={setUserWrittenSolution}
+      ></GeneralSolver>
     </div>
   );
 };

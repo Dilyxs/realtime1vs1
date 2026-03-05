@@ -94,3 +94,36 @@ func AnswerQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib
 	w.WriteHeader(http.StatusAccepted)
 	w.Write(jsonMsg)
 }
+
+func AnswerQuestionNicheHandler(w http.ResponseWriter, r *http.Request, QDis *lib.QuestionDistributor) {
+	if r.Method != http.MethodPost {
+		jsonMsg, _ := json.Marshal(ErrorMessageJSON{
+			ErrorCode:        WrongFormat,
+			ErrorMessageJSON: "wrong format",
+		})
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(jsonMsg)
+		return
+	}
+	var foo lib.UserQuestionNicheJSON
+	if err := json.NewDecoder(r.Body).Decode(&foo); err != nil {
+
+		jsonMsg, _ := json.Marshal(ErrorMessageJSON{
+			ErrorCode:        WrongFormat,
+			ErrorMessageJSON: "wrong format",
+		})
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(jsonMsg)
+		return
+	}
+	res, err := lib.AnswerNicheQuestion(foo.RoomID, foo.Username, foo.Answer, QDis)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		jsonMsg, _ := json.Marshal(&err)
+		w.Write(jsonMsg)
+		return
+	}
+	jsonMsg, _ := json.Marshal(&res)
+	w.WriteHeader(http.StatusAccepted)
+	w.Write(jsonMsg)
+}

@@ -154,6 +154,17 @@ func (r GeneralQuestionWentResult) hasID() string {
 type Question interface {
 	hasChan() chan QuestionResult
 }
+
+type NicheQuestionFinalAnswerCommand struct {
+	Chan     chan QuestionResult
+	Username string
+	Content  string
+}
+
+func (command NicheQuestionFinalAnswerCommand) hasChan() chan QuestionResult {
+	return command.Chan
+}
+
 type CreateNewQuestionCommand struct {
 	RoomID int
 	Chan   chan QuestionResult
@@ -215,6 +226,12 @@ func (r RoomCreationResult) hasID() string {
 	return r.ID
 }
 
+// TODO: replace answer with a more appropriate struct later on other than string
+type UserQuestionNicheJSON struct {
+	RoomID   int    `json:"roomID"`
+	Username string `json:"username"`
+	Answer   string `json:"answer"`
+}
 type UserQuestionResultJSON struct {
 	RoomID       int    `json:"roomID"`
 	Username     string `json:"username"`
@@ -245,35 +262,48 @@ func (msg GameHasStarted) ToJSON() []byte {
 }
 
 func (q *QuestionManager) Run() {
-	localChan := make(chan UserQuestionResult, 100)
-	go q.AskQuestions(localChan)
-	for request := range q.Chan {
-		switch cmd := request.(type) {
-		case CreateNewQuestionCommand:
-			q.Topic = NicheProblems(cmd.Topic)
-			problem := GetANicheProblem(q.Topic, q.AllNicheProblems)
+	GeneralQuestionChan := make(chan UserQuestionResult, 100)
+	go q.AskQuestions(GeneralQuestionChan)
+	finalAnswers := make(map[string]string)
+InfiniteLoop:
+	for {
+		select {
+		case <-time.After(15 * time.Minute):
+			break InfiniteLoop
+		case request := <-q.Chan:
+			switch cmd := request.(type) {
+			case NicheQuestionFinalAnswerCommand:
+				finalAnswers[cmd.Username] = cmd.Content
+				cmd.Chan <- GeneralQuestionWentResult{
+					ID:         randomhelper.GetMessageID(),
+					Successful: true,
+				}
+			case CreateNewQuestionCommand:
+				q.Topic = NicheProblems(cmd.Topic)
+				problem := GetANicheProblem(q.Topic, q.AllNicheProblems)
 
-			coreInfo := ProblemNicheCoreInfo{
-				ProblemTopic:        problem.ProblemTopic,
-				ProblemTimeRequired: problem.ProblemTimeRequired,
-				ProblemDifficulty:   problem.ProblemDifficulty,
-				ProblemDescription:  problem.ProblemDescription,
+				coreInfo := ProblemNicheCoreInfo{
+					ProblemTopic:        problem.ProblemTopic,
+					ProblemTimeRequired: problem.ProblemTimeRequired,
+					ProblemDifficulty:   problem.ProblemDifficulty,
+					ProblemDescription:  problem.ProblemDescription,
+				}
+				q.ProblemAtHand = problem
+				cmd.Chan <- RoomCreationResult{
+					ID:   randomhelper.GetMessageID(),
+					Info: coreInfo,
+					Err:  nil,
+				}
+				// to let everyone know that the game has started:
+				q.WebsocketChan <- GameHasStarted{
+					ID:         randomhelper.GetMessageID(),
+					HasStarted: true,
+					GamePhase:  DuringGame,
+					GameInfo:   coreInfo,
+				}
+			case UserQuestionResult:
+				GeneralQuestionChan <- cmd
 			}
-			q.ProblemAtHand = problem
-			cmd.Chan <- RoomCreationResult{
-				ID:   randomhelper.GetMessageID(),
-				Info: coreInfo,
-				Err:  nil,
-			}
-			// to let everyone know that the game has started:
-			q.WebsocketChan <- GameHasStarted{
-				ID:         randomhelper.GetMessageID(),
-				HasStarted: true,
-				GamePhase:  DuringGame,
-				GameInfo:   coreInfo,
-			}
-		case UserQuestionResult:
-			localChan <- cmd
 		}
 	}
 }
@@ -392,4 +422,34 @@ func AnswerQuestionGeneral(roomID int, username string, questionID, optionChosen
 		log.Fatal("server should never return something other than QuestionGeneralAnswerResult")
 	}
 	return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: ServerArchitectureFailure, Description: "this was not expected"}
+}
+
+func AnswerNicheQuestion(roomID int, username string, answer string, QDistrub *QuestionDistributor) (GeneralQuestionWentResult, error) {
+	localChan := make(chan QuestionResult, 1)
+	targetRoom := QDistrub.GetRoom(roomID)
+	if targetRoom == nil {
+		return GeneralQuestionWentResult{}, RoomError{ErrorCode: RoomDoesNotExist, Description: "room does not exist"}
+	}
+	command := NicheQuestionFinalAnswerCommand{
+		Chan:     localChan,
+		Username: username,
+		Content:  answer,
+	}
+	targetRoom <- command
+	select {
+	case <-time.After(DefaultTimeout):
+		return GeneralQuestionWentResult{}, RoomError{ErrorCode: ServerTookTooMichTime, Description: "server took too much time to respond"}
+
+	case res := <-localChan:
+		switch cmd := res.(type) {
+		case GeneralQuestionWentResult:
+			if !cmd.Successful {
+				return GeneralQuestionWentResult{}, RoomError{ErrorCode: UserTookTooLong, Description: "user is too late!"}
+			}
+			return cmd, nil
+		}
+	default:
+		log.Fatal("server should never return something other than GeneralQuestionWentResult")
+	}
+	return GeneralQuestionWentResult{}, RoomError{ErrorCode: ServerArchitectureFailure, Description: "this was not expected"}
 }
