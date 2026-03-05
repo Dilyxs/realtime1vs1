@@ -203,6 +203,10 @@ const (
 	RoomDoesNotExist = iota + 1
 	GameFull
 	UserNotAllowedToJoinGame
+	ChannelDoeNotExist
+	ServerTookTooMichTime
+	UserTookTooLong
+	ServerArchitectureFailure
 )
 
 type RoomError struct {

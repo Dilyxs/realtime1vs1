@@ -142,6 +142,15 @@ type QuestionManager struct {
 type QuestionResult interface {
 	hasID() string
 }
+type GeneralQuestionWentResult struct {
+	ID         string `json:"id"`
+	Successful bool   `json:"successful"`
+}
+
+func (r GeneralQuestionWentResult) hasID() string {
+	return r.ID
+}
+
 type Question interface {
 	hasChan() chan QuestionResult
 }
@@ -206,6 +215,12 @@ func (r RoomCreationResult) hasID() string {
 	return r.ID
 }
 
+type UserQuestionResultJSON struct {
+	RoomID       int    `json:"roomID"`
+	Username     string `json:"username"`
+	QuestionID   int    `json:"questionID"`
+	ChosenOption int    `json:"option"`
+}
 type UserQuestionResult struct {
 	Username     string `json:"username"`
 	ID           int    `json:"id"`
@@ -264,8 +279,8 @@ func (q *QuestionManager) Run() {
 }
 
 type QuestionGeneralAnswerResult struct {
-	ID         string
-	Registered bool
+	ID         string `json:"id"`
+	Registered bool   `json:"registered"`
 }
 
 func (q QuestionGeneralAnswerResult) hasID() string {
@@ -348,3 +363,33 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 }
 
 const DefaultQuestionCoolDownPeriod = 45
+
+func AnswerQuestionGeneral(roomID int, username string, questionID, optionChosen int, QDistrub *QuestionDistributor) (QuestionGeneralAnswerResult, error) {
+	localChan := make(chan QuestionResult, 1)
+	targetRoom := QDistrub.GetRoom(roomID)
+	if targetRoom == nil {
+		return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: RoomDoesNotExist, Description: "room does not exist"}
+	}
+
+	targetRoom <- UserQuestionResult{
+		ID:           questionID,
+		Username:     username,
+		Chan:         localChan,
+		ChosenOption: optionChosen,
+	}
+	select {
+	case <-time.After(DefaultTimeout):
+		return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: ServerTookTooMichTime, Description: "server took too much time to respond"}
+	case res := <-localChan:
+		switch cmd := res.(type) {
+		case QuestionGeneralAnswerResult:
+			if !cmd.Registered {
+				return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: UserTookTooLong, Description: "user is too late!"}
+			}
+			return cmd, nil
+		}
+	default:
+		log.Fatal("server should never return something other than QuestionGeneralAnswerResult")
+	}
+	return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: ServerArchitectureFailure, Description: "this was not expected"}
+}

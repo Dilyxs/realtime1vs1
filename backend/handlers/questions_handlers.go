@@ -62,3 +62,35 @@ func NewQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.Qu
 		}
 	}
 }
+
+func AnswerQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.QuestionDistributor) {
+	if r.Method != http.MethodPost {
+		jsonMsg, _ := json.Marshal(ErrorMessageJSON{
+			ErrorCode:        WrongFormat,
+			ErrorMessageJSON: "wrong format",
+		})
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(jsonMsg)
+		return
+	}
+	var q lib.UserQuestionResultJSON
+	if err := json.NewDecoder(r.Body).Decode(&q); err != nil {
+		jsonMsg, _ := json.Marshal(ErrorMessageJSON{
+			ErrorCode:        WrongFormat,
+			ErrorMessageJSON: "wrong format",
+		})
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(jsonMsg)
+		return
+	}
+	res, err := lib.AnswerQuestionGeneral(q.RoomID, q.Username, q.QuestionID, q.ChosenOption, QDistrub)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		jsonMsg, _ := json.Marshal(&err)
+		w.Write(jsonMsg)
+		return
+	}
+	jsonMsg, _ := json.Marshal(&res)
+	w.WriteHeader(http.StatusAccepted)
+	w.Write(jsonMsg)
+}

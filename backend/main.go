@@ -63,6 +63,9 @@ func main() {
 	mux.HandleFunc("/startgame", func(w http.ResponseWriter, r *http.Request) {
 		handlers.NewQuestionHandler(w, r, QDistrub, &Manager)
 	})
+	mux.HandleFunc("/answergeneralquestion", func(w http.ResponseWriter, r *http.Request) {
+		handlers.AnswerQuestionHandler(w, r, QDistrub)
+	})
 
 	// cors setup
 	handler := randomhelper.CorsMiddleware(mux)
