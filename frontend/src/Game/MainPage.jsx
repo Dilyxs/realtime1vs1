@@ -50,7 +50,13 @@ const MainPage = ({ roomID, AccountInfo, isLoaded, messages }) => {
   }
   if (GamePhase === "duringGame") {
     return (
-      <MidGame messages={messages} GameNicheInfo={GameNicheInfo}></MidGame>
+      <MidGame
+        messages={messages}
+        GameNicheInfo={GameNicheInfo}
+        gameState={gameState}
+        roomID={roomID}
+        username={AccountInfo?.username}
+      ></MidGame>
     );
   }
   if (GamePhase === "postGame") {

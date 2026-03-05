@@ -50,6 +50,7 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
       },
     }));
   } else if (gamePhase == 1) {
+    const { question, options, topic, difficulty, questionID } = newMessage;
     if (newMessage.hasStarted) {
       const { gameInfo } = newMessage;
       setgameState((prev) => ({
@@ -62,14 +63,21 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
       }));
       return;
     }
-    if (newMessage?.questionID) {
+    if (newMessage?.questionID != undefined) {
       setgameState((prev) => ({
         ...prev,
         [gamePhase]: {
           ...prev[gamePhase],
-          GeneralQuestions: [
+          generalQuestions: [
             ...(prev[gamePhase]?.GeneralQuestions || []),
-            { question, options, topic, difficulty, hasBeenAsnwered: false },
+            {
+              question,
+              options,
+              topic,
+              difficulty,
+              questionID,
+              hasBeenAnswered: false,
+            },
           ],
         },
       }));

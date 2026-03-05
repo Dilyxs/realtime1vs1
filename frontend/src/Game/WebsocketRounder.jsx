@@ -14,7 +14,11 @@ const WebsocketRounder = ({
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState("connecting");
   const seenIds = useRef(new Set());
-  const [gameState, setgameState] = useState({ 0: {}, 1: {}, 2: {} });
+  const [gameState, setgameState] = useState({
+    0: {},
+    1: { generalQuestions: [] },
+    2: {},
+  });
 
   useEffect(() => {
     if (!AccountInfo?.username || !isLoaded) return;
