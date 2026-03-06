@@ -14,17 +14,19 @@ const PreGame = ({ isGameMaster, roomID }) => {
     return <div>Loading...</div>;
   }
   return (
-    <div>
-      <PlayerActive
-        gameState={gameState}
-        isGameMaster={isGameMaster}
-        username={username}
-      ></PlayerActive>
+    <div className="flex flex-col ">
       <div>
-        {isGameMaster && <OwnerPOV room_id={roomID}></OwnerPOV>}
-        {!isGameMaster && <ClientPOV></ClientPOV>}
+        <PlayerActive
+          gameState={gameState}
+          isGameMaster={isGameMaster}
+          username={username}
+        ></PlayerActive>
+        <div>
+          {isGameMaster && <OwnerPOV room_id={roomID}></OwnerPOV>}
+          {!isGameMaster && <ClientPOV></ClientPOV>}
+        </div>
+        <PlayerReadyOption ws={ws} username={username}></PlayerReadyOption>
       </div>
-      <PlayerReadyOption ws={ws} username={username}></PlayerReadyOption>
     </div>
   );
 };

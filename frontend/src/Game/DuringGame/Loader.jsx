@@ -16,7 +16,7 @@ const Loader = ({ GameNicheInfo }) => {
     problemDescription,
   } = GameNicheInfo;
   return (
-    <div className="fixed z-50 bg-white p-4">
+    <div className="fixed z-50 bg-blue-800 p-4">
       <h1>{problemTopic} contest...</h1>
       <div>
         <p>{problemDescription}</p>

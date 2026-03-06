@@ -32,18 +32,23 @@ const Homepage = () => {
     );
   }
   return (
-    <div>
-      <h1>Hi {AccountInfo.username}</h1>
-      <CreateGame
-        username={AccountInfo.username}
-        Navigate={Navigate}
-      ></CreateGame>
-      <JoinGame
-        setgameID={setgameID}
-        gameID={gameID}
-        username={AccountInfo.username}
-        Navigate={Navigate}
-      ></JoinGame>
+    <div className="flex flex-col">
+      <div>
+        <h1>Hi {AccountInfo.username}</h1>
+        <CreateGame
+          username={AccountInfo.username}
+          Navigate={Navigate}
+        ></CreateGame>
+        <JoinGame
+          setgameID={setgameID}
+          gameID={gameID}
+          username={AccountInfo.username}
+          Navigate={Navigate}
+        ></JoinGame>
+      </div>
+      <div>
+        <h1>Leaderboard! : Coming Soon!</h1>
+      </div>
     </div>
   );
 };

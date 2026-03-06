@@ -64,6 +64,7 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
       return;
     }
     if (newMessage?.questionID != undefined) {
+      console.log("general question detected");
       setgameState((prev) => ({
         ...prev,
         [gamePhase]: {
@@ -79,6 +80,30 @@ export const HandleNewMessage = (ev, setgameState, seenIds, setMessages) => {
               hasBeenAnswered: false,
             },
           ],
+        },
+      }));
+    }
+  } else if (gamePhase == 2) {
+    const { hasStarted } = newMessage;
+    if (hasStarted) {
+      setgameState((prev) => ({
+        ...prev,
+        [gamePhase]: {
+          ...prev[gamePhase],
+          hasStarted: true,
+        },
+      }));
+    } else {
+      const { result, hasFinished, userWrittenSolution } = newMessage;
+      setgameState((prev) => ({
+        ...prev,
+        [gamePhase]: {
+          ...prev[gamePhase],
+          result: {
+            score: result,
+            code: userWrittenSolution,
+          },
+          hasFinished,
         },
       }));
     }

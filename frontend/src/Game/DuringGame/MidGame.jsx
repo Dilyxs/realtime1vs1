@@ -40,6 +40,8 @@ const MidGame = ({
         GameNicheInfo={GameNicheInfo}
         UserWrittenSolution={UserWrittenSolution}
         setUserWrittenSolution={setUserWrittenSolution}
+        roomID={roomID}
+        username={username}
       ></GeneralSolver>
     </div>
   );

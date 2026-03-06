@@ -33,6 +33,10 @@ type ProblemNiche struct {
 	ProblemRubric       []Rubric `json:"problem_rubric"`
 }
 
+func (p ProblemNiche) String() string {
+	return fmt.Sprintf("ProblemID: %s, ProblemTopic: %s, ProblemTimeRequired: %s, ProblemDifficulty: %s, ProblemDescription: %s, ProblemHints: %v, ProblemRubric: %v", p.ProblemID, p.ProblemTopic, p.ProblemTimeRequired, p.ProblemDifficulty, p.ProblemDescription, p.ProblemHints, p.ProblemRubric)
+}
+
 func (p ProblemNiche) ToJSON() []byte {
 	res, _ := json.Marshal(p)
 	return res
@@ -42,6 +46,10 @@ type Rubric struct {
 	Criterion   string `json:"criterion"`
 	Points      int    `json:"points"`
 	Description string `json:"description"`
+}
+
+func (r Rubric) String() string {
+	return fmt.Sprintf("Criterion: %s, Points: %d, Description: %s", r.Criterion, r.Points, r.Description)
 }
 
 type ProblemGeneral struct {
@@ -56,7 +64,7 @@ type ProblemGeneral struct {
 type ProblemGeneralCoreInfo struct {
 	ID         string    `json:"id"`
 	QuestionID int       `json:"questionID"`
-	GamePhase  GamePhase `"json:gamePhase"`
+	GamePhase  GamePhase `json:"gamePhase"`
 	Question   string    `json:"question"`
 	Options    []string  `json:"options"`
 	Topic      string    `json:"topic"`
@@ -265,6 +273,7 @@ func (q *QuestionManager) Run() {
 	GeneralQuestionChan := make(chan UserQuestionResult, 100)
 	go q.AskQuestions(GeneralQuestionChan)
 	finalAnswers := make(map[string]string)
+	var ChosenNicheQuestion ProblemNiche
 InfiniteLoop:
 	for {
 		select {
@@ -281,6 +290,7 @@ InfiniteLoop:
 			case CreateNewQuestionCommand:
 				q.Topic = NicheProblems(cmd.Topic)
 				problem := GetANicheProblem(q.Topic, q.AllNicheProblems)
+				ChosenNicheQuestion = problem
 
 				coreInfo := ProblemNicheCoreInfo{
 					ProblemTopic:        problem.ProblemTopic,
@@ -306,6 +316,33 @@ InfiniteLoop:
 			}
 		}
 	}
+	q.WebsocketChan <- GameHasStarted{
+		ID:         randomhelper.GetMessageID(),
+		GamePhase:  2,
+		HasStarted: true,
+	}
+	// broken out of loop, gotta let users know that it's now evaluation time!
+	PerformanceOfPlayers := EvaluatePerformance(ChosenNicheQuestion, finalAnswers)
+	q.WebsocketChan <- FinalNicheQuestionResult{
+		ID:                  randomhelper.GetMessageID(),
+		GamePhase:           PostGame,
+		Result:              PerformanceOfPlayers,
+		UserWrittenSolution: finalAnswers,
+		HasFinished:         true,
+	}
+}
+
+type FinalNicheQuestionResult struct {
+	ID                  string            `json:"string"`
+	GamePhase           GamePhase         `json:"gamePhase"`
+	Result              map[string]int    `json:"result"`
+	UserWrittenSolution map[string]string `json:"userWrittenSolution"`
+	HasFinished         bool              `json:"hasFinished"`
+}
+
+func (f FinalNicheQuestionResult) ToJSON() []byte {
+	res, _ := json.Marshal(f)
+	return res
 }
 
 type QuestionGeneralAnswerResult struct {

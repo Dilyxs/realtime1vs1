@@ -12,6 +12,13 @@ const MainPage = ({ roomID, AccountInfo, isLoaded, messages }) => {
   const { gameState } = useContext(WebsocketHandler);
   const [GameNicheInfo, setGameNicheInfo] = useState({});
   const [UserWrittenSolution, setUserWrittenSolution] = useState("");
+  const [finalAnswer, setFinalAnswer] = useState({});
+  useEffect(() => {
+    if (gameState[2]?.hasStarted) {
+      setGamePhase("postGame");
+      setFinalAnswer(gameState[2]?.result);
+    }
+  }, [gameState]);
   useEffect(() => {
     if (gameState[1]?.hasStarted) {
       setGamePhase("duringGame");
@@ -65,6 +72,7 @@ const MainPage = ({ roomID, AccountInfo, isLoaded, messages }) => {
   if (GamePhase === "postGame") {
     return (
       <EndGame
+        finalAnswer={finalAnswer}
         isGameMaster={status?.isGameMaster}
         messages={messages}
       ></EndGame>

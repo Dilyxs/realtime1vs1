@@ -1,9 +1,15 @@
+import { useState } from "react";
+import { answerNicheQuestion } from "./helperfunc";
+
 const GeneralSolver = ({
   GameNicheInfo,
   UserWrittenSolution,
   setUserWrittenSolution,
+  roomID,
+  username,
 }) => {
   const { problemDescription } = GameNicheInfo;
+  const [questionAnswered, setquestionAnswered] = useState(false);
   return (
     <div>
       <div className="flex flex-col">
@@ -17,6 +23,8 @@ const GeneralSolver = ({
           }
           <h1>Write your code here:</h1>
           <input
+            rows={10}
+            cols={50}
             type="text"
             value={UserWrittenSolution}
             onChange={(e) => {
@@ -24,16 +32,31 @@ const GeneralSolver = ({
             }}
           ></input>
           {
-            //NOTE: for testing purpose let's make a 15 min counter ideally the chosenquestion amount
+            //:NOTE: for testing purpose let's make a 15 min counter ideally the chosenquestion amount
             //<Timer></Timer>
           }
-          <button
-            onClick={() => {
-              console.log("submit result!");
-            }}
-          >
-            <h1>Submit!</h1>
-          </button>
+          {!questionAnswered && (
+            <div>
+              <button
+                onClick={async () => {
+                  const response = await answerNicheQuestion(
+                    roomID,
+                    username,
+                    UserWrittenSolution,
+                  );
+                  if (response?.succesful) {
+                    setquestionAnswered(true);
+                  }
+                }}
+              ></button>
+              <h1>Submit!</h1>
+            </div>
+          )}
+          {questionAnswered && (
+            <div>
+              <p>Wait for timer to finish or everyone to submit</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

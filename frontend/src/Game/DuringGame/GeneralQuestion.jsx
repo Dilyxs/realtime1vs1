@@ -2,50 +2,39 @@ import { useEffect, useState } from "react";
 import { answerGeneralQuestion } from "./helperfunc";
 
 const GeneralQuestion = ({ gameState, username, roomID }) => {
-  const [lastQuestion, setlastQuestion] = useState(null);
-  const [hasBeenAnswered, sethasBeenAnswered] = useState(false);
+  const [lastQuestion, setLastQuestion] = useState(null);
+  const [hasBeenAnswered, setHasBeenAnswered] = useState(false);
+
   useEffect(() => {
     let timeoutID;
-    if (gameState[1]?.generalQuestions.length == 0) {
-      return;
-    }
+    if (!gameState[1]?.generalQuestions.length) return;
 
-    if (
-      lastQuestion !=
-      gameState[1]?.generalQuestions[gameState[1]?.generalQuestions.length - 1]
-    ) {
-      setlastQuestion(
-        gameState[1]?.generalQuestions[
-          gameState[1]?.generalQuestions.length - 1
-        ],
-      );
-      sethasBeenAnswered(false);
-      timeoutID = setTimeout(() => {
-        sethasBeenAnswered(true);
-      }, 5000);
+    const latestQuestion =
+      gameState[1].generalQuestions[gameState[1].generalQuestions.length - 1];
+
+    if (lastQuestion !== latestQuestion) {
+      setLastQuestion(latestQuestion);
+      setHasBeenAnswered(false);
+      timeoutID = setTimeout(() => setHasBeenAnswered(true), 5000);
     }
     return () => clearTimeout(timeoutID);
-  }, [gameState]);
-  if (lastQuestion == null || hasBeenAnswered) {
-    return;
-  }
-  const { question, options, topic, difficulty } = lastQuestion;
+  }, [gameState, lastQuestion]);
+
+  if (!lastQuestion || hasBeenAnswered) return null;
+
+  const { question, options, topic, difficulty, questionID } = lastQuestion;
+
   return (
-    <div class="fixed top-0 left-0 w-full z-50 bg-white p-4">
+    <div className="fixed top-0 left-0 w-full z-50 bg-white p-4">
       <h3>{topic}</h3>
       <p>{difficulty}</p>
       <p>{question}</p>
       {options.map((option, id) => (
         <p
           key={id}
-          onClick={async (e) => {
-            sethasBeenAnswered(true);
-            await answerGeneralQuestion(
-              roomID,
-              username,
-              e.key,
-              lastQuestion?.questionID,
-            );
+          onClick={async () => {
+            setHasBeenAnswered(true);
+            await answerGeneralQuestion(roomID, username, option, questionID);
           }}
         >
           {option}
