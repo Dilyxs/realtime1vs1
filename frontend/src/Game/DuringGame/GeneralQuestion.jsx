@@ -4,9 +4,9 @@ import { answerGeneralQuestion } from "./helperfunc";
 const GeneralQuestion = ({ gameState, username, roomID }) => {
   const [lastQuestion, setLastQuestion] = useState(null);
   const [hasBeenAnswered, setHasBeenAnswered] = useState(false);
+  const [timer, settimer] = useState(5);
 
   useEffect(() => {
-    let timeoutID;
     if (!gameState[1]?.generalQuestions.length) return;
 
     const latestQuestion =
@@ -15,10 +15,21 @@ const GeneralQuestion = ({ gameState, username, roomID }) => {
     if (lastQuestion !== latestQuestion) {
       setLastQuestion(latestQuestion);
       setHasBeenAnswered(false);
-      timeoutID = setTimeout(() => setHasBeenAnswered(true), 5000);
+      settimer(5);
     }
-    return () => clearTimeout(timeoutID);
   }, [gameState, lastQuestion]);
+  useEffect(() => {
+    if (!lastQuestion || hasBeenAnswered) return;
+    const timeoutID = setTimeout(() => setHasBeenAnswered(true), 5000);
+    const intervalID = setInterval(() => {
+      settimer((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeoutID);
+      clearInterval(intervalID);
+    };
+  }, [hasBeenAnswered, lastQuestion]);
 
   if (!lastQuestion || hasBeenAnswered) return null;
 
@@ -35,12 +46,13 @@ const GeneralQuestion = ({ gameState, username, roomID }) => {
           key={id}
           onClick={async () => {
             setHasBeenAnswered(true);
-            await answerGeneralQuestion(roomID, username, option, questionID);
+            await answerGeneralQuestion(roomID, username, id, questionID);
           }}
         >
           {option}
         </p>
       ))}
+      <h3>{timer}</h3>
     </div>
   );
 };

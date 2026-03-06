@@ -207,6 +207,7 @@ const (
 	ServerTookTooMichTime
 	UserTookTooLong
 	ServerArchitectureFailure
+	WrongQuestionAnswered
 )
 
 type RoomError struct {

@@ -66,8 +66,8 @@ func NewQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.Qu
 func AnswerQuestionHandler(w http.ResponseWriter, r *http.Request, QDistrub *lib.QuestionDistributor) {
 	if r.Method != http.MethodPost {
 		jsonMsg, _ := json.Marshal(ErrorMessageJSON{
-			ErrorCode:        WrongFormat,
-			ErrorMessageJSON: "wrong format",
+			ErrorCode:        WrongMethod,
+			ErrorMessageJSON: "wrong method",
 		})
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		w.Write(jsonMsg)

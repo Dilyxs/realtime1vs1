@@ -7,8 +7,6 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -346,9 +344,11 @@ func (f FinalNicheQuestionResult) ToJSON() []byte {
 }
 
 type QuestionGeneralAnswerResult struct {
-	ID         string `json:"id"`
-	Registered bool   `json:"registered"`
+	ID         string       `json:"id"`
+	Registered bool         `json:"registered"`
+	Cause      CauseReasons `json:"cause"`
 }
+type CauseReasons int
 
 func (q QuestionGeneralAnswerResult) hasID() string {
 	return q.ID
@@ -364,20 +364,14 @@ type PlayerAndOption struct {
 }
 
 func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
-	contentMinute := q.ProblemAtHand.ProblemTimeRequired
-	minString := strings.Split(contentMinute, " ")[0]
-	timeTotal, err := strconv.Atoi(minString)
-	if err != nil {
-		log.Fatalf("could not convert time into minute: %v", err)
-	}
-	totalGeneralQuestions := (timeTotal / 5)
 	L := int32(len(q.AllGeneralProblems))
 	// for testing purposes let's make it 10
-	totalGeneralQuestions = 10
+	totalGeneralQuestions := 10
 	time.Sleep(15 * time.Second) // this enough time for the intro to play out!
 	for range totalGeneralQuestions {
-		pickedQuestionID := rand.Int31n(L)
-		pickedQuestion := q.AllGeneralProblems[pickedQuestionID]
+		pickedQuestionIDInternal := rand.Int31n(L)
+		pickedQuestion := q.AllGeneralProblems[pickedQuestionIDInternal]
+		pickedQuestionID := pickedQuestion.QuestionID
 
 		formattedquestion := ProblemGeneralCoreInfo{
 			ID:         randomhelper.GetMessageID(),
@@ -391,16 +385,16 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 		q.WebsocketChan <- formattedquestion
 		result := make(map[bool][]PlayerAndOption)
 
-		timerChan := time.NewTicker(5 * time.Second)
+		timerChan := time.NewTicker(100 * time.Second)
 	InfiniteLoop:
 		for {
-			time.Sleep(DefaultQuestionCoolDownPeriod * time.Second) // can make this random later on!
+			fmt.Println("in loop")
 			select {
 			case <-timerChan.C:
 				break InfiniteLoop
 			case req := <-localChan:
 				if req.ID != int(pickedQuestionID) {
-					req.Chan <- QuestionGeneralAnswerResult{ID: randomhelper.GetMessageID(), Registered: false}
+					req.Chan <- QuestionGeneralAnswerResult{ID: randomhelper.GetMessageID(), Registered: false, Cause: WrongQuestionAnswered}
 					continue
 				}
 				if pickedQuestion.Answer == req.ChosenOption {
@@ -417,6 +411,7 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 				req.Chan <- QuestionGeneralAnswerResult{ID: randomhelper.GetMessageID(), Registered: true}
 			}
 		}
+		fmt.Println("out loop")
 		// Now just send it to Websocket AS a final output!
 		var res QuestionGeneralWebsocketOutput
 		res.SuccessfulPlayers = result[true]
@@ -425,6 +420,15 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 			ID:        randomhelper.GetMessageID(),
 			GamePhase: DuringGame,
 			Result:    res,
+		}
+	CoolDownLoop:
+		for {
+			select {
+			case <-time.After(DefaultQuestionCoolDownPeriod * time.Second):
+				break CoolDownLoop
+			case req := <-localChan:
+				req.Chan <- QuestionGeneralAnswerResult{ID: randomhelper.GetMessageID(), Registered: false, Cause: UserTookTooLong}
+			}
 		}
 	}
 }
@@ -451,12 +455,16 @@ func AnswerQuestionGeneral(roomID int, username string, questionID, optionChosen
 		switch cmd := res.(type) {
 		case QuestionGeneralAnswerResult:
 			if !cmd.Registered {
-				return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: UserTookTooLong, Description: "user is too late!"}
+				if cmd.Cause == UserTookTooLong {
+					return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: UserTookTooLong, Description: "user took too long"}
+				}
+				return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: WrongQuestionAnswered, Description: "user answered the wrong question"}
 			}
 			return cmd, nil
+		default:
+			fmt.Println(res)
+			log.Fatal("server should never return something other than QuestionGeneralAnswerResult")
 		}
-	default:
-		log.Fatal("server should never return something other than QuestionGeneralAnswerResult")
 	}
 	return QuestionGeneralAnswerResult{}, RoomError{ErrorCode: ServerArchitectureFailure, Description: "this was not expected"}
 }
@@ -484,9 +492,9 @@ func AnswerNicheQuestion(roomID int, username string, answer string, QDistrub *Q
 				return GeneralQuestionWentResult{}, RoomError{ErrorCode: UserTookTooLong, Description: "user is too late!"}
 			}
 			return cmd, nil
+		default:
+			log.Fatal("server should never return something other than GeneralQuestionWentResult")
 		}
-	default:
-		log.Fatal("server should never return something other than GeneralQuestionWentResult")
 	}
 	return GeneralQuestionWentResult{}, RoomError{ErrorCode: ServerArchitectureFailure, Description: "this was not expected"}
 }

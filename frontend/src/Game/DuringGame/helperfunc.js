@@ -8,7 +8,7 @@ export const answerGeneralQuestion = async (
   const baseurl = import.meta.env.VITE_BACKEND_URL;
   const fetchurl = `${baseurl}/answergeneralquestion`;
   const data = {
-    roomID,
+    roomID: Number(roomID),
     username,
     questionID,
     option: optionID,
@@ -33,7 +33,7 @@ export const answerNicheQuestion = async (roomID, username, answer) => {
   const baseurl = import.meta.env.VITE_BACKEND_URL;
   const fetchurl = `${baseurl}/answernichequestion`;
   const data = {
-    roomID,
+    roomID: Number(roomID),
     username,
     answer,
   };
