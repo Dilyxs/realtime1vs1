@@ -7,7 +7,7 @@ export const answerGeneralQuestion = async (
 ) => {
   const baseurl = import.meta.env.VITE_BACKEND_URL;
   const fetchurl = `${baseurl}/answergeneralquestion`;
-  data = {
+  const data = {
     roomID,
     username,
     questionID,

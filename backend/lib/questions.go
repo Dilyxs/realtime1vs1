@@ -374,11 +374,11 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 	L := int32(len(q.AllGeneralProblems))
 	// for testing purposes let's make it 10
 	totalGeneralQuestions = 10
+	time.Sleep(15 * time.Second) // this enough time for the intro to play out!
 	for range totalGeneralQuestions {
 		pickedQuestionID := rand.Int31n(L)
 		pickedQuestion := q.AllGeneralProblems[pickedQuestionID]
 
-		time.Sleep(10 * time.Second) // this enough time for the intro to play out!
 		formattedquestion := ProblemGeneralCoreInfo{
 			ID:         randomhelper.GetMessageID(),
 			QuestionID: pickedQuestion.QuestionID,

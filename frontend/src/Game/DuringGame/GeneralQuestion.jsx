@@ -25,12 +25,13 @@ const GeneralQuestion = ({ gameState, username, roomID }) => {
   const { question, options, topic, difficulty, questionID } = lastQuestion;
 
   return (
-    <div className="fixed top-0 left-0 w-full z-50 bg-white p-4">
+    <div className="fixed top-0 left-0 w-full z-50 bg-green-900 p-4">
       <h3>{topic}</h3>
       <p>{difficulty}</p>
       <p>{question}</p>
       {options.map((option, id) => (
         <p
+          className="cursor-pointer hover:bg-yellow-50"
           key={id}
           onClick={async () => {
             setHasBeenAnswered(true);
