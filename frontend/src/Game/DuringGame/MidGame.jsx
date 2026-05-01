@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Loader from "./Loader";
 import GeneralQuestion from "./GeneralQuestion";
 import GeneralSolver from "./GeneralSolver";
+import GeneralQuestionResult from "./GeneralQuestionResult";
 
 const MidGame = ({
   GameNicheInfo,
@@ -36,6 +37,8 @@ const MidGame = ({
         username={username}
         roomID={roomID}
       ></GeneralQuestion>
+      <GeneralQuestionResult></GeneralQuestionResult>
+
       <GeneralSolver
         GameNicheInfo={GameNicheInfo}
         UserWrittenSolution={UserWrittenSolution}

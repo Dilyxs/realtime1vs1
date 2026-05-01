@@ -1,0 +1,3007 @@
+[
+  {
+    "problem_id": "react_01",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "25 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a counter component that supports increment, decrement, and reset operations using the useState hook. The counter should not go below zero. Display the current count prominently, and disable the decrement button when the count is zero. Additionally, change the text color to red when the count exceeds 10.",
+    "problem_hints": [
+      "Think about which hook manages local component state and how to initialize it.",
+      "Use conditional logic in the button's disabled prop and inline styles or className toggling for the color change.",
+      "useState returns [value, setter]. Use Math.max(0, count - 1) to prevent negatives, and a ternary on count > 10 for styling."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "State Management",
+        "points": 30,
+        "description": "Correctly uses useState to track count, initializes to 0, and updates immutably."
+      },
+      {
+        "criterion": "Button Logic",
+        "points": 25,
+        "description": "Increment, decrement, and reset all work correctly. Decrement does not go below 0."
+      },
+      {
+        "criterion": "UI Feedback",
+        "points": 25,
+        "description": "Decrement button is disabled at zero. Color changes to red when count exceeds 10."
+      },
+      {
+        "criterion": "Code Quality",
+        "points": 20,
+        "description": "Clean component structure, proper JSX, no unnecessary re-renders or state."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_02",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Create a controlled form component with fields for name, email, and message. Implement real-time validation: name must be at least 2 characters, email must match a basic email regex, and message must be at least 10 characters. Display inline error messages beneath each field as the user types. Disable the submit button until all fields are valid.",
+    "problem_hints": [
+      "Controlled components store their values in state and update via onChange handlers.",
+      "Create a validation function that runs on every state change and returns an errors object keyed by field name.",
+      "Use a useEffect or derive validation state from the current form values on each render. The submit button's disabled prop should check that the errors object has no entries."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Controlled Inputs",
+        "points": 25,
+        "description": "All three fields are properly controlled via state with onChange handlers."
+      },
+      {
+        "criterion": "Validation Logic",
+        "points": 30,
+        "description": "Name length, email regex, and message length validations are correct and run in real-time."
+      },
+      {
+        "criterion": "Error Display",
+        "points": 25,
+        "description": "Inline error messages appear beneath the correct fields and disappear when valid."
+      },
+      {
+        "criterion": "Submit Control",
+        "points": 20,
+        "description": "Submit button is disabled when any field is invalid and enabled only when all pass."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_03",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a Todo List application where users can add, toggle complete, and delete todos. Each todo should display its text with a strikethrough when completed. Persist the todo list to localStorage so it survives page refreshes. Include an input field with an Add button, and each todo item should have a checkbox and a delete button.",
+    "problem_hints": [
+      "You will need useState for the list and useEffect for syncing with localStorage.",
+      "On mount, read from localStorage and parse the JSON. On every state update to todos, write back to localStorage.",
+      "Use JSON.parse(localStorage.getItem('todos')) || [] for initialization, and a useEffect with [todos] dependency to persist."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "CRUD Operations",
+        "points": 30,
+        "description": "Add, toggle, and delete operations all work correctly on the todo list."
+      },
+      {
+        "criterion": "localStorage Persistence",
+        "points": 25,
+        "description": "Todos are saved to localStorage on change and loaded on mount."
+      },
+      {
+        "criterion": "UI Rendering",
+        "points": 25,
+        "description": "Completed todos show strikethrough. Checkbox reflects completion state."
+      },
+      {
+        "criterion": "Edge Cases",
+        "points": 20,
+        "description": "Cannot add empty todos. Handles empty localStorage gracefully."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_04",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Create a reusable Modal component that uses React Portals to render outside the main DOM hierarchy. The modal should accept children, an isOpen prop, and an onClose callback. It must render into a dedicated div#modal-root element. Clicking the backdrop (overlay) should close the modal, but clicking inside the modal content should not. Include a close button in the top-right corner.",
+    "problem_hints": [
+      "React Portals are created with ReactDOM.createPortal(child, container).",
+      "Use event.stopPropagation() on the modal content div to prevent backdrop click from firing when clicking inside.",
+      "Ensure div#modal-root exists in your HTML. Render the overlay with an onClick={onClose} and the inner content with onClick={e => e.stopPropagation()}."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Portal Usage",
+        "points": 30,
+        "description": "Modal renders via ReactDOM.createPortal into a separate DOM node."
+      },
+      {
+        "criterion": "Open/Close Behavior",
+        "points": 25,
+        "description": "Modal shows/hides based on isOpen prop. onClose fires on backdrop click and close button."
+      },
+      {
+        "criterion": "Event Propagation",
+        "points": 25,
+        "description": "Clicking inside modal content does not trigger close. Only backdrop and close button do."
+      },
+      {
+        "criterion": "Reusability",
+        "points": 20,
+        "description": "Component accepts children and is generic enough to wrap any content."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_05",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "40 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a searchable, filterable list component. Given an array of product objects (with name, category, and price fields), render a list that can be filtered by a search term (matching name) and by category via a dropdown. Both filters should work simultaneously. Display the count of matching results above the list. If no results match, show a friendly empty state message.",
+    "problem_hints": [
+      "Derive the filtered list from state rather than storing filtered results separately.",
+      "Use two pieces of state: searchTerm and selectedCategory. Filter the products array using both on each render.",
+      "Chain .filter() calls: first filter by category (if not 'all'), then by whether name.toLowerCase().includes(searchTerm.toLowerCase())."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Filter Logic",
+        "points": 30,
+        "description": "Search and category filters work correctly both independently and together."
+      },
+      {
+        "criterion": "Derived State",
+        "points": 25,
+        "description": "Filtered list is computed from source data + filter state, not stored separately."
+      },
+      {
+        "criterion": "UI Elements",
+        "points": 25,
+        "description": "Search input, category dropdown, result count, and empty state all render correctly."
+      },
+      {
+        "criterion": "Code Quality",
+        "points": 20,
+        "description": "Clean separation of concerns, no unnecessary state, readable code."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_06",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "40 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Create a set of accordion/collapsible components where only one section can be open at a time. The Accordion component should accept an array of items, each with a title and content. Clicking a section title should expand it and collapse any previously open section. Include smooth CSS transitions for the expand/collapse animation. Add an aria-expanded attribute for accessibility.",
+    "problem_hints": [
+      "Track which section is open using a single piece of state (the index or id of the open item).",
+      "For smooth transitions, use max-height with CSS transition rather than display:none toggling.",
+      "Set the open index on click. If the clicked index matches the current open index, set it to null (close all). Use aria-expanded={isOpen} on each trigger button."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Single-Open Behavior",
+        "points": 30,
+        "description": "Only one section is expanded at a time. Clicking an open section collapses it."
+      },
+      {
+        "criterion": "Animation",
+        "points": 25,
+        "description": "Expand/collapse uses CSS transitions and looks smooth."
+      },
+      {
+        "criterion": "Accessibility",
+        "points": 25,
+        "description": "aria-expanded is set correctly. Trigger elements are buttons or have proper roles."
+      },
+      {
+        "criterion": "Component API",
+        "points": 20,
+        "description": "Accordion accepts items as props and is reusable with any content."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_07",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a custom useDebounce hook that delays updating a value until a specified delay has passed since the last change. Then use this hook to implement a search input that only triggers an API call (simulated with console.log or a mock function) after the user stops typing for 500ms. Display a loading indicator while the debounced value is pending, and show the final debounced value below the input.",
+    "problem_hints": [
+      "useDebounce should use useState and useEffect internally, with a setTimeout that resets on each value change.",
+      "In the useEffect, set a timeout that updates the debounced value after the delay. Return a cleanup function that clears the timeout.",
+      "const [debouncedValue, setDebouncedValue] = useState(value); useEffect(() => { const timer = setTimeout(() => setDebouncedValue(value), delay); return () => clearTimeout(timer); }, [value, delay]);"
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Hook Implementation",
+        "points": 35,
+        "description": "useDebounce correctly delays value updates using setTimeout with proper cleanup."
+      },
+      {
+        "criterion": "Integration",
+        "points": 25,
+        "description": "Search input uses the hook and triggers the mock API call only after debounce."
+      },
+      {
+        "criterion": "Loading State",
+        "points": 20,
+        "description": "Loading indicator shows while input value differs from debounced value."
+      },
+      {
+        "criterion": "Cleanup",
+        "points": 20,
+        "description": "Timeout is properly cleared on unmount and on value change to prevent memory leaks."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_08",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "50 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a theme system using React Context API. Create a ThemeProvider that supports at least three themes (light, dark, and high-contrast). Each theme should define colors for background, text, primary, secondary, and border. Components nested at any depth should be able to consume the current theme and a toggleTheme function. Build a demo page with a navbar, card, and button that all respond to theme changes. Persist the selected theme to localStorage.",
+    "problem_hints": [
+      "Create a ThemeContext with createContext. The provider should hold the current theme name in state and expose both the theme object and a cycle/set function.",
+      "Define a themes object mapping theme names to color objects. Use useEffect to sync the selected theme name to localStorage and read it on mount.",
+      "Consuming components can use useContext(ThemeContext) to get { theme, setTheme }. Apply theme colors via inline styles or CSS variables set on :root."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Context Architecture",
+        "points": 25,
+        "description": "ThemeContext is properly created with provider and consumer pattern."
+      },
+      {
+        "criterion": "Theme Definitions",
+        "points": 20,
+        "description": "At least 3 themes with 5+ color properties each, well-structured."
+      },
+      {
+        "criterion": "Deep Consumption",
+        "points": 20,
+        "description": "Multiple nested components correctly consume and react to theme changes."
+      },
+      {
+        "criterion": "Persistence",
+        "points": 15,
+        "description": "Selected theme survives page refresh via localStorage."
+      },
+      {
+        "criterion": "UI Demo",
+        "points": 20,
+        "description": "Navbar, card, and button all visually respond to theme switching."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_09",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a data fetching component that displays a paginated list of users from a mock API. Implement loading, error, and empty states. Use useReducer to manage the complex state (users array, current page, total pages, loading boolean, error string). Include Previous/Next pagination buttons that trigger new fetches. Add a retry button on error state. The component should cancel in-flight requests when a new page is requested or the component unmounts.",
+    "problem_hints": [
+      "useReducer is ideal here because you have multiple related state values that change together (loading, data, error, page).",
+      "Define action types like FETCH_START, FETCH_SUCCESS, FETCH_ERROR, SET_PAGE. Use an AbortController to cancel pending fetch calls.",
+      "Create the AbortController in the useEffect, pass its signal to fetch, and return () => controller.abort() as cleanup. Dispatch FETCH_START before fetching, then FETCH_SUCCESS or FETCH_ERROR based on the result."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "useReducer Design",
+        "points": 25,
+        "description": "Reducer handles all state transitions with clear action types and immutable updates."
+      },
+      {
+        "criterion": "Data Fetching",
+        "points": 25,
+        "description": "Fetches data on page change, handles loading/success/error correctly."
+      },
+      {
+        "criterion": "Request Cancellation",
+        "points": 20,
+        "description": "AbortController cancels in-flight requests on page change and unmount."
+      },
+      {
+        "criterion": "Pagination UI",
+        "points": 15,
+        "description": "Previous/Next buttons work, are disabled at boundaries, and show current page."
+      },
+      {
+        "criterion": "Error Handling",
+        "points": 15,
+        "description": "Error state renders with message and retry button that re-triggers the fetch."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_10",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Create a multi-step form wizard with 3 steps: Personal Info (name, email), Address (street, city, zip), and Review & Submit. Implement forward and backward navigation between steps. Validate each step before allowing the user to proceed to the next. On the Review step, display all entered data and a submit button. Use useContext to share form state across step components. Show a progress bar indicating the current step out of total steps.",
+    "problem_hints": [
+      "Create a FormContext that holds all field values and a dispatch or update function. Each step component reads/writes from this shared context.",
+      "Track the current step index in the parent. Validation should run when clicking Next -- if it fails, show errors and block navigation.",
+      "The progress bar width can be calculated as ((currentStep + 1) / totalSteps) * 100 + '%'. The Review step simply reads all values from context and displays them."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Multi-Step Navigation",
+        "points": 20,
+        "description": "Forward and backward navigation works. Step components mount/unmount correctly."
+      },
+      {
+        "criterion": "Shared State via Context",
+        "points": 25,
+        "description": "Form data is shared via context, accessible from all steps without prop drilling."
+      },
+      {
+        "criterion": "Per-Step Validation",
+        "points": 25,
+        "description": "Each step validates its fields before allowing Next. Errors are displayed inline."
+      },
+      {
+        "criterion": "Review & Submit",
+        "points": 15,
+        "description": "Review step shows all data correctly. Submit button triggers final action."
+      },
+      {
+        "criterion": "Progress Bar",
+        "points": 15,
+        "description": "Progress bar accurately reflects current step out of total steps."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_11",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "50 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a drag-and-drop Kanban board with three columns: To Do, In Progress, and Done. Users should be able to drag task cards between columns using the HTML5 Drag and Drop API (no external libraries). Each card shows a title and priority badge. Track the state of all tasks in a single array with a status field. Reorder should update state immediately and the UI should reflect the new positions.",
+    "problem_hints": [
+      "Use onDragStart, onDragOver (with preventDefault), and onDrop events on the card and column elements.",
+      "Store a dragging item reference in state or a ref. On drop, update that item's status field to match the target column.",
+      "Set dataTransfer.setData('text/plain', taskId) on drag start. On drop, read it back and update the tasks array by mapping over it and changing the status of the matching task."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Drag and Drop",
+        "points": 30,
+        "description": "Cards can be dragged between all three columns using native HTML5 DnD API."
+      },
+      {
+        "criterion": "State Management",
+        "points": 25,
+        "description": "Single source of truth array updated correctly on drop. No stale state."
+      },
+      {
+        "criterion": "UI Feedback",
+        "points": 25,
+        "description": "Visual feedback during drag (cursor, highlight). Cards render in correct columns."
+      },
+      {
+        "criterion": "Code Quality",
+        "points": 20,
+        "description": "Clean event handler logic, proper key props, no unnecessary re-renders."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_12",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement an infinite scroll feed component that loads batches of posts as the user scrolls near the bottom of the page. Use the Intersection Observer API via a custom useIntersectionObserver hook. Each post should display a title, body preview, and author. Show a loading spinner at the bottom while fetching. Handle the case where all posts have been loaded by showing an end-of-list message and stopping further observations.",
+    "problem_hints": [
+      "Create a sentinel div at the bottom of the list. When it enters the viewport, trigger the next fetch.",
+      "Your custom hook should accept a ref and options, create an IntersectionObserver, and return isIntersecting. Clean up the observer on unmount.",
+      "Track a hasMore boolean. When the API returns fewer items than the page size, set hasMore to false and disconnect the observer."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Custom Hook",
+        "points": 25,
+        "description": "useIntersectionObserver correctly wraps the API, observes the target, and cleans up."
+      },
+      {
+        "criterion": "Infinite Loading",
+        "points": 25,
+        "description": "New batches load automatically when scrolling near bottom. Data appends correctly."
+      },
+      {
+        "criterion": "End State",
+        "points": 20,
+        "description": "Stops fetching when no more data. Shows end-of-list message."
+      },
+      {
+        "criterion": "Loading UI",
+        "points": 15,
+        "description": "Spinner shows during fetch. No duplicate fetches for the same page."
+      },
+      {
+        "criterion": "Post Rendering",
+        "points": 15,
+        "description": "Each post displays title, body preview, and author correctly."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_13",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a real-time chat interface component. Messages should appear in a scrollable container that auto-scrolls to the bottom when new messages arrive. Implement a message input with send button and Enter key support. Each message should show the sender name, message text, and timestamp. Use useRef to manage the scroll container and auto-scroll behavior. Include a 'scroll to bottom' floating button that appears when the user scrolls up and disappears when at the bottom.",
+    "problem_hints": [
+      "Use a ref on the messages container. After new messages are added to state, call containerRef.current.scrollTop = containerRef.current.scrollHeight.",
+      "Track whether the user is scrolled up by comparing scrollTop + clientHeight to scrollHeight in an onScroll handler.",
+      "Only auto-scroll if the user was already at the bottom before the new message arrived. Show the floating button when they are not at the bottom."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Message Display",
+        "points": 20,
+        "description": "Messages render with sender, text, and formatted timestamp in a scrollable container."
+      },
+      {
+        "criterion": "Auto-Scroll",
+        "points": 25,
+        "description": "Container auto-scrolls to bottom on new messages only when user is already at bottom."
+      },
+      {
+        "criterion": "Input Handling",
+        "points": 20,
+        "description": "Send button and Enter key both submit. Input clears after send. Cannot send empty."
+      },
+      {
+        "criterion": "Scroll Button",
+        "points": 20,
+        "description": "Floating button appears when scrolled up, clicking it scrolls to bottom, then it hides."
+      },
+      {
+        "criterion": "useRef Usage",
+        "points": 15,
+        "description": "Refs used correctly for DOM access. No direct DOM manipulation outside refs."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_14",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "65 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Create an ErrorBoundary class component that catches JavaScript errors in its child component tree. It should display a fallback UI with the error message and a 'Try Again' button that resets the boundary. Implement componentDidCatch to log errors to a mock error reporting service. Also create a useErrorHandler custom hook for functional components that can programmatically trigger the nearest error boundary. Test it with a component that throws on a button click.",
+    "problem_hints": [
+      "Error boundaries must be class components using static getDerivedStateFromError and componentDidCatch lifecycle methods.",
+      "getDerivedStateFromError returns new state with hasError: true. componentDidCatch receives error and errorInfo for logging.",
+      "For the hook, throw the error from a state update: const [error, setError] = useState(null); if (error) throw error; return setError. This triggers the nearest boundary on next render."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "ErrorBoundary Class",
+        "points": 30,
+        "description": "Properly implements getDerivedStateFromError and componentDidCatch. Catches child errors."
+      },
+      {
+        "criterion": "Fallback UI",
+        "points": 20,
+        "description": "Shows error message and retry button. Retry resets hasError state to re-render children."
+      },
+      {
+        "criterion": "Error Logging",
+        "points": 15,
+        "description": "componentDidCatch logs to a mock service with error and component stack."
+      },
+      {
+        "criterion": "useErrorHandler Hook",
+        "points": 20,
+        "description": "Hook allows functional components to programmatically trigger the error boundary."
+      },
+      {
+        "criterion": "Integration Test",
+        "points": 15,
+        "description": "Demo component correctly throws and is caught. Recovery works after retry."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_15",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "70 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a virtualized list component that efficiently renders only the visible items from a large dataset of 10,000 items. Calculate which items are in the viewport based on scroll position, item height, and container height. Render only those items plus a small buffer above and below. Use absolute positioning within a tall container to maintain correct scroll behavior. Display the total item count and current visible range. Do not use any external virtualization library.",
+    "problem_hints": [
+      "The outer container has overflow:auto and a fixed height. The inner container has height = totalItems * itemHeight to create the right scrollbar.",
+      "On scroll, calculate startIndex = Math.floor(scrollTop / itemHeight) and visibleCount = Math.ceil(containerHeight / itemHeight). Add a buffer of ~5 items above and below.",
+      "Render only items from (startIndex - buffer) to (startIndex + visibleCount + buffer). Position each with style={{ position: 'absolute', top: index * itemHeight }}."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Virtualization Logic",
+        "points": 30,
+        "description": "Correctly calculates visible range from scroll position. Only visible items are in the DOM."
+      },
+      {
+        "criterion": "Performance",
+        "points": 25,
+        "description": "Handles 10,000 items smoothly. DOM node count stays constant regardless of dataset size."
+      },
+      {
+        "criterion": "Scroll Behavior",
+        "points": 20,
+        "description": "Scrollbar size is correct. Scrolling feels native with no jumps or flickers."
+      },
+      {
+        "criterion": "Buffer Zone",
+        "points": 15,
+        "description": "Items above and below viewport are pre-rendered to prevent flashing on fast scroll."
+      },
+      {
+        "criterion": "Info Display",
+        "points": 10,
+        "description": "Shows total count and currently visible range (e.g., 'Showing 45-65 of 10,000')."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_16",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "80 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a complete client-side routing system from scratch without using React Router or any routing library. Implement a Router component that listens to popstate events and matches the current URL path to registered routes. Support exact and parameterized routes (e.g., /users/:id). Create Link and NavLink components that use pushState for navigation without page reloads. NavLink should apply an active class when its path matches. Implement a NotFound fallback route. Handle nested routes and a simple layout with persistent sidebar navigation.",
+    "problem_hints": [
+      "Use window.addEventListener('popstate', handler) and history.pushState to manage navigation. Store the current path in state.",
+      "For parameterized routes, convert route patterns like /users/:id into regex: /^\\/users\\/([^/]+)$/. Extract params with match groups.",
+      "The Router component holds current path state. On mount, read window.location.pathname. Link components call history.pushState then update Router state via context or a custom event."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Route Matching",
+        "points": 25,
+        "description": "Exact and parameterized routes match correctly. Params are extracted and passed to components."
+      },
+      {
+        "criterion": "Navigation",
+        "points": 25,
+        "description": "Link/NavLink use pushState. No page reloads. Back/forward browser buttons work via popstate."
+      },
+      {
+        "criterion": "NavLink Active State",
+        "points": 15,
+        "description": "NavLink applies active class when current path matches its to prop."
+      },
+      {
+        "criterion": "NotFound & Fallback",
+        "points": 15,
+        "description": "Unmatched paths render a NotFound component."
+      },
+      {
+        "criterion": "Nested Layout",
+        "points": 20,
+        "description": "Persistent sidebar layout with nested content area that changes based on route."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_17",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "90 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Create a full-featured data table component with sorting, multi-column filtering, pagination, and row selection. The table should accept a columns config array (defining header, accessor key, sortable boolean, filterable boolean) and a data array. Sorting should support ascending, descending, and unsorted states with visual indicators. Filters should be per-column text inputs in the header row. Pagination should be configurable (rows per page). Row selection should use checkboxes with a select-all checkbox in the header. Export selected rows as JSON via a button.",
+    "problem_hints": [
+      "Process data through a pipeline: first filter, then sort, then paginate. Derive the displayed data on each render rather than storing intermediate results.",
+      "For multi-column sorting, you could support single-column sort with a sortConfig { key, direction } state. For filters, use an object { columnKey: filterValue }.",
+      "Selection can be a Set of row IDs. Select-all toggles all currently visible (filtered+paginated) rows. The export button calls JSON.stringify on rows whose IDs are in the selection Set."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Sorting",
+        "points": 20,
+        "description": "Click column headers to cycle asc/desc/none. Visual indicators show sort state."
+      },
+      {
+        "criterion": "Filtering",
+        "points": 20,
+        "description": "Per-column text filters work independently and together. Only filterable columns show inputs."
+      },
+      {
+        "criterion": "Pagination",
+        "points": 20,
+        "description": "Configurable page size. Page controls work. Resets to page 1 on filter/sort change."
+      },
+      {
+        "criterion": "Row Selection",
+        "points": 20,
+        "description": "Checkbox per row. Select-all for current page. Selection persists across pages."
+      },
+      {
+        "criterion": "Export & Config",
+        "points": 20,
+        "description": "Export selected rows as JSON. Columns config drives table rendering correctly."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_18",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "90 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a state management library similar to a minimal Redux from scratch. Create a createStore function that accepts a reducer and returns { getState, dispatch, subscribe }. Then build a React integration layer: a StoreProvider component and a useSelector hook (with shallow equality check to prevent unnecessary re-renders) and a useDispatch hook. Support middleware via an applyMiddleware function that composes middleware around dispatch (implement a logger middleware and a thunk middleware for async actions). Demonstrate with a shopping cart feature that uses async actions to fetch products.",
+    "problem_hints": [
+      "createStore: hold state in a closure. dispatch runs the reducer and notifies subscribers. subscribe adds a listener and returns an unsubscribe function.",
+      "useSelector should subscribe to the store on mount, and only trigger a re-render if the selected value has changed (use useRef to store previous value and shallow compare).",
+      "Middleware signature: store => next => action. applyMiddleware chains them. Thunk middleware checks if action is a function: if so, call action(dispatch, getState) instead of passing to next."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "createStore",
+        "points": 25,
+        "description": "getState, dispatch, and subscribe work correctly. Reducer produces new state immutably."
+      },
+      {
+        "criterion": "React Integration",
+        "points": 25,
+        "description": "StoreProvider, useSelector, and useDispatch hooks work. Components re-render on relevant state changes only."
+      },
+      {
+        "criterion": "Middleware System",
+        "points": 20,
+        "description": "applyMiddleware composes correctly. Logger logs actions. Thunk enables async dispatch."
+      },
+      {
+        "criterion": "Shallow Equality",
+        "points": 15,
+        "description": "useSelector avoids re-renders when selected value is shallowly equal to previous."
+      },
+      {
+        "criterion": "Demo Integration",
+        "points": 15,
+        "description": "Shopping cart works with async product fetching via thunk actions."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_19",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "100 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a spreadsheet-like grid component that supports 100 rows and 26 columns (A-Z). Each cell should be editable on double-click, switching from display mode to an input. Implement formula support: cells starting with '=' should evaluate simple expressions like =A1+B2 or =SUM(A1:A10). When a referenced cell changes, all dependent cells should recalculate automatically. Implement cell selection with keyboard arrow key navigation. Optimize rendering so that only changed cells re-render using React.memo and careful state design.",
+    "problem_hints": [
+      "Store cell data in a Map or object keyed by cell ID (e.g., 'A1'). Build a dependency graph: when cell A1 references B2, A1 depends on B2.",
+      "For formula parsing, split on operators for simple expressions. For SUM(A1:A10), parse the range and sum the values. Use a topological sort or recursive evaluation for the dependency chain.",
+      "Wrap each Cell in React.memo with a custom comparison function that only checks if that cell's value or display value changed. Use useCallback for handlers passed to cells."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Grid Rendering",
+        "points": 15,
+        "description": "100x26 grid renders with column headers A-Z and row numbers. Scrollable."
+      },
+      {
+        "criterion": "Cell Editing",
+        "points": 20,
+        "description": "Double-click enters edit mode. Blur or Enter commits. Escape cancels."
+      },
+      {
+        "criterion": "Formula Engine",
+        "points": 25,
+        "description": "= expressions evaluate. Supports basic arithmetic and SUM range function. Handles cell references."
+      },
+      {
+        "criterion": "Dependency Recalculation",
+        "points": 25,
+        "description": "Changing a cell triggers recalc of all dependents. No circular dependency crash."
+      },
+      {
+        "criterion": "Performance",
+        "points": 15,
+        "description": "React.memo prevents full grid re-render. Only affected cells update. Keyboard navigation works."
+      }
+    ]
+  },
+  {
+    "problem_id": "react_20",
+    "problem_topic": "React JavaScript",
+    "problem_time_required": "120 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Create an accessible, fully keyboard-navigable component library consisting of: a Combobox (autocomplete input with listbox), a DatePicker (calendar popup with month navigation), and a Tooltip. All components must follow WAI-ARIA authoring practices. The Combobox must support aria-activedescendant, arrow key navigation through options, Enter to select, and Escape to close. The DatePicker must use a grid role for the calendar, support arrow keys for day navigation, and announce the selected date to screen readers via aria-live. The Tooltip must use aria-describedby and appear on focus as well as hover. Implement proper focus trapping in the DatePicker popup.",
+    "problem_hints": [
+      "Reference the WAI-ARIA Authoring Practices for combobox, dialog, and tooltip patterns. Each has specific role, state, and property requirements.",
+      "For the Combobox, manage activeIndex state for aria-activedescendant. The listbox role container holds option role items. Arrow keys move activeIndex, Enter selects options[activeIndex].",
+      "DatePicker focus trap: on Tab at the last focusable element, move focus to the first. Use a ref to track all focusable elements inside the popup. aria-live='polite' region announces date changes."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Combobox Accessibility",
+        "points": 25,
+        "description": "Correct ARIA roles/states. Keyboard navigation works. Screen reader announces options."
+      },
+      {
+        "criterion": "DatePicker Accessibility",
+        "points": 25,
+        "description": "Grid role calendar. Arrow key day navigation. Focus trapping. aria-live announcements."
+      },
+      {
+        "criterion": "Tooltip Accessibility",
+        "points": 15,
+        "description": "aria-describedby links trigger to tooltip. Shows on focus and hover. Dismissible with Escape."
+      },
+      {
+        "criterion": "Keyboard Navigation",
+        "points": 20,
+        "description": "All three components are fully operable via keyboard only. No mouse dependency."
+      },
+      {
+        "criterion": "WAI-ARIA Compliance",
+        "points": 15,
+        "description": "Roles, states, and properties follow WAI-ARIA authoring practices accurately."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_01",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "25 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a simple HTTP server using the net/http standard library that serves three endpoints: GET /health returns a 200 JSON response with {\"status\": \"ok\"}, GET /time returns the current server time in ISO 8601 format, and GET /echo?message=hello returns the query parameter value in a JSON response. All responses must have Content-Type: application/json header. Handle missing query parameters with a 400 Bad Request response.",
+    "problem_hints": [
+      "Use http.HandleFunc to register handlers and http.ListenAndServe to start the server.",
+      "Read query parameters with r.URL.Query().Get(\"message\"). Use json.NewEncoder(w).Encode() to write JSON responses.",
+      "Set headers before writing the response body: w.Header().Set(\"Content-Type\", \"application/json\"). For 400 errors, use w.WriteHeader(http.StatusBadRequest) before encoding the error JSON."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Endpoint Implementation",
+        "points": 35,
+        "description": "All three endpoints return correct responses with proper status codes."
+      },
+      {
+        "criterion": "JSON Handling",
+        "points": 25,
+        "description": "Responses are valid JSON with correct Content-Type header."
+      },
+      {
+        "criterion": "Error Handling",
+        "points": 25,
+        "description": "Missing query params return 400 with descriptive error message."
+      },
+      {
+        "criterion": "Code Quality",
+        "points": 15,
+        "description": "Clean handler functions, proper imports, idiomatic Go style."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_02",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Create a CLI tool that reads a JSON configuration file, validates required fields (name, version, port), and outputs a formatted summary to stdout. The tool should accept the file path as a command-line argument. If the file doesn't exist, is not valid JSON, or is missing required fields, print a clear error message to stderr and exit with a non-zero code. Use the flag package for argument parsing and support a --verbose flag that prints additional details.",
+    "problem_hints": [
+      "Use os.Args or the flag package to parse arguments. Read the file with os.ReadFile.",
+      "Unmarshal into a struct with json.Unmarshal. Check for zero values on required fields after unmarshaling.",
+      "Write errors to os.Stderr with fmt.Fprintf(os.Stderr, ...) and call os.Exit(1). For verbose mode, conditionally print extra fields."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "File Reading",
+        "points": 25,
+        "description": "Reads file from CLI argument. Handles missing file gracefully."
+      },
+      {
+        "criterion": "JSON Parsing",
+        "points": 25,
+        "description": "Unmarshals JSON correctly. Reports parse errors clearly."
+      },
+      {
+        "criterion": "Validation",
+        "points": 25,
+        "description": "Checks all required fields. Reports which fields are missing."
+      },
+      {
+        "criterion": "CLI Interface",
+        "points": 25,
+        "description": "Flag parsing works. Verbose mode adds detail. Proper exit codes."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_03",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a concurrent file word counter. Given a list of file paths as command-line arguments, launch a goroutine for each file to count words concurrently. Use channels to collect results and print a summary table showing each filename and its word count, plus a total. Handle errors for files that cannot be opened without crashing the program. Limit concurrency to at most 5 simultaneous goroutines using a semaphore pattern.",
+    "problem_hints": [
+      "Create a buffered channel of capacity 5 to use as a semaphore. Send to it before starting work, receive from it when done.",
+      "Use a results channel of a struct type { filename string, count int, err error }. Each goroutine sends one result.",
+      "Read files with os.Open and bufio.NewScanner with scanner.Split(bufio.ScanWords). Count calls to scanner.Scan()."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Concurrency",
+        "points": 30,
+        "description": "Files are processed concurrently with goroutines. Semaphore limits to 5 concurrent."
+      },
+      {
+        "criterion": "Word Counting",
+        "points": 25,
+        "description": "Accurate word counts for each file."
+      },
+      {
+        "criterion": "Error Handling",
+        "points": 25,
+        "description": "Unreadable files report errors without crashing. Other files still process."
+      },
+      {
+        "criterion": "Output",
+        "points": 20,
+        "description": "Summary table with per-file counts and total is formatted and readable."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_04",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a simple in-memory key-value store exposed via a REST API. Implement PUT /store/{key} with a JSON body {\"value\": \"...\"} to set a value, GET /store/{key} to retrieve it, DELETE /store/{key} to remove it, and GET /store to list all keys. The store must be safe for concurrent access. Return 404 for keys that don't exist. Include a TTL feature: PUT requests can optionally include a ttl_seconds field, and expired entries should not be returned by GET.",
+    "problem_hints": [
+      "Use sync.RWMutex to protect the map. RLock for reads, Lock for writes.",
+      "Store entries as structs with value, createdAt, and ttl fields. On GET, check if time.Now().After(createdAt.Add(ttl)).",
+      "For the list endpoint, iterate the map and skip expired entries. Consider a background goroutine with a ticker to periodically clean up expired entries."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "CRUD Endpoints",
+        "points": 25,
+        "description": "PUT, GET, DELETE, and list all work correctly with proper status codes."
+      },
+      {
+        "criterion": "Concurrency Safety",
+        "points": 25,
+        "description": "sync.RWMutex or equivalent protects the map. No race conditions."
+      },
+      {
+        "criterion": "TTL Feature",
+        "points": 30,
+        "description": "TTL is stored and checked on read. Expired keys return 404. Cleanup works."
+      },
+      {
+        "criterion": "Error Responses",
+        "points": 20,
+        "description": "404 for missing keys. 400 for bad requests. JSON error messages."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_05",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Create a logging middleware for an HTTP server that wraps any http.Handler. For each request, the middleware should log: HTTP method, request path, response status code, response size in bytes, and request duration in milliseconds. Format the log as structured JSON written to stdout. To capture the status code and response size, you must implement a custom ResponseWriter wrapper. Chain this middleware with a CORS middleware that sets Access-Control-Allow-Origin, Allow-Methods, and Allow-Headers headers.",
+    "problem_hints": [
+      "Create a struct that embeds http.ResponseWriter and adds statusCode and bytesWritten fields. Override WriteHeader and Write methods.",
+      "In the logging middleware, record time.Now() before calling next.ServeHTTP, then calculate duration after. Read captured status and size from your wrapper.",
+      "Chain middleware by having each return an http.Handler. loggingMiddleware(corsMiddleware(yourHandler))."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "ResponseWriter Wrapper",
+        "points": 30,
+        "description": "Custom wrapper correctly captures status code and bytes written without breaking the response."
+      },
+      {
+        "criterion": "Log Output",
+        "points": 25,
+        "description": "Structured JSON log with method, path, status, size, and duration for each request."
+      },
+      {
+        "criterion": "CORS Middleware",
+        "points": 25,
+        "description": "Sets correct CORS headers. Handles OPTIONS preflight requests."
+      },
+      {
+        "criterion": "Middleware Chaining",
+        "points": 20,
+        "description": "Both middlewares compose cleanly and work with any handler."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_06",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "40 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Write a Go package that implements a generic in-memory cache with expiration support using Go generics (type parameters). The cache should support Get, Set (with TTL), Delete, and Len operations. It must be concurrency-safe. Implement a background cleanup goroutine that runs on a configurable interval and removes expired entries. Provide a Close method that stops the cleanup goroutine using a done channel. Write table-driven unit tests covering set/get, expiration, deletion, and concurrent access.",
+    "problem_hints": [
+      "Use type Cache[K comparable, V any] struct with a sync.RWMutex and map[K]entry[V] where entry has value and expiresAt.",
+      "The cleanup goroutine should select on a time.Ticker.C channel and a done channel. On tick, lock and delete expired entries. On done, return.",
+      "For tests, use t.Run with subtests. For concurrency tests, launch multiple goroutines doing Set/Get and use the -race flag."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Generic Implementation",
+        "points": 25,
+        "description": "Uses Go generics correctly. Works with multiple types."
+      },
+      {
+        "criterion": "Concurrency Safety",
+        "points": 25,
+        "description": "Mutex protects all map access. Passes race detector."
+      },
+      {
+        "criterion": "TTL & Cleanup",
+        "points": 25,
+        "description": "Entries expire correctly. Background goroutine cleans up. Close stops it."
+      },
+      {
+        "criterion": "Unit Tests",
+        "points": 25,
+        "description": "Table-driven tests cover all operations including concurrent access."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_07",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "40 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a URL shortener service with two endpoints: POST /shorten accepts {\"url\": \"https://...\"} and returns a short code, and GET /{code} redirects to the original URL with a 301 status. Store mappings in memory using a map. Generate short codes using a base62 encoding of an incrementing counter. Validate that submitted URLs are well-formed using net/url.Parse. Track visit counts for each short URL and expose them via GET /stats/{code}. Return appropriate errors for invalid URLs and unknown codes.",
+    "problem_hints": [
+      "Base62 uses characters 0-9, a-z, A-Z. Convert the counter integer to base62 by repeatedly dividing by 62 and mapping remainders.",
+      "Use net/url.Parse(rawURL) and check that both scheme and host are non-empty to validate URLs.",
+      "For redirects, use http.Redirect(w, r, originalURL, http.StatusMovedPermanently). Increment the visit counter atomically or under a lock."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Shortening Logic",
+        "points": 25,
+        "description": "POST creates short codes. Base62 encoding produces valid, unique codes."
+      },
+      {
+        "criterion": "Redirect",
+        "points": 25,
+        "description": "GET /{code} redirects with 301. Unknown codes return 404."
+      },
+      {
+        "criterion": "URL Validation",
+        "points": 20,
+        "description": "Rejects malformed URLs with descriptive 400 error."
+      },
+      {
+        "criterion": "Stats Tracking",
+        "points": 15,
+        "description": "Visit count increments on each redirect. Stats endpoint returns the count."
+      },
+      {
+        "criterion": "Code Quality",
+        "points": 15,
+        "description": "Clean structure, proper error handling, idiomatic Go."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_08",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "50 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a token-based authentication middleware system. Create endpoints for POST /register (accept username/password, hash password with bcrypt, store in memory), POST /login (verify credentials, return a JWT token), and GET /protected (requires valid JWT in Authorization: Bearer header). The JWT should include the username, issued-at, and expiration claims. The middleware should extract the token, validate it, and inject the username into the request context. Handle expired tokens, malformed tokens, and missing headers with appropriate error responses.",
+    "problem_hints": [
+      "Use golang.org/x/crypto/bcrypt for password hashing: bcrypt.GenerateFromPassword and bcrypt.CompareHashAndPassword.",
+      "For JWT, use a library like github.com/golang-jwt/jwt/v5. Create tokens with jwt.NewWithClaims and validate with jwt.Parse with a key function.",
+      "Inject the username into context with context.WithValue(r.Context(), userKey, username). Downstream handlers retrieve it with r.Context().Value(userKey)."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Registration",
+        "points": 20,
+        "description": "Stores user with bcrypt-hashed password. Rejects duplicate usernames."
+      },
+      {
+        "criterion": "Login & JWT",
+        "points": 25,
+        "description": "Verifies credentials. Returns signed JWT with correct claims and expiration."
+      },
+      {
+        "criterion": "Auth Middleware",
+        "points": 25,
+        "description": "Extracts Bearer token, validates JWT, injects user into context."
+      },
+      {
+        "criterion": "Error Handling",
+        "points": 15,
+        "description": "401 for expired/invalid/missing tokens. 400 for bad input. Clear error messages."
+      },
+      {
+        "criterion": "Security",
+        "points": 15,
+        "description": "Passwords never stored in plain text. JWT secret is not hardcoded in handlers."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_09",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a worker pool system that processes jobs from a channel. Implement a Pool struct that accepts a configurable number of workers and a job queue size. Each job is a function that returns a Result struct with an ID, output value, and error. Workers pull from the job channel, execute the function, and send results to a results channel. Implement graceful shutdown: when Stop is called, stop accepting new jobs, wait for in-flight jobs to finish, and close the results channel. Add support for job timeouts using context.WithTimeout. Include a monitor goroutine that logs pool stats (active workers, pending jobs, completed count) every N seconds.",
+    "problem_hints": [
+      "Workers are goroutines in a for-range loop over the jobs channel. Closing the jobs channel signals workers to stop after draining.",
+      "Use sync.WaitGroup to track active workers. When all workers are done, close the results channel.",
+      "For timeouts, wrap each job execution in a select with ctx.Done() and the job result. The monitor goroutine uses a ticker and atomic counters."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Pool Architecture",
+        "points": 25,
+        "description": "Configurable workers and queue size. Workers correctly consume from job channel."
+      },
+      {
+        "criterion": "Result Collection",
+        "points": 20,
+        "description": "Results channel receives all job outcomes. ID, value, and error are set correctly."
+      },
+      {
+        "criterion": "Graceful Shutdown",
+        "points": 25,
+        "description": "Stop prevents new jobs, waits for in-flight, then closes results channel."
+      },
+      {
+        "criterion": "Job Timeouts",
+        "points": 15,
+        "description": "context.WithTimeout cancels long-running jobs. Timeout errors are returned."
+      },
+      {
+        "criterion": "Monitoring",
+        "points": 15,
+        "description": "Stats goroutine logs active workers, pending jobs, and completion count periodically."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_10",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Create a rate limiter middleware using the token bucket algorithm. The limiter should be configurable with requests per second and burst size. Implement per-client rate limiting based on IP address (using X-Forwarded-For header with fallback to RemoteAddr). Store client buckets in a concurrent map with automatic cleanup of stale entries. Return 429 Too Many Requests with a Retry-After header when the limit is exceeded. Write an HTTP middleware that wraps any handler. Include unit tests that verify rate limiting behavior using a mock clock or time manipulation.",
+    "problem_hints": [
+      "Token bucket: each client has tokens (starts at burst). On request, check if tokens > 0. Tokens refill at rate per second based on elapsed time since last request.",
+      "Use sync.Map or a regular map with RWMutex for per-client buckets. Store lastTime and tokens per client.",
+      "Calculate tokens to add: elapsed := time.Since(bucket.lastTime); bucket.tokens = min(burst, bucket.tokens + elapsed.Seconds() * rate). Stale cleanup: periodically remove clients not seen for >10 minutes."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Token Bucket Algorithm",
+        "points": 25,
+        "description": "Correct implementation with configurable rate and burst. Tokens refill over time."
+      },
+      {
+        "criterion": "Per-Client Tracking",
+        "points": 20,
+        "description": "Separate limits per IP. X-Forwarded-For and RemoteAddr handled correctly."
+      },
+      {
+        "criterion": "HTTP Integration",
+        "points": 20,
+        "description": "Middleware returns 429 with Retry-After header. Passes through when under limit."
+      },
+      {
+        "criterion": "Cleanup",
+        "points": 15,
+        "description": "Stale client entries are cleaned up periodically to prevent memory leaks."
+      },
+      {
+        "criterion": "Testing",
+        "points": 20,
+        "description": "Unit tests verify limiting, bursting, and recovery behavior."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_11",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a pub/sub message broker in Go. Create a Broker struct that supports Subscribe(topic) returning a channel, Unsubscribe(topic, channel), and Publish(topic, message). Messages published to a topic should be delivered to all subscribers of that topic. Subscribers that are slow (channel buffer full) should be skipped with a warning log rather than blocking the publisher. Support wildcard subscriptions where subscribing to 'events.*' receives messages published to 'events.click', 'events.scroll', etc. Include a graceful Close method that closes all subscriber channels.",
+    "problem_hints": [
+      "Use a map[string][]chan Message for topic to subscriber channels. Protect with sync.RWMutex.",
+      "On Publish, iterate subscribers and use a select with default to do non-blocking sends. Log a warning if the channel is full.",
+      "For wildcards, when publishing to 'events.click', also check all subscription patterns. Use strings.HasSuffix on the pattern (stripped of '*') to match."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Core Pub/Sub",
+        "points": 25,
+        "description": "Subscribe, Unsubscribe, and Publish work correctly for exact topics."
+      },
+      {
+        "criterion": "Non-Blocking Publish",
+        "points": 20,
+        "description": "Slow subscribers are skipped, not blocking. Warning logged."
+      },
+      {
+        "criterion": "Wildcard Support",
+        "points": 25,
+        "description": "Wildcard patterns match correctly. Messages routed to wildcard subscribers."
+      },
+      {
+        "criterion": "Concurrency Safety",
+        "points": 15,
+        "description": "Thread-safe operations. No panics on concurrent subscribe/publish."
+      },
+      {
+        "criterion": "Graceful Close",
+        "points": 15,
+        "description": "Close method shuts down all channels cleanly. No goroutine leaks."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_12",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a WebSocket chat server using the gorilla/websocket or nhooyr.io/websocket library. The server should support multiple chat rooms. Clients send JSON messages with {\"room\": \"general\", \"username\": \"alice\", \"text\": \"hello\"}. The server broadcasts the message to all other clients in the same room. Implement /join and /leave commands. Maintain a list of active users per room and broadcast user join/leave events. Handle client disconnections gracefully by removing them from rooms and notifying others. Include a /rooms endpoint that returns the list of active rooms and their user counts.",
+    "problem_hints": [
+      "Maintain a Hub struct with rooms map[string]map[*Client]bool. Clients register/unregister through channels the Hub listens on.",
+      "Each Client has a goroutine for reading (readPump) and one for writing (writePump). Messages are sent to the client's send channel.",
+      "On disconnect, the readPump exits, triggering unregister. The Hub removes the client from their room and broadcasts a leave event."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "WebSocket Handling",
+        "points": 20,
+        "description": "Upgrade works. Read/write pumps handle messages. Ping/pong keepalive."
+      },
+      {
+        "criterion": "Room Management",
+        "points": 25,
+        "description": "Multiple rooms work. Messages only go to same-room clients. Join/leave commands work."
+      },
+      {
+        "criterion": "Broadcast Logic",
+        "points": 20,
+        "description": "Messages broadcast to all room members except sender. System events for join/leave."
+      },
+      {
+        "criterion": "Disconnect Handling",
+        "points": 20,
+        "description": "Graceful cleanup on disconnect. Other users notified. No goroutine leaks."
+      },
+      {
+        "criterion": "Rooms Endpoint",
+        "points": 15,
+        "description": "HTTP endpoint returns active rooms with user counts as JSON."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_13",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "65 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Create a data pipeline framework using Go channels. Implement a Pipeline struct that chains together processing stages. Each stage is a function that takes an input channel and returns an output channel. Build these stages: a Generator that produces items, a Filter that passes only items matching a predicate, a Transform that maps items through a function, a FanOut that distributes work to N parallel workers, a FanIn that merges N channels into one, and a Sink that collects final results. Use context for cancellation throughout. Demonstrate with a pipeline that generates numbers 1-1000, filters evens, squares them, processes in 4 parallel workers, and collects results.",
+    "problem_hints": [
+      "Each stage is func(ctx context.Context, in <-chan T) <-chan T. It launches a goroutine that reads from in and writes to a new output channel.",
+      "FanOut creates N copies of a stage, each reading from the same input channel. FanIn uses sync.WaitGroup and a merged output channel.",
+      "Always select on ctx.Done() alongside channel operations to support cancellation. Close output channels when input is exhausted."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Stage Implementation",
+        "points": 25,
+        "description": "Generator, Filter, Transform, Sink all work correctly as channel-based stages."
+      },
+      {
+        "criterion": "FanOut/FanIn",
+        "points": 25,
+        "description": "FanOut distributes to N workers. FanIn merges without deadlock or data loss."
+      },
+      {
+        "criterion": "Pipeline Composition",
+        "points": 20,
+        "description": "Stages chain together cleanly. Pipeline is reusable with different stages."
+      },
+      {
+        "criterion": "Context Cancellation",
+        "points": 15,
+        "description": "All stages respect context cancellation. No goroutine leaks on cancel."
+      },
+      {
+        "criterion": "Demo Correctness",
+        "points": 15,
+        "description": "Example pipeline produces correct results (squared even numbers from 1-1000)."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_14",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "70 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a REST API for a task management system with full CRUD operations backed by SQLite. Use database/sql with the go-sqlite3 driver. Design a tasks table with id, title, description, status (todo/in_progress/done), priority (low/medium/high), created_at, and updated_at. Implement endpoints: GET /tasks (with query params for filtering by status and sorting), GET /tasks/{id}, POST /tasks, PUT /tasks/{id}, DELETE /tasks/{id}. Use prepared statements for all queries. Implement proper database migrations on startup. Return paginated results with total count, page, and per_page metadata.",
+    "problem_hints": [
+      "Run CREATE TABLE IF NOT EXISTS on startup for migration. Use db.Prepare for prepared statements stored on your repository struct.",
+      "For filtering and sorting, dynamically build the WHERE clause and ORDER BY based on query params. Be careful to avoid SQL injection even with dynamic queries.",
+      "Pagination: SELECT COUNT(*) for total, then SELECT ... LIMIT ? OFFSET ?. Return metadata as { data: [...], total: N, page: X, per_page: Y }."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Database Layer",
+        "points": 25,
+        "description": "SQLite setup, migrations, prepared statements, and connection management are correct."
+      },
+      {
+        "criterion": "CRUD Endpoints",
+        "points": 25,
+        "description": "All five endpoints work correctly with proper status codes and validation."
+      },
+      {
+        "criterion": "Filtering & Sorting",
+        "points": 20,
+        "description": "Query param filtering by status and sorting by fields work. SQL injection prevented."
+      },
+      {
+        "criterion": "Pagination",
+        "points": 15,
+        "description": "Results are paginated. Metadata includes total, page, per_page."
+      },
+      {
+        "criterion": "Error Handling",
+        "points": 15,
+        "description": "404 for missing tasks. 400 for invalid input. 500 for DB errors with safe messages."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_15",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "75 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a reverse proxy server with load balancing in Go. The proxy should accept a list of backend server URLs from a config file. Implement three load balancing strategies: round-robin, least-connections, and random. The proxy should forward incoming HTTP requests to a selected backend, copy all headers, stream the response back to the client, and handle backend failures by retrying on the next available server. Implement health checking: periodically ping each backend's /health endpoint and remove unhealthy backends from the rotation. Add request/response logging middleware and support for configurable timeouts on backend connections.",
+    "problem_hints": [
+      "Use httputil.NewSingleHostReverseProxy as a base or implement forwarding manually with http.Client and copying headers.",
+      "For least-connections, track active connections per backend with atomic counters. Increment on forward, decrement when response completes.",
+      "Health checker: a goroutine per backend that ticks every N seconds and sends GET /health. Set a healthy boolean flag atomically. Load balancers skip unhealthy backends."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Proxy Forwarding",
+        "points": 20,
+        "description": "Requests forwarded correctly. Headers and body preserved. Response streamed back."
+      },
+      {
+        "criterion": "Load Balancing",
+        "points": 25,
+        "description": "All three strategies implemented and selectable. Distribution is correct."
+      },
+      {
+        "criterion": "Health Checking",
+        "points": 20,
+        "description": "Periodic health checks. Unhealthy backends removed. Healthy ones re-added."
+      },
+      {
+        "criterion": "Failure Handling",
+        "points": 20,
+        "description": "Failed backends trigger retry on next server. Proper timeout handling."
+      },
+      {
+        "criterion": "Configuration",
+        "points": 15,
+        "description": "Config file parsed. Timeouts configurable. Logging middleware works."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_16",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "80 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a distributed task scheduler that coordinates work across multiple worker nodes. The scheduler exposes an HTTP API: POST /tasks submits a task (with type, payload, scheduled_at, and max_retries), GET /tasks/{id} returns status, and GET /tasks returns all tasks with filtering. Workers poll GET /tasks/next to claim the next available task (using optimistic locking to prevent double-claiming). When a worker claims a task, it has a configurable timeout to complete it. If the timeout expires, the task is marked as failed and re-queued up to max_retries times. Track task state transitions: pending -> claimed -> running -> completed|failed. Store everything in SQLite with proper transactions.",
+    "problem_hints": [
+      "Optimistic locking: UPDATE tasks SET status='claimed', worker_id=?, claimed_at=? WHERE id=? AND status='pending' and check rows affected.",
+      "Use a background goroutine to check for tasks stuck in 'claimed' or 'running' beyond the timeout. Reset them to 'pending' if retries remain, 'failed' otherwise.",
+      "Wrap claim + return in a transaction. Use FOR UPDATE or check RowsAffected to ensure only one worker claims each task."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Task Submission & Storage",
+        "points": 20,
+        "description": "POST creates tasks in DB. All fields stored. GET endpoints return correct data."
+      },
+      {
+        "criterion": "Claiming Mechanism",
+        "points": 25,
+        "description": "Optimistic locking prevents double-claims. Only one worker gets each task."
+      },
+      {
+        "criterion": "Timeout & Retry",
+        "points": 25,
+        "description": "Stuck tasks detected and requeued. Max retries respected. Failed state is terminal."
+      },
+      {
+        "criterion": "State Machine",
+        "points": 15,
+        "description": "All state transitions are valid. No illegal transitions. History tracked."
+      },
+      {
+        "criterion": "Concurrency & Transactions",
+        "points": 15,
+        "description": "DB transactions used correctly. Concurrent workers don't cause corruption."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_17",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "85 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a real-time event streaming system using Server-Sent Events (SSE). Implement an event bus that supports multiple named channels. Clients connect via GET /events/{channel} and receive a stream of SSE-formatted events. Publishers send events via POST /events/{channel} with JSON payloads. Support event types, IDs for resumption (Last-Event-ID header), and event replay from a bounded in-memory history buffer (last 1000 events per channel). Handle client disconnections via context cancellation. Implement backpressure: if a client's send buffer is full, skip events for that client with a warning. Include a dashboard endpoint GET /dashboard that returns stats (connected clients per channel, events per second, total events).",
+    "problem_hints": [
+      "SSE format: 'id: {id}\\nevent: {type}\\ndata: {json}\\n\\n'. Set Content-Type to text/event-stream and Cache-Control: no-cache.",
+      "Use http.Flusher interface to flush after each event. Check if w implements Flusher. Use r.Context().Done() to detect client disconnect.",
+      "Store events in a circular buffer per channel. On new connection, check Last-Event-ID header and replay events after that ID before switching to live stream."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "SSE Protocol",
+        "points": 20,
+        "description": "Correct SSE format with id, event, data fields. Proper headers and flushing."
+      },
+      {
+        "criterion": "Pub/Sub Architecture",
+        "points": 20,
+        "description": "Multiple channels. Publishers and subscribers work independently. Clean routing."
+      },
+      {
+        "criterion": "Event Replay",
+        "points": 25,
+        "description": "History buffer stores last 1000 events. Last-Event-ID triggers replay of missed events."
+      },
+      {
+        "criterion": "Backpressure & Disconnect",
+        "points": 20,
+        "description": "Slow clients skipped. Disconnected clients cleaned up. No goroutine leaks."
+      },
+      {
+        "criterion": "Dashboard",
+        "points": 15,
+        "description": "Stats endpoint shows per-channel clients, events/sec, and totals."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_18",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "90 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a circuit breaker pattern as a Go library. The circuit breaker wraps function calls and monitors failures. It has three states: Closed (normal operation, tracking failure count), Open (all calls rejected immediately, returning a fast-fail error), and Half-Open (allowing a limited number of probe requests to test recovery). Configure thresholds: failure count to trip open, timeout before transitioning to half-open, and success count in half-open to close again. Implement the library as a generic wrapper that works with any function signature using generics. Provide callback hooks for state transitions. Include a comprehensive test suite that simulates failure scenarios, state transitions, concurrent access, and recovery patterns.",
+    "problem_hints": [
+      "States: Closed tracks consecutive failures. When failures >= threshold, transition to Open with a timer. When timer expires, go to HalfOpen.",
+      "Use sync.RWMutex for state access. The Execute method checks state: Open returns error immediately, Closed/HalfOpen execute the function and update counters.",
+      "For generics: type CircuitBreaker[T any] struct. Execute takes func() (T, error) and returns (T, error). State transition callbacks: OnStateChange func(from, to State)."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "State Machine",
+        "points": 25,
+        "description": "Three states implemented correctly. All transitions follow circuit breaker specification."
+      },
+      {
+        "criterion": "Configuration",
+        "points": 15,
+        "description": "Thresholds configurable. Timeout, failure count, and success count all work."
+      },
+      {
+        "criterion": "Generic API",
+        "points": 20,
+        "description": "Works with any function via generics. Clean Execute interface."
+      },
+      {
+        "criterion": "Callbacks & Observability",
+        "points": 15,
+        "description": "State transition callbacks fire correctly. Current state is queryable."
+      },
+      {
+        "criterion": "Test Suite",
+        "points": 25,
+        "description": "Tests cover all states, transitions, concurrent access, timeout recovery, and edge cases."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_19",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "100 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a file synchronization service. The server exposes an API for clients to upload files, download files, and list files with metadata (name, size, checksum, last_modified). Implement chunked file upload: large files are split into 1MB chunks, uploaded individually with chunk index, and reassembled on the server. Use SHA-256 checksums to verify integrity at both chunk and whole-file level. Support resumable uploads: if an upload is interrupted, the client can query which chunks have been received and resume from where it left off. Implement a diff endpoint that accepts a list of local file checksums and returns which files need to be uploaded, downloaded, or deleted to synchronize. Store file metadata in SQLite and file contents on disk.",
+    "problem_hints": [
+      "Store chunks in a temp directory keyed by upload ID. Track received chunks in the DB. On final assembly, concatenate chunks in order and verify the whole-file checksum.",
+      "For resumable uploads: POST /uploads to start (returns upload_id), PUT /uploads/{id}/chunks/{index} for each chunk, GET /uploads/{id}/status to see which chunks are received, POST /uploads/{id}/complete to assemble.",
+      "The diff endpoint compares client checksums against server checksums. Files only on client need upload, only on server need download, and checksums that differ need update."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Chunked Upload",
+        "points": 25,
+        "description": "Files split into chunks. Chunks uploaded individually. Assembly produces correct file."
+      },
+      {
+        "criterion": "Integrity Verification",
+        "points": 20,
+        "description": "SHA-256 checksums verified per-chunk and whole-file. Corrupt chunks rejected."
+      },
+      {
+        "criterion": "Resumable Uploads",
+        "points": 20,
+        "description": "Status endpoint reports received chunks. Client can resume from last successful chunk."
+      },
+      {
+        "criterion": "Diff & Sync",
+        "points": 20,
+        "description": "Diff endpoint correctly identifies files to upload, download, and delete."
+      },
+      {
+        "criterion": "Storage Layer",
+        "points": 15,
+        "description": "SQLite metadata and disk storage work correctly. File listing with metadata works."
+      }
+    ]
+  },
+  {
+    "problem_id": "go_20",
+    "problem_topic": "Backend Golang",
+    "problem_time_required": "110 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Create a mini container runtime in Go that demonstrates core Linux container concepts. Implement process isolation using OS-level primitives: use syscall.SysProcAttr to create new namespaces (UTS, PID, mount), set a custom hostname inside the container, mount a proc filesystem, and pivot_root to a provided filesystem directory to give the container its own root filesystem. Implement resource limiting using cgroups v2: set memory limit and CPU quota by writing to cgroup files. The runtime should accept a rootfs path and a command to execute inside the container. Include proper cleanup: unmount filesystems and remove cgroup entries on exit. Print clear status messages for each isolation step.",
+    "problem_hints": [
+      "Use cmd.SysProcAttr = &syscall.SysProcAttr{Cloneflags: syscall.CLONE_NEWUTS | syscall.CLONE_NEWPID | syscall.CLONE_NEWNS} to create namespaces.",
+      "Inside the child process: syscall.Sethostname for UTS, syscall.Mount('proc', '/proc', 'proc', 0, '') for proc mount, and pivot_root to change root.",
+      "For cgroups v2: write to /sys/fs/cgroup/{container-name}/memory.max and cpu.max. Add the child PID to cgroup.procs. Clean up by removing the cgroup directory on exit."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Namespace Isolation",
+        "points": 25,
+        "description": "UTS, PID, and mount namespaces created. Hostname is isolated. PID 1 inside container."
+      },
+      {
+        "criterion": "Filesystem Isolation",
+        "points": 25,
+        "description": "pivot_root changes root filesystem. Proc mounted. Provided rootfs used correctly."
+      },
+      {
+        "criterion": "Cgroup Limits",
+        "points": 20,
+        "description": "Memory limit and CPU quota set via cgroups v2. Limits are enforced."
+      },
+      {
+        "criterion": "Cleanup",
+        "points": 15,
+        "description": "Filesystems unmounted. Cgroup entries removed. No resource leaks on exit."
+      },
+      {
+        "criterion": "UX & Logging",
+        "points": 15,
+        "description": "Clear status messages for each step. Errors reported with context. Usage help available."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_01",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "20 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Write a GPIO driver module for an ARM Cortex-M microcontroller. Implement functions to configure a pin as input or output, set a pin high or low, read a pin state, and toggle a pin. Use memory-mapped I/O by defining register addresses as volatile pointers. The driver should accept a port base address and pin number (0-15) and manipulate the correct bits in the direction register (DDR), output register (PORT), and input register (PIN). Do not use any vendor HAL libraries.",
+    "problem_hints": [
+      "Memory-mapped registers are accessed via volatile pointers: #define GPIO_PORT_DIR (*(volatile uint32_t *)(base + 0x00)).",
+      "To set bit N: register |= (1 << N). To clear bit N: register &= ~(1 << N). To toggle: register ^= (1 << N).",
+      "Use volatile uint32_t* for all register accesses. Cast the base address and add offsets for DIR, OUT, and IN registers."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Register Access",
+        "points": 30,
+        "description": "Correct use of volatile pointers for memory-mapped I/O. Proper base + offset addressing."
+      },
+      {
+        "criterion": "Bit Manipulation",
+        "points": 30,
+        "description": "Set, clear, toggle, and read operations use correct bitwise operations on the right pin."
+      },
+      {
+        "criterion": "API Design",
+        "points": 20,
+        "description": "Clean function signatures accepting port base and pin number. Input/output config works."
+      },
+      {
+        "criterion": "Safety",
+        "points": 20,
+        "description": "Pin number bounds checking. No undefined behavior. volatile used correctly."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_02",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "25 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a circular (ring) buffer library in C for buffering UART data. The buffer should work with a fixed-size statically allocated array (no malloc). Implement functions: ring_buf_init, ring_buf_put (returns error if full), ring_buf_get (returns error if empty), ring_buf_is_full, ring_buf_is_empty, and ring_buf_count. The buffer must be safe for single-producer single-consumer use without locks by using head and tail indices correctly. Size must be a power of 2 to allow efficient modulo via bitmask.",
+    "problem_hints": [
+      "Use head for write position and tail for read position. The buffer is empty when head == tail, full when ((head + 1) & mask) == tail.",
+      "Power-of-2 size allows replacing modulo with bitmask: index & (size - 1) instead of index % size.",
+      "For SPSC safety, only the producer modifies head and only the consumer modifies tail. No lock needed if using volatile or appropriate memory barriers."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Core Operations",
+        "points": 30,
+        "description": "Put, get, full, empty, and count all work correctly."
+      },
+      {
+        "criterion": "Circular Logic",
+        "points": 25,
+        "description": "Wrap-around works. Bitmask used for efficient modulo. No off-by-one errors."
+      },
+      {
+        "criterion": "Static Allocation",
+        "points": 20,
+        "description": "No dynamic memory. Fixed-size array. Power-of-2 enforcement."
+      },
+      {
+        "criterion": "SPSC Safety",
+        "points": 25,
+        "description": "Safe for single-producer single-consumer without locks. Correct index discipline."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_03",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "25 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Write a software debouncing module for mechanical push buttons. Implement a debounce algorithm that samples a button's GPIO state at regular intervals (e.g., every 5ms via a timer tick) and only reports a state change after the signal has been stable for a configurable number of consecutive samples (e.g., 4). The module should support multiple buttons (up to 8) tracked simultaneously via a struct array. Provide callbacks for button press and release events. Detect and report both short press and long press (held > 1 second).",
+    "problem_hints": [
+      "For each button, maintain a history counter. On each sample, if the raw state matches the last stable state, reset counter. If different, increment counter.",
+      "When counter reaches the threshold, update the stable state and fire the appropriate callback (press or release).",
+      "For long press detection, start a timer when a press is detected. If the button is still held after 1 second worth of samples, fire the long-press callback."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Debounce Algorithm",
+        "points": 30,
+        "description": "Consecutive-sample algorithm correctly filters noise. Configurable threshold."
+      },
+      {
+        "criterion": "Multi-Button Support",
+        "points": 20,
+        "description": "Up to 8 buttons tracked independently in a struct array."
+      },
+      {
+        "criterion": "Event Callbacks",
+        "points": 25,
+        "description": "Press and release callbacks fire at correct times. No false triggers."
+      },
+      {
+        "criterion": "Long Press Detection",
+        "points": 25,
+        "description": "Long press detected after configurable hold time. Distinguishes short vs long."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_04",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a UART transmit and receive driver using polling and interrupt-driven modes. For polling mode, implement uart_putc that spins on the transmit-ready flag and uart_getc that spins on the receive-ready flag. For interrupt mode, implement a TX ISR that pulls from a transmit ring buffer and an RX ISR that pushes into a receive ring buffer. Provide uart_init to configure baud rate by calculating the divisor from a given system clock and desired baud rate. Support 8N1 configuration (8 data bits, no parity, 1 stop bit).",
+    "problem_hints": [
+      "Baud rate divisor = system_clock / (16 * baud_rate) for a standard 16x oversampling UART.",
+      "In interrupt mode, the TX ISR checks the ring buffer: if data available, write to TX data register; if empty, disable TX interrupt.",
+      "The RX ISR reads from the RX data register and pushes into the RX ring buffer. If the buffer is full, either drop the byte or set an overflow flag."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Polling Mode",
+        "points": 20,
+        "description": "uart_putc and uart_getc correctly poll status flags and transfer data."
+      },
+      {
+        "criterion": "Interrupt Mode",
+        "points": 30,
+        "description": "TX and RX ISRs correctly interact with ring buffers and hardware registers."
+      },
+      {
+        "criterion": "Baud Rate Config",
+        "points": 20,
+        "description": "Divisor calculated correctly. uart_init sets up registers for 8N1."
+      },
+      {
+        "criterion": "Buffer Integration",
+        "points": 15,
+        "description": "Ring buffers used for ISR data. No data loss under normal conditions."
+      },
+      {
+        "criterion": "Volatile & ISR Safety",
+        "points": 15,
+        "description": "Shared variables are volatile. ISRs are kept short. Critical sections handled."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_05",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Create a timer/counter driver module that configures a hardware timer for three modes: one-shot delay, periodic interrupt, and PWM output. For one-shot mode, configure the timer to fire a single interrupt after a specified number of milliseconds. For periodic mode, fire an interrupt repeatedly at a configurable frequency. For PWM mode, generate a square wave with configurable frequency and duty cycle (0-100%). Implement a millisecond tick counter using the periodic mode that provides a millis() function similar to Arduino. All timing calculations should derive from a configurable system clock frequency.",
+    "problem_hints": [
+      "Timer count = (system_clock / prescaler) * desired_period_seconds. Choose prescaler to keep count within the timer's bit width.",
+      "For PWM, set the period register for frequency and the compare register for duty cycle: compare = period * duty_cycle / 100.",
+      "millis() reads a volatile uint32_t counter incremented by a 1ms periodic timer ISR. Make the counter volatile and handle 32-bit overflow."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "One-Shot Mode",
+        "points": 20,
+        "description": "Timer fires once after specified delay. ISR executes callback. Timer stops after."
+      },
+      {
+        "criterion": "Periodic Mode",
+        "points": 25,
+        "description": "Timer fires repeatedly at correct frequency. ISR callback invoked each time."
+      },
+      {
+        "criterion": "PWM Generation",
+        "points": 25,
+        "description": "Correct frequency and duty cycle. Duty cycle adjustable 0-100%."
+      },
+      {
+        "criterion": "millis() Function",
+        "points": 15,
+        "description": "Millisecond counter is accurate and handles overflow."
+      },
+      {
+        "criterion": "Clock Calculations",
+        "points": 15,
+        "description": "All timing derived from system clock. Prescaler selection is correct."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_06",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a finite state machine (FSM) framework in C. Define a state machine struct that holds the current state, a table of state-transition rules, and optional entry/exit action callbacks per state. Transitions are triggered by events. Each rule specifies: current_state, event, next_state, guard condition (function pointer returning bool), and transition action. Implement fsm_init, fsm_dispatch(event), and fsm_get_state. Demonstrate the framework by modeling a traffic light controller with states (Red, Green, Yellow) and events (timer_expired, emergency_stop, emergency_clear).",
+    "problem_hints": [
+      "The transition table is an array of structs: { state_t from, event_t event, state_t to, guard_fn guard, action_fn action }.",
+      "fsm_dispatch loops through the table looking for a matching (current_state, event) pair where the guard returns true (or is NULL).",
+      "On transition: call current state's exit action, call the transition action, update current state, call new state's entry action."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "FSM Framework",
+        "points": 30,
+        "description": "Generic framework with state, event, transition table, guards, and actions."
+      },
+      {
+        "criterion": "Dispatch Logic",
+        "points": 25,
+        "description": "Event dispatch finds correct transition. Guard conditions evaluated. Actions fire in order."
+      },
+      {
+        "criterion": "Entry/Exit Actions",
+        "points": 20,
+        "description": "State entry and exit callbacks fire during transitions."
+      },
+      {
+        "criterion": "Traffic Light Demo",
+        "points": 25,
+        "description": "All states and transitions modeled correctly. Emergency events work."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_07",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Write a CRC-16 and CRC-32 calculation library optimized for embedded systems. Implement both a bit-by-bit calculation (minimal RAM) and a lookup-table-based calculation (faster, uses 256-entry or 512-byte table). The lookup table should be generated at compile time using a const array or a generation function called at init. Support CRC-16-CCITT (polynomial 0x1021) and CRC-32 (polynomial 0x04C11DB7). Provide functions to calculate CRC over a byte buffer and an incremental API that can process data in chunks. Verify results against known test vectors (e.g., CRC-32 of the string '123456789' should be 0xCBF43926).",
+    "problem_hints": [
+      "Bit-by-bit: for each bit, shift CRC left. If the shifted-out bit XOR the input bit is 1, XOR CRC with the polynomial.",
+      "Table-based: crc = (crc << 8) ^ table[((crc >> 8) ^ byte) & 0xFF] for CRC-16. Pre-compute table[i] by running the bit-by-bit algorithm for byte value i.",
+      "Incremental API: pass the running CRC as a parameter. crc_update(crc, data, len) returns the updated CRC. Final CRC may need XOR with 0xFFFFFFFF for CRC-32."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "CRC Algorithms",
+        "points": 30,
+        "description": "Both bit-by-bit and table-based methods produce correct results for CRC-16 and CRC-32."
+      },
+      {
+        "criterion": "Lookup Table",
+        "points": 20,
+        "description": "Table generated correctly. Stored in const/ROM. Matches expected values."
+      },
+      {
+        "criterion": "Incremental API",
+        "points": 25,
+        "description": "Chunked processing produces same result as single-buffer calculation."
+      },
+      {
+        "criterion": "Test Vectors",
+        "points": 25,
+        "description": "Known test vectors pass. Both CRC-16-CCITT and CRC-32 verified."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_08",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "50 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement an SPI master driver that supports full-duplex communication with configurable clock polarity (CPOL), clock phase (CPHA), bit order (MSB/LSB first), and clock speed via prescaler. Provide functions for: spi_init(config), spi_transfer_byte (sends and receives one byte simultaneously), spi_transfer_buffer (sends/receives an array), and chip select management (assert/deassert GPIO). Implement a higher-level function to communicate with a specific SPI device: read the WHO_AM_I register of an accelerometer by sending the register address with the read bit set and clocking in the response byte. Handle SPI bus arbitration if multiple devices share the bus.",
+    "problem_hints": [
+      "CPOL sets idle clock level. CPHA sets sample edge. Mode 0 = CPOL=0,CPHA=0 (sample on rising, shift on falling).",
+      "For full-duplex: write TX data to data register, wait for transfer complete flag, read RX data register. This happens simultaneously.",
+      "Bus arbitration: use a mutex or busy flag. Assert CS for the target device, perform transfers, then deassert CS and release the bus."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "SPI Configuration",
+        "points": 25,
+        "description": "CPOL, CPHA, bit order, and clock prescaler all configurable and set correctly in registers."
+      },
+      {
+        "criterion": "Transfer Functions",
+        "points": 25,
+        "description": "Byte and buffer transfers work in full-duplex. TX and RX data correct."
+      },
+      {
+        "criterion": "Chip Select",
+        "points": 15,
+        "description": "CS assert/deassert managed correctly per transaction."
+      },
+      {
+        "criterion": "Device Communication",
+        "points": 20,
+        "description": "Accelerometer WHO_AM_I read implemented correctly with read bit protocol."
+      },
+      {
+        "criterion": "Bus Arbitration",
+        "points": 15,
+        "description": "Multiple devices can share the bus without conflicts."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_09",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "50 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build an ADC driver with DMA support for continuous multi-channel sampling. Configure the ADC to scan multiple channels (e.g., 4 analog inputs) in sequence. Set up a DMA transfer to automatically move ADC conversion results into a memory buffer without CPU intervention. Use double-buffering (ping-pong): while DMA fills one buffer, the application processes the other. Implement a callback that fires when each buffer is full. Apply a simple digital low-pass filter (exponential moving average) to the raw samples. Calculate and expose the filtered values in millivolts assuming a 3.3V reference and 12-bit ADC resolution.",
+    "problem_hints": [
+      "ADC scan mode converts channels in sequence. DMA circular mode continuously fills the buffer. Half-transfer and transfer-complete interrupts support double-buffering.",
+      "Exponential moving average: filtered = alpha * new_sample + (1 - alpha) * filtered. Use fixed-point: filtered = (alpha * new + (256 - alpha) * filtered) >> 8 with alpha as uint8_t.",
+      "Millivolt conversion: mv = (raw * 3300) / 4095 for 12-bit ADC with 3.3V reference. Be careful with integer overflow: use uint32_t for the multiplication."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "ADC Configuration",
+        "points": 20,
+        "description": "Multi-channel scan mode configured correctly. Channels convert in sequence."
+      },
+      {
+        "criterion": "DMA Setup",
+        "points": 25,
+        "description": "DMA transfers ADC results to memory. Circular mode. No CPU involvement in transfers."
+      },
+      {
+        "criterion": "Double Buffering",
+        "points": 25,
+        "description": "Ping-pong buffers work. Processing and filling happen concurrently. Callbacks fire correctly."
+      },
+      {
+        "criterion": "Digital Filter",
+        "points": 15,
+        "description": "EMA filter applied correctly using fixed-point math. Smoothing is effective."
+      },
+      {
+        "criterion": "Voltage Conversion",
+        "points": 15,
+        "description": "Raw to millivolt conversion is accurate. No integer overflow."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_10",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement an I2C master driver that supports standard mode (100kHz) and fast mode (400kHz). Implement the full I2C protocol: generating start/repeated-start conditions, sending address bytes with R/W bit, transmitting and receiving data bytes, sending ACK/NACK, and generating stop conditions. Build higher-level functions: i2c_write_register(device_addr, reg_addr, data, len) and i2c_read_register(device_addr, reg_addr, buffer, len) that handle the complete transaction sequence. Implement bus error detection (arbitration lost, NACK received) with proper recovery. Support clock stretching by checking the SCL line state. Demonstrate by reading temperature from a simulated I2C temperature sensor.",
+    "problem_hints": [
+      "Write register: START, send device_addr+W, send reg_addr, send data bytes, STOP. Read register: START, send device_addr+W, send reg_addr, REPEATED START, send device_addr+R, read data bytes with ACK (NACK on last byte), STOP.",
+      "Check the ACK bit after each byte transmission. If NACK received, abort the transaction and return an error code.",
+      "Clock stretching: after releasing SCL, wait until SCL actually goes high (the slave may hold it low). Add a timeout to prevent infinite wait."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Protocol Implementation",
+        "points": 25,
+        "description": "Start, stop, repeated start, ACK/NACK all generated correctly per I2C spec."
+      },
+      {
+        "criterion": "Read/Write Transactions",
+        "points": 25,
+        "description": "Register read and write sequences are correct. Multi-byte transfers work."
+      },
+      {
+        "criterion": "Error Handling",
+        "points": 20,
+        "description": "NACK detection, arbitration lost, and bus error recovery implemented."
+      },
+      {
+        "criterion": "Speed Configuration",
+        "points": 15,
+        "description": "Standard and fast mode timing configured correctly. Clock stretching handled."
+      },
+      {
+        "criterion": "Sensor Demo",
+        "points": 15,
+        "description": "Temperature read from simulated sensor with correct byte order and conversion."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_11",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Design and implement a cooperative task scheduler for a bare-metal embedded system (no RTOS). Each task is a function pointer with a configurable period in milliseconds. The scheduler maintains a task table (max 16 tasks) and runs tasks when their period has elapsed based on a system tick counter. Implement scheduler_init, scheduler_add_task(task_fn, period_ms, priority), scheduler_remove_task, and scheduler_run (the main loop). Higher-priority tasks run first when multiple tasks are due. Include an idle hook that executes when no tasks are ready. Track worst-case execution time per task and provide a scheduler_stats function.",
+    "problem_hints": [
+      "Each task entry stores: function pointer, period, last_run tick, priority, and wcet fields. scheduler_run loops forever checking which tasks are due.",
+      "A task is due when (current_tick - last_run) >= period. Sort or scan by priority to run the highest-priority due task first.",
+      "For WCET tracking, read the tick counter before and after each task call. Store the max duration seen for each task."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Task Management",
+        "points": 25,
+        "description": "Add and remove tasks correctly. Max 16 enforced. Task table is well-structured."
+      },
+      {
+        "criterion": "Scheduling Logic",
+        "points": 30,
+        "description": "Tasks fire at correct periods. Priority ordering works. No task starvation."
+      },
+      {
+        "criterion": "Timing Accuracy",
+        "points": 20,
+        "description": "Period tracking based on tick counter is accurate. Drift is minimized."
+      },
+      {
+        "criterion": "Stats & Idle",
+        "points": 25,
+        "description": "WCET tracked per task. Idle hook runs when no tasks due. Stats function works."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_12",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a power management module that transitions a microcontroller between four power modes: Active, Idle, Sleep, and Deep Sleep. Each mode has different wake-up sources and latencies. In Idle mode, halt the CPU but keep peripherals running. In Sleep mode, disable most clocks but keep the RTC and one GPIO interrupt for wake-up. In Deep Sleep, only the RTC continues. Before entering a low-power mode, save peripheral state to a retention struct. On wake-up, restore the state and reinitialize disabled peripherals. Implement an API that accepts a minimum sleep duration and automatically selects the deepest sleep mode that can wake up in time. Track total time spent in each mode.",
+    "problem_hints": [
+      "Create a retention struct that stores the configuration registers of peripherals that lose state in deep sleep.",
+      "Mode selection: if sleep_duration < idle_threshold, use Idle. If < sleep_threshold, use Sleep. Otherwise Deep Sleep. Account for wake-up latency.",
+      "Use the RTC alarm to schedule wake-up. Configure the GPIO interrupt for external wake-up. After wake-up, check the wake-up source register to determine what woke the system."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Power Modes",
+        "points": 25,
+        "description": "All four modes implemented with correct clock/peripheral management per mode."
+      },
+      {
+        "criterion": "State Save/Restore",
+        "points": 25,
+        "description": "Peripheral state saved before sleep and restored after wake-up correctly."
+      },
+      {
+        "criterion": "Auto Mode Selection",
+        "points": 25,
+        "description": "Deepest suitable mode chosen based on duration and wake-up latency."
+      },
+      {
+        "criterion": "Wake-Up & Tracking",
+        "points": 25,
+        "description": "Wake-up sources configured. Time tracking per mode is accurate."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_13",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a command-line interface (CLI) shell over UART for an embedded system. The shell should read characters from UART, support line editing (backspace, cursor movement with arrow keys), maintain a command history buffer (last 8 commands, navigable with up/down arrows), and parse commands with arguments. Implement a command registry where modules can register commands with a name, help text, and handler function. Include built-in commands: 'help' (lists all commands), 'info' (prints system info like uptime and free stack), and 'reboot'. Handle escape sequences for arrow keys (ESC [ A/B/C/D). Support tab completion for command names.",
+    "problem_hints": [
+      "Arrow keys send 3-byte escape sequences: ESC (0x1B), '[', then A/B/C/D. Detect ESC and read the next two bytes to determine the key.",
+      "Command history is a circular buffer of strings. Up arrow moves back in history, down arrow moves forward. Copy the history entry into the current line buffer.",
+      "Tab completion: on TAB, find all registered commands that start with the current input. If one match, complete it. If multiple, print all matches."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Line Input",
+        "points": 20,
+        "description": "Character-by-character input with echo. Backspace and line editing work."
+      },
+      {
+        "criterion": "Command Parsing",
+        "points": 20,
+        "description": "Commands split into name and arguments correctly. Registry lookup works."
+      },
+      {
+        "criterion": "History",
+        "points": 20,
+        "description": "Up/down arrows navigate history. Circular buffer stores last 8 commands."
+      },
+      {
+        "criterion": "Tab Completion",
+        "points": 20,
+        "description": "Tab completes unique matches. Shows all options for ambiguous matches."
+      },
+      {
+        "criterion": "Built-in Commands",
+        "points": 20,
+        "description": "help, info, and reboot work correctly. Command registration is clean."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_14",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a flash memory storage driver with wear leveling for storing configuration data on an embedded system. The flash has 4KB sectors that must be erased before writing (erase sets all bits to 1, write can only clear bits to 0). Implement a simple log-structured storage: new writes append to the current sector with a header (key, length, sequence number). To read a key, scan for the latest entry with that key. When a sector is full, compact it by copying only the latest value of each key to a fresh sector and erasing the old one. Track erase counts per sector and rotate to the least-erased sector for wear leveling. Support at least 32 unique keys with values up to 64 bytes each.",
+    "problem_hints": [
+      "Each entry header: 1 byte key_id, 1 byte length, 2 byte sequence number, then data bytes. A key_id of 0xFF means empty (erased) space.",
+      "To find the latest value: scan all entries, tracking the highest sequence number seen for each key.",
+      "Compaction: allocate a new sector, write only the latest entry per key, erase the old sector, update the active sector pointer. Increment the erased sector's wear count."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Flash Abstraction",
+        "points": 20,
+        "description": "Sector erase and byte-write semantics respected. No invalid operations."
+      },
+      {
+        "criterion": "Log-Structured Storage",
+        "points": 25,
+        "description": "Append writes with headers. Read scans for latest sequence number. Correct results."
+      },
+      {
+        "criterion": "Compaction",
+        "points": 25,
+        "description": "Compaction copies latest values to new sector. Old sector erased. No data loss."
+      },
+      {
+        "criterion": "Wear Leveling",
+        "points": 15,
+        "description": "Erase counts tracked. Least-worn sector chosen for new writes."
+      },
+      {
+        "criterion": "Edge Cases",
+        "points": 15,
+        "description": "Handles full sectors, power loss during compaction (basic), and max keys/sizes."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_15",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "65 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Create a lightweight memory pool allocator for an embedded RTOS environment where malloc/free are not available or too slow. Implement fixed-size block pools: pool_create(block_size, num_blocks) pre-allocates a static memory region divided into equal blocks. pool_alloc returns a free block in O(1) time, pool_free returns it in O(1) time. Use a free-list linked through the free blocks themselves (the first bytes of a free block store the pointer to the next free block). Support multiple pools of different sizes. Implement a multi-pool allocator that selects the smallest pool whose block size fits the request. Add debug features: detect double-free, detect buffer overflow via sentinel bytes, and report pool utilization stats.",
+    "problem_hints": [
+      "Initialize the free list by linking all blocks: each block's first sizeof(void*) bytes point to the next block. The last block points to NULL.",
+      "pool_alloc pops the head of the free list. pool_free pushes to the head. Both are O(1). Use a critical section or disable interrupts for thread safety.",
+      "Sentinel bytes: write a magic pattern (e.g., 0xDEADBEEF) after each block's usable area. On free, check if the sentinel is intact. If not, overflow detected."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Pool Implementation",
+        "points": 25,
+        "description": "Fixed-size blocks allocated from static memory. Free list works correctly. O(1) alloc/free."
+      },
+      {
+        "criterion": "Multi-Pool Allocator",
+        "points": 25,
+        "description": "Multiple pool sizes. Best-fit selection. Fallback when preferred pool is empty."
+      },
+      {
+        "criterion": "Thread Safety",
+        "points": 20,
+        "description": "Critical sections protect free list. Safe for use from multiple RTOS tasks."
+      },
+      {
+        "criterion": "Debug Features",
+        "points": 30,
+        "description": "Double-free detection, overflow sentinels, and utilization stats all work."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_16",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "75 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a bootloader for an ARM Cortex-M microcontroller. The bootloader resides in the first 16KB of flash and the application starts at 0x4000. On reset, the bootloader checks if a firmware update is available (flag in a dedicated flash page). If no update, it jumps to the application by reading the application's vector table (initial stack pointer at 0x4000 and reset handler at 0x4004). If an update is available, receive the new firmware image over UART using XMODEM protocol (128-byte packets with CRC-16 checksum). Verify the complete image with a CRC-32 before writing to application flash. Erase only the necessary sectors before programming. Implement a rollback mechanism: if the new firmware fails to boot (detected via a watchdog timeout), restore the previous firmware from a backup region.",
+    "problem_hints": [
+      "To jump to app: set MSP to value at 0x4000, then call the function pointer at 0x4004. Disable interrupts and reset peripherals first.",
+      "XMODEM: wait for NAK to start, receive SOH + block_num + ~block_num + 128 data bytes + CRC-16. Send ACK for good packets, NAK for bad.",
+      "Rollback: before writing new firmware, copy current app to a backup flash region. Set a 'boot_attempt' counter in flash. If the counter exceeds threshold (app didn't clear it), restore from backup."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Application Jump",
+        "points": 20,
+        "description": "Correctly reads vector table and jumps to app. MSP set. Interrupts disabled before jump."
+      },
+      {
+        "criterion": "XMODEM Reception",
+        "points": 25,
+        "description": "Full XMODEM protocol with CRC-16. Handles retries, timeouts, and cancellation."
+      },
+      {
+        "criterion": "Flash Programming",
+        "points": 20,
+        "description": "Correct erase-then-write sequence. Only necessary sectors erased. CRC-32 verified before commit."
+      },
+      {
+        "criterion": "Rollback Mechanism",
+        "points": 20,
+        "description": "Backup created. Boot counter tracks attempts. Automatic rollback on failure."
+      },
+      {
+        "criterion": "Safety",
+        "points": 15,
+        "description": "Bootloader cannot be overwritten. Power loss during update is recoverable."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_17",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "80 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Design and implement a priority-based preemptive task scheduler as a minimal RTOS kernel. Support up to 8 tasks, each with its own stack space. Implement context switching using PendSV exception on ARM Cortex-M: save registers (R4-R11) to the current task's stack, switch to the next task's stack, and restore registers. Each task has a priority level. The highest-priority ready task runs. Implement a SysTick handler for time slicing among equal-priority tasks. Provide kernel APIs: task_create(function, stack, stack_size, priority), task_delay(ticks), mutex_create, mutex_lock (with priority inheritance to prevent priority inversion), and mutex_unlock. Implement the idle task that runs when no other tasks are ready.",
+    "problem_hints": [
+      "PendSV saves R4-R11 manually. R0-R3, R12, LR, PC, xPSR are saved automatically by the exception entry. Store/restore PSP for each task.",
+      "Task states: READY, RUNNING, BLOCKED, DELAYED. task_delay moves task to DELAYED with a wake-up tick count. SysTick decrements delays and moves tasks back to READY.",
+      "Priority inheritance: when a low-priority task holds a mutex that a high-priority task wants, temporarily boost the holder's priority to the waiter's level. Restore on unlock."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Context Switching",
+        "points": 25,
+        "description": "PendSV correctly saves and restores R4-R11 and PSP. Tasks resume correctly."
+      },
+      {
+        "criterion": "Priority Scheduling",
+        "points": 25,
+        "description": "Highest-priority ready task runs. Time-slicing for equal priority via SysTick."
+      },
+      {
+        "criterion": "Task Management",
+        "points": 20,
+        "description": "task_create, task_delay work. Task states tracked correctly. Idle task runs when appropriate."
+      },
+      {
+        "criterion": "Mutex with Priority Inheritance",
+        "points": 20,
+        "description": "Mutex lock/unlock work. Priority inheritance prevents inversion. Priority restored on unlock."
+      },
+      {
+        "criterion": "Stack Management",
+        "points": 10,
+        "description": "Each task has dedicated stack. Initial stack frame set up correctly for first context switch."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_18",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "85 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a real-time digital signal processing pipeline on an embedded system. The pipeline consists of: (1) an ADC ISR that fills a double-buffered input at 44.1kHz sample rate, (2) a 64-tap FIR low-pass filter with configurable coefficients, (3) a fast 256-point FFT (radix-2 decimation-in-time) using fixed-point Q15 arithmetic, and (4) a peak detector that identifies the dominant frequency in the spectrum. All DSP operations must use fixed-point math (no floating point). The FIR filter should use a circular buffer to avoid shifting the sample array. Optimize the FFT with bit-reversal permutation and butterfly operations. Output the dominant frequency and its magnitude via UART at 10Hz update rate.",
+    "problem_hints": [
+      "Q15 format: multiply two Q15 values and shift right 15. Use int32_t for intermediate results to avoid overflow: result = (int32_t)a * b >> 15.",
+      "FIR with circular buffer: maintain a write index. On new sample, write at index, then compute output = sum(coeffs[i] * buffer[(write_index - i) & mask]). Bitmask for power-of-2 buffer.",
+      "FFT butterfly: for each stage s, step = 2^s, half = step/2. For each group, apply: temp = twiddle * odd; even' = even + temp; odd' = even - temp. Pre-compute twiddle factors as Q15."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "ADC Double Buffering",
+        "points": 15,
+        "description": "ISR fills buffers at 44.1kHz. Ping-pong works. No data loss."
+      },
+      {
+        "criterion": "FIR Filter",
+        "points": 25,
+        "description": "64-tap FIR with circular buffer. Fixed-point arithmetic correct. Coefficients configurable."
+      },
+      {
+        "criterion": "FFT Implementation",
+        "points": 30,
+        "description": "256-point radix-2 FFT in Q15. Bit-reversal and butterfly operations correct."
+      },
+      {
+        "criterion": "Peak Detection",
+        "points": 15,
+        "description": "Dominant frequency identified correctly from FFT magnitude spectrum."
+      },
+      {
+        "criterion": "Fixed-Point Correctness",
+        "points": 15,
+        "description": "All operations use Q15. No overflow. Results accurate within acceptable tolerance."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_19",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "90 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a lightweight TCP/IP stack for an embedded system with an Ethernet MAC peripheral. Implement the following layers: (1) Ethernet frame parsing and construction (source/destination MAC, EtherType), (2) ARP protocol (request/reply, ARP cache table with timeout), (3) IPv4 (header construction/parsing, checksum calculation, basic routing to default gateway), (4) ICMP echo (respond to pings), and (5) a minimal UDP layer (send and receive datagrams on configurable ports with a callback-based API). All buffers must be statically allocated from a fixed-size buffer pool. Implement the IP header checksum using the ones-complement sum algorithm. The stack should handle at least 4 concurrent UDP sockets.",
+    "problem_hints": [
+      "IP checksum: sum all 16-bit words of the header, fold carries (add high 16 bits to low 16 bits), then invert. Do not include the checksum field itself (set to 0 before calculating).",
+      "ARP: on outgoing packet, check ARP cache for destination MAC. If not found, queue the packet, send ARP request, and transmit the queued packet when the reply arrives.",
+      "Buffer pool: pre-allocate an array of fixed-size (e.g., 1536 byte) buffers. Alloc/free use a free list. Each layer adds/strips its header by adjusting a data pointer within the buffer."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Ethernet Layer",
+        "points": 15,
+        "description": "Frame parsing and construction correct. MAC addresses handled. EtherType dispatching works."
+      },
+      {
+        "criterion": "ARP",
+        "points": 20,
+        "description": "ARP request/reply work. Cache stores entries with timeout. Queued packets sent after resolution."
+      },
+      {
+        "criterion": "IPv4 & ICMP",
+        "points": 25,
+        "description": "IP headers correct with valid checksum. ICMP echo replies work. Basic routing to gateway."
+      },
+      {
+        "criterion": "UDP Layer",
+        "points": 25,
+        "description": "Send/receive datagrams. Port-based demux. Callback API. 4 concurrent sockets supported."
+      },
+      {
+        "criterion": "Buffer Management",
+        "points": 15,
+        "description": "Static buffer pool. No dynamic allocation. Zero-copy header manipulation where possible."
+      }
+    ]
+  },
+  {
+    "problem_id": "embedded_c_20",
+    "problem_topic": "Embedded C",
+    "problem_time_required": "120 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a motor control system that implements Field-Oriented Control (FOC) for a three-phase BLDC motor. Implement: (1) Clarke transform to convert three-phase currents (Ia, Ib, Ic) to two-phase stationary frame (Ialpha, Ibeta), (2) Park transform to convert stationary frame to rotating frame (Id, Iq) using the rotor electrical angle, (3) dual PI controllers for Id (flux) and Iq (torque) current loops, (4) inverse Park transform to convert Vd, Vq back to Valpha, Vbeta, (5) Space Vector PWM (SVPWM) to generate three-phase PWM duty cycles from Valpha, Vbeta. The control loop must run at 20kHz from a timer ISR. Implement a simple six-step rotor position estimator using Hall sensor inputs. Use fixed-point Q15 math for all trigonometric calculations with a lookup table for sin/cos.",
+    "problem_hints": [
+      "Clarke: Ialpha = Ia; Ibeta = (Ia + 2*Ib) / sqrt(3). Park: Id = Ialpha*cos(theta) + Ibeta*sin(theta); Iq = -Ialpha*sin(theta) + Ibeta*cos(theta).",
+      "PI controller: output = Kp * error + Ki * integral. Clamp integral to prevent windup. Kp and Ki are in Q15 fixed-point.",
+      "SVPWM: determine the sector from Valpha/Vbeta angle, calculate T1 and T2 times for adjacent vectors, distribute the null vector time equally. Convert to duty cycles for three half-bridges."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Clarke/Park Transforms",
+        "points": 20,
+        "description": "Forward and inverse transforms mathematically correct in fixed-point."
+      },
+      {
+        "criterion": "PI Current Controllers",
+        "points": 20,
+        "description": "Id and Iq loops regulate correctly. Anti-windup implemented. Tunable gains."
+      },
+      {
+        "criterion": "SVPWM",
+        "points": 25,
+        "description": "Sector identification, vector timing, and duty cycle calculation are correct."
+      },
+      {
+        "criterion": "Control Loop Timing",
+        "points": 15,
+        "description": "20kHz ISR execution. All calculations complete within the ISR period."
+      },
+      {
+        "criterion": "Position Estimation",
+        "points": 20,
+        "description": "Hall sensor decoding gives correct electrical angle. Sin/cos lookup table accurate."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_01",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "25 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a basic Block struct and a Blockchain struct in Rust. Each Block contains an index, timestamp, data string, previous block hash, nonce, and its own hash. Implement a calculate_hash method that concatenates all fields and produces a SHA-256 hash. The Blockchain struct holds a Vec<Block> and provides methods: new() (creates a genesis block), add_block(data), and is_valid() (verifies each block's hash and the chain linkage). Use the sha2 crate for hashing.",
+    "problem_hints": [
+      "Use the sha2 crate: Sha256::new(), hasher.update(data), hasher.finalize(). Convert the result to a hex string with format!.",
+      "Genesis block has index 0, previous_hash of '0', and arbitrary data. Each new block's previous_hash must match the last block's hash.",
+      "is_valid iterates from block 1, checking: block.hash == block.calculate_hash() AND block.previous_hash == chain[i-1].hash."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Block Structure",
+        "points": 25,
+        "description": "Block struct has all required fields. calculate_hash produces correct SHA-256 output."
+      },
+      {
+        "criterion": "Chain Management",
+        "points": 30,
+        "description": "Genesis block created. add_block links correctly. Chain grows properly."
+      },
+      {
+        "criterion": "Validation",
+        "points": 25,
+        "description": "is_valid checks hash integrity and chain linkage. Detects tampering."
+      },
+      {
+        "criterion": "Rust Idioms",
+        "points": 20,
+        "description": "Proper ownership, borrows, and derive macros. No unnecessary clones."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_02",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a Merkle Tree in Rust for verifying transaction integrity. Given a list of transaction hashes (as byte arrays), build a binary Merkle tree where each leaf is a transaction hash and each internal node is the SHA-256 hash of its two children concatenated. If the number of leaves is odd, duplicate the last leaf. Implement methods: new(transactions), root() returning the Merkle root hash, and generate_proof(index) that returns the sibling hashes needed to verify a specific transaction. Implement a verify_proof(leaf, proof, root) function that recomputes the root from the leaf and proof.",
+    "problem_hints": [
+      "Build bottom-up: start with leaf hashes, then pair them and hash each pair. Repeat until one root remains.",
+      "A proof is a Vec<(Hash, Side)> where Side is Left or Right, indicating which side the sibling is on at each level.",
+      "Verification: start with the leaf hash. For each proof element, concatenate (sibling, current) or (current, sibling) based on Side, then hash. Final result should match root."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Tree Construction",
+        "points": 30,
+        "description": "Merkle tree built correctly. Odd leaf count handled by duplication. Root is correct."
+      },
+      {
+        "criterion": "Proof Generation",
+        "points": 25,
+        "description": "generate_proof returns correct sibling hashes with correct left/right orientation."
+      },
+      {
+        "criterion": "Proof Verification",
+        "points": 25,
+        "description": "verify_proof reconstructs the root from leaf + proof. Matches expected root."
+      },
+      {
+        "criterion": "Rust Quality",
+        "points": 20,
+        "description": "Proper use of enums, Vec, slices. No unnecessary allocations. Clean API."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_03",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "30 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a simple cryptocurrency wallet in Rust that generates Ed25519 key pairs, derives addresses from public keys, and signs/verifies messages. Use the ed25519-dalek crate. Implement: generate_keypair() from a random seed, derive_address(public_key) by taking the first 20 bytes of the SHA-256 hash of the public key and encoding as hex, sign_message(secret_key, message) returning a signature, and verify_signature(public_key, message, signature) returning a boolean. Add a function to export/import keys as hex strings. Write tests for the sign-then-verify round trip.",
+    "problem_hints": [
+      "Use ed25519_dalek::SigningKey::generate(&mut OsRng) to create a key pair. The VerifyingKey is derived from SigningKey.",
+      "Address derivation: hash the public key bytes with SHA-256, take [0..20], and hex-encode. This is similar to how Ethereum derives addresses.",
+      "For hex export: use the hex crate or format! with {:02x}. For import: decode hex string to bytes, then construct SigningKey::from_bytes."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Key Generation",
+        "points": 25,
+        "description": "Ed25519 keypair generated correctly using secure randomness."
+      },
+      {
+        "criterion": "Address Derivation",
+        "points": 20,
+        "description": "SHA-256 of public key, truncated to 20 bytes, hex encoded. Deterministic."
+      },
+      {
+        "criterion": "Sign/Verify",
+        "points": 30,
+        "description": "Messages signed correctly. Valid signatures verify. Invalid signatures rejected."
+      },
+      {
+        "criterion": "Import/Export",
+        "points": 15,
+        "description": "Keys serialized to hex and deserialized back correctly."
+      },
+      {
+        "criterion": "Tests",
+        "points": 10,
+        "description": "Round-trip test passes. Invalid signature test passes."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_04",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a Proof of Work mining algorithm in Rust. Given a block header (previous hash, transactions root, timestamp, nonce), find a nonce such that the SHA-256 hash of the serialized header starts with a configurable number of leading zero bits (difficulty). Implement a mine(header, difficulty) function that increments the nonce until the target is met, returning the valid nonce and hash. Also implement a verify_pow(header, nonce, difficulty) function. Measure and display the hash rate (hashes per second). Support adjustable difficulty and demonstrate how increasing difficulty exponentially increases mining time.",
+    "problem_hints": [
+      "Leading zero bits: the first difficulty/8 bytes of the hash must be 0x00, and the next byte must be less than a threshold based on remaining bits.",
+      "Simpler approach: convert hash to a big integer or compare byte-by-byte against a target. Target = max_hash >> difficulty.",
+      "For hash rate: record start time, count iterations, calculate hashes_per_second = count / elapsed_seconds."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Mining Algorithm",
+        "points": 30,
+        "description": "Nonce search finds a hash meeting the difficulty target. Correct hash calculation."
+      },
+      {
+        "criterion": "Verification",
+        "points": 25,
+        "description": "verify_pow independently confirms the nonce produces a valid hash below target."
+      },
+      {
+        "criterion": "Difficulty Scaling",
+        "points": 20,
+        "description": "Configurable difficulty. Demonstrates exponential time increase with difficulty."
+      },
+      {
+        "criterion": "Performance Metrics",
+        "points": 15,
+        "description": "Hash rate measured and displayed accurately."
+      },
+      {
+        "criterion": "Code Quality",
+        "points": 10,
+        "description": "Clean Rust code. Proper serialization. No panics."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_05",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "35 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Create a transaction model in Rust using the UTXO (Unspent Transaction Output) model similar to Bitcoin. Define structs for TransactionInput (referencing a previous tx hash and output index, with a signature) and TransactionOutput (recipient address and amount). A Transaction contains a Vec of inputs and outputs. Implement: create_coinbase_tx (mining reward with no inputs), create_transaction (selecting UTXOs, creating inputs/outputs, handling change), and validate_transaction (verify that input amounts >= output amounts, all referenced UTXOs exist and are unspent, and signatures are valid). Maintain a UTXO set as a HashMap.",
+    "problem_hints": [
+      "UTXO key: (tx_hash, output_index). On new transaction, remove consumed UTXOs and add new ones.",
+      "Change output: if input sum > output sum, create an additional output back to the sender for the difference.",
+      "Coinbase tx has an empty inputs vec and a single output with the mining reward. It creates new coins."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Data Structures",
+        "points": 20,
+        "description": "Transaction, Input, Output structs well-defined. Hash derivation correct."
+      },
+      {
+        "criterion": "UTXO Management",
+        "points": 25,
+        "description": "UTXO set updated correctly on new transactions. No double-spending possible."
+      },
+      {
+        "criterion": "Transaction Creation",
+        "points": 25,
+        "description": "UTXO selection, input/output creation, and change handling all correct."
+      },
+      {
+        "criterion": "Validation",
+        "points": 20,
+        "description": "Amount check, UTXO existence, and signature verification all implemented."
+      },
+      {
+        "criterion": "Coinbase",
+        "points": 10,
+        "description": "Coinbase transaction correctly creates new coins with no inputs."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_06",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "40 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Implement a BIP-39 mnemonic seed phrase generator and HD wallet key derivation in Rust. Generate a 128-bit or 256-bit entropy, compute the checksum (first 4 or 8 bits of SHA-256 of entropy), append to entropy, and split into 11-bit groups mapped to a 2048-word wordlist. Implement mnemonic_to_seed using PBKDF2-HMAC-SHA512 with the mnemonic as password and 'mnemonic' + optional passphrase as salt (2048 iterations). From the seed, derive a master key and chain code by HMAC-SHA512 of the seed with key 'Bitcoin seed'. Implement one level of child key derivation.",
+    "problem_hints": [
+      "11-bit groups: concatenate entropy + checksum bits, then take every 11 bits as an index (0-2047) into the wordlist.",
+      "PBKDF2: use the pbkdf2 crate with hmac::Hmac<Sha512>. 2048 iterations. Output is 64 bytes (512 bits).",
+      "Master key: HMAC-SHA512(key='Bitcoin seed', data=seed). First 32 bytes = private key, last 32 bytes = chain code."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Mnemonic Generation",
+        "points": 25,
+        "description": "Entropy generated, checksum appended, 11-bit groups mapped to words correctly."
+      },
+      {
+        "criterion": "Seed Derivation",
+        "points": 25,
+        "description": "PBKDF2-HMAC-SHA512 with correct parameters produces valid 64-byte seed."
+      },
+      {
+        "criterion": "Master Key",
+        "points": 20,
+        "description": "HMAC-SHA512 derives master private key and chain code from seed."
+      },
+      {
+        "criterion": "Child Derivation",
+        "points": 20,
+        "description": "One level of child key derivation works correctly."
+      },
+      {
+        "criterion": "Wordlist & Validation",
+        "points": 10,
+        "description": "BIP-39 English wordlist used. Checksum validated on import."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_07",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "40 minutes",
+    "problem_difficulty": "easy",
+    "problem_description": "Build a simple blockchain serialization and networking layer in Rust. Define a wire protocol for exchanging blocks and transactions between peers. Implement serialization and deserialization of blocks and transactions using the serde and bincode crates. Define message types: Ping, Pong, RequestBlock(hash), ResponseBlock(Block), BroadcastTransaction(Transaction), and RequestPeers. Implement a message framing protocol over TCP: each message is prefixed with a 4-byte length header. Build a simple peer that can connect to another peer, send and receive framed messages, and handle each message type with a match-based dispatcher.",
+    "problem_hints": [
+      "Use serde with #[derive(Serialize, Deserialize)] and bincode::serialize/deserialize for compact binary encoding.",
+      "Message framing: write u32 length as big-endian bytes, then the serialized message bytes. On read, read 4 bytes for length, then read exactly that many bytes.",
+      "Use an enum with #[serde(tag = \"type\")] or a simple enum for message types. The dispatcher matches on the enum variant."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Serialization",
+        "points": 25,
+        "description": "Blocks and transactions serialize/deserialize correctly with bincode. Round-trip works."
+      },
+      {
+        "criterion": "Message Types",
+        "points": 20,
+        "description": "All message types defined as enum variants. Clean type-safe design."
+      },
+      {
+        "criterion": "Framing Protocol",
+        "points": 25,
+        "description": "Length-prefixed framing works. Partial reads handled. No message corruption."
+      },
+      {
+        "criterion": "TCP Networking",
+        "points": 20,
+        "description": "Peer connects, sends, and receives framed messages over TCP."
+      },
+      {
+        "criterion": "Dispatcher",
+        "points": 10,
+        "description": "Match-based handler processes each message type correctly."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_08",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "50 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a simple smart contract virtual machine in Rust. Define a stack-based bytecode instruction set with operations: PUSH(value), POP, ADD, SUB, MUL, DIV, EQ, LT, GT, JUMP(addr), JUMPIF(addr), STORE(key), LOAD(key), and HALT. The VM has a stack (max depth 256), a key-value storage (HashMap<u64, u64>), a program counter, and gas metering (each instruction costs a configurable amount of gas). Implement execute(bytecode, gas_limit) that returns the final stack state and storage, or an error (stack overflow, stack underflow, out of gas, division by zero, invalid opcode). Write at least 5 test programs demonstrating different features.",
+    "problem_hints": [
+      "Represent instructions as an enum. The VM loop: fetch instruction at PC, match on it, execute, increment PC, decrement gas.",
+      "JUMPIF pops the top of stack: if nonzero, set PC to addr. STORE pops value then key from stack and writes to storage.",
+      "Gas: define a cost per opcode (e.g., arithmetic = 3, storage = 20, jump = 8). Check remaining gas before each instruction."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Instruction Set",
+        "points": 25,
+        "description": "All opcodes implemented correctly. Stack operations follow expected semantics."
+      },
+      {
+        "criterion": "VM Execution",
+        "points": 25,
+        "description": "Program counter advances correctly. Jumps work. Programs execute to completion or error."
+      },
+      {
+        "criterion": "Gas Metering",
+        "points": 20,
+        "description": "Gas decremented per instruction. Out-of-gas halts execution with error."
+      },
+      {
+        "criterion": "Error Handling",
+        "points": 15,
+        "description": "Stack overflow/underflow, division by zero, invalid opcode all handled as errors."
+      },
+      {
+        "criterion": "Test Programs",
+        "points": 15,
+        "description": "5+ test programs demonstrate arithmetic, jumps, storage, gas limits, and errors."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_09",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a fungible token contract in Rust (simulating an ERC-20-like token without an actual blockchain). Define a Token struct with name, symbol, decimals, total_supply, balances (HashMap<Address, u128>), and allowances (HashMap<(Address, Address), u128>). Implement methods: mint(to, amount) (only callable by owner), transfer(from, to, amount), approve(owner, spender, amount), transfer_from(spender, from, to, amount), balance_of(address), and allowance(owner, spender). All operations must check for sufficient balance/allowance and prevent overflow. Emit events (as a Vec<Event> log) for Transfer and Approval. Write comprehensive tests including edge cases like zero transfers, self-transfers, and overflow attempts.",
+    "problem_hints": [
+      "Use u128 for amounts to handle large token supplies. Check balance >= amount before subtracting. Use checked_add/checked_sub for overflow safety.",
+      "transfer_from: check allowance >= amount, then decrease allowance and call the internal transfer logic.",
+      "Events: define an Event enum with Transfer { from, to, amount } and Approval { owner, spender, amount }. Push to a Vec<Event> on each operation."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Token Operations",
+        "points": 25,
+        "description": "Mint, transfer, approve, transfer_from all work correctly."
+      },
+      {
+        "criterion": "Safety Checks",
+        "points": 25,
+        "description": "Insufficient balance/allowance rejected. Overflow prevented. Owner-only mint enforced."
+      },
+      {
+        "criterion": "Event Logging",
+        "points": 15,
+        "description": "Transfer and Approval events emitted correctly with accurate data."
+      },
+      {
+        "criterion": "Allowance System",
+        "points": 15,
+        "description": "Approve sets allowance. transfer_from decreases it. Double-approve handled."
+      },
+      {
+        "criterion": "Tests",
+        "points": 20,
+        "description": "Comprehensive tests: normal flow, edge cases, error conditions all covered."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_10",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "55 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a Proof of Stake (PoS) validator selection system in Rust. Implement a staking mechanism where validators deposit tokens to participate. The validator selection for each block should be weighted by stake: higher stake means higher probability of being selected. Implement: register_validator(address, stake), unregister_validator(address) with an unbonding period of N blocks, select_validator(block_height) using a deterministic random selection seeded by the previous block hash, slash_validator(address, percentage) to penalize misbehavior by reducing stake, and distribute_rewards(block_height, reward_amount) proportionally to all active validators by stake weight. Track validator state: Active, Unbonding(until_block), Slashed.",
+    "problem_hints": [
+      "Weighted selection: compute total_stake, generate a random number in [0, total_stake) using the block hash as seed, then iterate validators accumulating stake until the random number is covered.",
+      "For deterministic randomness, hash (previous_block_hash ++ block_height) and interpret the first 8 bytes as a u64 seed.",
+      "Unbonding: on unregister, set state to Unbonding(current_height + N). The validator cannot be selected but stake is locked until the unbonding height is reached."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Staking Mechanism",
+        "points": 20,
+        "description": "Register/unregister work. Stake tracked per validator. Unbonding period enforced."
+      },
+      {
+        "criterion": "Validator Selection",
+        "points": 25,
+        "description": "Weighted random selection is correct and deterministic for a given seed."
+      },
+      {
+        "criterion": "Slashing",
+        "points": 20,
+        "description": "Slash reduces stake by percentage. Validator marked as Slashed. Cannot be selected."
+      },
+      {
+        "criterion": "Reward Distribution",
+        "points": 20,
+        "description": "Rewards distributed proportionally to stake. Math is correct with no rounding loss."
+      },
+      {
+        "criterion": "State Management",
+        "points": 15,
+        "description": "Validator states tracked correctly. Transitions are valid."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_11",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement an Automated Market Maker (AMM) DEX in Rust using the constant product formula (x * y = k). Create a LiquidityPool struct that holds reserves of two tokens. Implement: add_liquidity(amount_a, amount_b) that mints LP tokens proportional to the contribution, remove_liquidity(lp_tokens) that burns LP tokens and returns proportional reserves, and swap(token_in, amount_in) that calculates the output amount using the constant product formula with a 0.3% fee. Track LP token balances per address. Implement price_of(token) that returns the current exchange rate. Prevent swaps that would drain more than 90% of any reserve. Write tests verifying the invariant holds after every operation.",
+    "problem_hints": [
+      "Constant product: after swap, new_reserve_in * new_reserve_out >= old_k. Output = reserve_out - (k / (reserve_in + amount_in_after_fee)).",
+      "LP tokens on first deposit: mint sqrt(amount_a * amount_b). On subsequent deposits: mint min(amount_a/reserve_a, amount_b/reserve_b) * total_lp_supply.",
+      "Fee: amount_in_after_fee = amount_in * 997 / 1000. This keeps 0.3% in the pool, increasing k over time."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Swap Logic",
+        "points": 25,
+        "description": "Constant product formula applied correctly. Fee deducted. Output amount is accurate."
+      },
+      {
+        "criterion": "Liquidity Management",
+        "points": 25,
+        "description": "Add/remove liquidity mints/burns LP tokens proportionally. Reserves update correctly."
+      },
+      {
+        "criterion": "Invariant Preservation",
+        "points": 20,
+        "description": "k never decreases (only increases from fees). Tests verify after every operation."
+      },
+      {
+        "criterion": "Safety Checks",
+        "points": 15,
+        "description": "Cannot drain >90% of reserve. Zero amounts rejected. Overflow handled."
+      },
+      {
+        "criterion": "Price Function",
+        "points": 15,
+        "description": "Exchange rate calculated correctly from current reserves."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_12",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "60 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Build a blockchain-based voting system in Rust. Implement a VotingContract that supports creating proposals, registering voters, casting votes, and tallying results. Each proposal has an ID, description, options list, start_block, and end_block. Voters must be registered before the proposal starts and can only vote once per proposal. Implement vote weight based on token balance at the proposal's start block (snapshot). Support three voting strategies: simple majority, supermajority (66%), and quadratic voting (vote weight = sqrt of token balance). Emit events for ProposalCreated, VoteCast, and ProposalFinalized. Implement a quorum requirement: a minimum percentage of total supply must participate for the result to be valid.",
+    "problem_hints": [
+      "Snapshot: store each voter's balance at proposal creation time. Use this snapshot balance for vote weight, not current balance.",
+      "Quadratic voting: weight = integer_sqrt(balance). Implement integer square root with Newton's method or binary search.",
+      "Quorum: total_votes_weight / total_snapshot_supply >= quorum_percentage. If not met, proposal result is 'Quorum Not Reached'."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Proposal Management",
+        "points": 20,
+        "description": "Create proposals with options, time bounds, and voting strategy. Lifecycle works."
+      },
+      {
+        "criterion": "Voting Logic",
+        "points": 25,
+        "description": "Vote casting respects registration, time bounds, and single-vote-per-proposal rule."
+      },
+      {
+        "criterion": "Voting Strategies",
+        "points": 25,
+        "description": "Simple majority, supermajority, and quadratic voting all calculate correctly."
+      },
+      {
+        "criterion": "Snapshot & Quorum",
+        "points": 15,
+        "description": "Balance snapshot used for weights. Quorum check enforced on finalization."
+      },
+      {
+        "criterion": "Events & Tests",
+        "points": 15,
+        "description": "Events emitted correctly. Tests cover all strategies and edge cases."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_13",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "65 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a blockchain peer-to-peer network simulator in Rust using async Rust (tokio). Create a Network struct that manages multiple Node instances communicating via tokio mpsc channels (simulating network links). Each node maintains its own copy of the blockchain. Implement a gossip protocol: when a node mines or receives a new block, it broadcasts to all connected peers. Implement the longest-chain rule: when a node receives a chain longer than its own, it validates and adopts it. Simulate network partitions by temporarily disconnecting nodes, causing forks, then healing the partition and observing chain convergence. Log all events with timestamps for debugging.",
+    "problem_hints": [
+      "Each Node has a tokio::sync::mpsc::Sender to each peer and a single Receiver for incoming messages. Messages: NewBlock(Block), RequestChain, ResponseChain(Vec<Block>).",
+      "Longest chain rule: on receiving a longer valid chain, replace local chain entirely. Validate all blocks in the received chain before adopting.",
+      "Network partition: remove the channel connections between two groups of nodes. After some blocks are mined in each partition, reconnect and observe which chain wins."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Async Networking",
+        "points": 20,
+        "description": "Tokio mpsc channels connect nodes. Messages sent and received asynchronously."
+      },
+      {
+        "criterion": "Gossip Protocol",
+        "points": 25,
+        "description": "New blocks propagate to all peers. No message loops. Duplicate blocks ignored."
+      },
+      {
+        "criterion": "Longest Chain Rule",
+        "points": 25,
+        "description": "Nodes adopt longer valid chains. Shorter forks abandoned. Validation before adoption."
+      },
+      {
+        "criterion": "Partition & Convergence",
+        "points": 20,
+        "description": "Network partition causes forks. Healing leads to convergence on one chain."
+      },
+      {
+        "criterion": "Logging",
+        "points": 10,
+        "description": "Timestamped event logs show block propagation, forks, and convergence."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_14",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "65 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Create an NFT collection system in Rust simulating ERC-721 functionality. Implement an NftCollection struct with: mint(to, metadata_uri) that assigns sequential token IDs, transfer(from, to, token_id), approve(owner, approved, token_id), set_approval_for_all(owner, operator, approved), and owner_of(token_id). Metadata includes a URI, name, description, and attributes array (trait_type/value pairs). Implement enumeration: tokens_of_owner(address) returns all token IDs owned by an address. Add a royalty system: on each transfer, a percentage of a notional sale price is recorded as owed to the original creator. Implement a reveal mechanism: tokens start with a placeholder URI and can be revealed by the collection owner, updating all URIs with a base URI + token ID pattern.",
+    "problem_hints": [
+      "Store owners as HashMap<u64, Address>, approvals as HashMap<u64, Address>, and operator_approvals as HashMap<(Address, Address), bool>.",
+      "Transfer checks: caller must be owner, approved, or operator. Update owner map, clear single-token approval on transfer.",
+      "Reveal: store a revealed bool and base_uri. Before reveal, token_uri returns placeholder. After reveal, return format!(\"{}{}\", base_uri, token_id)."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Core NFT Operations",
+        "points": 25,
+        "description": "Mint, transfer, owner_of work correctly. Sequential IDs assigned."
+      },
+      {
+        "criterion": "Approval System",
+        "points": 20,
+        "description": "Single approval and operator approval both work. Cleared on transfer."
+      },
+      {
+        "criterion": "Enumeration",
+        "points": 15,
+        "description": "tokens_of_owner returns correct list. Updated on mint and transfer."
+      },
+      {
+        "criterion": "Royalties",
+        "points": 20,
+        "description": "Royalty percentage tracked per collection. Owed amounts accumulate on transfers."
+      },
+      {
+        "criterion": "Reveal Mechanism",
+        "points": 20,
+        "description": "Placeholder before reveal. Base URI + token ID after reveal. Owner-only reveal."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_15",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "70 minutes",
+    "problem_difficulty": "medium",
+    "problem_description": "Implement a state trie (Modified Merkle Patricia Trie) in Rust for efficiently storing and verifying blockchain account states. The trie should support: insert(key, value), get(key), delete(key), and root_hash() that computes the Merkle root of the entire trie. Implement the three node types: leaf (stores remaining key path + value), extension (stores shared prefix + pointer to child), and branch (16 children + optional value). Keys are nibble-paths (each byte split into two 4-bit nibbles). Compact encoding: store shared prefixes efficiently. Implement generate_proof(key) that returns the nodes along the path for Merkle proof verification.",
+    "problem_hints": [
+      "Split byte keys into nibbles: key 0xAB becomes [0xA, 0xB]. Traversal follows nibble-by-nibble through the trie.",
+      "On insert, if a leaf shares a prefix with the new key, split into an extension + branch. If an extension's prefix partially matches, split it.",
+      "Root hash: hash leaf as RLP(compact_path, value). Hash branch as RLP(child_hashes[0..15], value). Hash extension as RLP(compact_path, child_hash)."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Trie Structure",
+        "points": 25,
+        "description": "Leaf, extension, and branch nodes implemented correctly. Nibble-path traversal works."
+      },
+      {
+        "criterion": "Insert/Get/Delete",
+        "points": 25,
+        "description": "All operations produce correct trie structure. Node splitting on insert works."
+      },
+      {
+        "criterion": "Root Hash",
+        "points": 20,
+        "description": "Merkle root computed correctly. Changes to any value change the root."
+      },
+      {
+        "criterion": "Proof Generation",
+        "points": 20,
+        "description": "Proof contains correct path nodes. Verification against root succeeds."
+      },
+      {
+        "criterion": "Compact Encoding",
+        "points": 10,
+        "description": "Shared prefixes stored efficiently. Nibble paths encoded correctly."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_16",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "80 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a multi-signature wallet contract in Rust. The wallet is controlled by N owners and requires M-of-N signatures to execute any transaction. Implement: create_wallet(owners, required_signatures), submit_transaction(proposer, to, value, data) that creates a pending transaction, confirm_transaction(owner, tx_id) that adds a signature, execute_transaction(tx_id) that executes when enough confirmations are collected, and revoke_confirmation(owner, tx_id). Support adding and removing owners (itself requiring M-of-N approval). Implement a time lock: confirmed transactions must wait a configurable delay before execution. Include a nonce per transaction to prevent replay attacks. Track all transaction states and emit events.",
+    "problem_hints": [
+      "Store pending transactions in a HashMap<u64, PendingTx>. PendingTx has: to, value, data, confirmations: HashSet<Address>, executed: bool, submitted_at: u64.",
+      "Execute check: confirmations.len() >= required AND current_block >= submitted_at + timelock_blocks AND !executed.",
+      "Owner management: submit a special transaction type (AddOwner/RemoveOwner). It goes through the same M-of-N confirmation flow."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Multi-Sig Logic",
+        "points": 25,
+        "description": "M-of-N confirmation required. Cannot execute with fewer. Cannot confirm twice."
+      },
+      {
+        "criterion": "Transaction Lifecycle",
+        "points": 25,
+        "description": "Submit, confirm, execute, revoke all work. State transitions are valid."
+      },
+      {
+        "criterion": "Timelock",
+        "points": 15,
+        "description": "Transactions cannot execute before timelock expires. Delay is configurable."
+      },
+      {
+        "criterion": "Owner Management",
+        "points": 20,
+        "description": "Add/remove owners via M-of-N approval. Required signatures adjustable."
+      },
+      {
+        "criterion": "Security",
+        "points": 15,
+        "description": "Replay prevention via nonce. Only owners can confirm. Events emitted."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_17",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "90 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a simplified Ethereum-like execution environment in Rust. Implement an account-based state model with accounts having nonce, balance, code (bytecode), and storage (HashMap). Implement a transaction processor that handles two transaction types: value transfers (deduct from sender, credit to receiver, increment nonce) and contract calls (load contract code, execute in the VM from problem blockchain_rust_08 or a new simple VM, update storage). Implement gas accounting: each transaction specifies gas_limit and gas_price. Unused gas is refunded. The gas_price * gas_used is paid to the block proposer. Implement transaction ordering by nonce (reject gaps) and a basic mempool that orders pending transactions by gas_price (highest first). Validate transactions: check nonce sequence, sufficient balance for value + gas_limit * gas_price, and valid signatures.",
+    "problem_hints": [
+      "Account state: struct Account { nonce: u64, balance: u128, code: Vec<u8>, storage: HashMap<u64, u64> }. World state is HashMap<Address, Account>.",
+      "Transaction validation order: verify signature, check nonce == account.nonce, check balance >= value + gas_limit * gas_price. Then execute.",
+      "After execution: actual_cost = gas_used * gas_price. Refund = (gas_limit - gas_used) * gas_price back to sender. Pay actual_cost to proposer."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Account Model",
+        "points": 20,
+        "description": "Account state with nonce, balance, code, storage. World state managed correctly."
+      },
+      {
+        "criterion": "Transaction Processing",
+        "points": 25,
+        "description": "Value transfers and contract calls execute correctly. State updates are atomic."
+      },
+      {
+        "criterion": "Gas Accounting",
+        "points": 25,
+        "description": "Gas limit enforced. Unused gas refunded. Proposer paid. Out-of-gas reverts state."
+      },
+      {
+        "criterion": "Mempool & Ordering",
+        "points": 15,
+        "description": "Transactions ordered by gas price. Nonce gaps rejected. Sequential execution."
+      },
+      {
+        "criterion": "Validation",
+        "points": 15,
+        "description": "Signature, nonce, and balance checks all enforced before execution."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_18",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "100 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a simplified zero-knowledge proof system in Rust using the Schnorr identification protocol and extend it to a non-interactive proof using the Fiat-Shamir heuristic. First, implement the interactive Schnorr protocol: Prover knows secret x, sends commitment R = g^r (random r), Verifier sends challenge c, Prover responds with s = r + c*x. Verifier checks g^s == R * y^c (where y = g^x is the public key). Then convert to non-interactive by computing c = Hash(g, y, R). Implement this over a prime-order group using the num-bigint crate for big integer arithmetic. Build a higher-level API: prove(secret, message) returning a proof, and verify(public_key, message, proof) returning bool. Demonstrate with a proof of knowledge of a discrete logarithm.",
+    "problem_hints": [
+      "Use a safe prime p and generator g of the group Z*_p of order q = (p-1)/2. All arithmetic is mod p.",
+      "Fiat-Shamir: c = SHA-256(g || y || R || message) mod q. This makes the proof non-interactive and bound to a specific message.",
+      "Proof struct: { R: BigUint, s: BigUint }. Verify: compute c = Hash(...), check g^s mod p == (R * y^c) mod p."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Interactive Protocol",
+        "points": 20,
+        "description": "Schnorr identification with commitment, challenge, response implemented correctly."
+      },
+      {
+        "criterion": "Fiat-Shamir Transform",
+        "points": 25,
+        "description": "Non-interactive proof via hashing. Challenge derived deterministically. Message bound."
+      },
+      {
+        "criterion": "Group Arithmetic",
+        "points": 20,
+        "description": "Modular exponentiation, multiplication correct with big integers. Prime group setup valid."
+      },
+      {
+        "criterion": "Prove/Verify API",
+        "points": 20,
+        "description": "Clean API. Valid proofs verify. Invalid proofs (wrong secret, wrong message) rejected."
+      },
+      {
+        "criterion": "Security Properties",
+        "points": 15,
+        "description": "Random nonce r used per proof. No secret leakage. Soundness demonstrated in tests."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_19",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "105 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Build a DeFi lending protocol simulation in Rust. Implement a LendingPool that supports multiple token types. Users can: deposit(token, amount) to supply liquidity and earn interest, withdraw(token, amount) to reclaim deposits plus accrued interest, borrow(collateral_token, borrow_token, amount) using deposited collateral, and repay(token, amount). Implement a collateralization ratio (e.g., 150%): users can only borrow up to collateral_value / ratio. Implement variable interest rates based on utilization (borrowed / total_deposited): low utilization = low rate, high utilization = high rate, using a kinked rate model (two slopes with a kink at 80% utilization). Implement liquidation: when a borrower's collateral ratio falls below 110%, anyone can liquidate by repaying part of the debt and receiving the collateral at a 5% discount. Track accrued interest using a cumulative interest index updated per block.",
+    "problem_hints": [
+      "Interest index: each token has a cumulative_index that grows each block. User's debt = principal * current_index / index_at_borrow_time.",
+      "Kinked rate model: if utilization < 80%, rate = base_rate + utilization * slope1. If >= 80%, rate = base_rate + 80% * slope1 + (utilization - 80%) * slope2 (slope2 >> slope1).",
+      "Liquidation: liquidator repays up to 50% of borrower's debt. Receives collateral worth (repaid_amount * (1 + discount)) at current prices. Update borrower's debt and collateral."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Deposit/Withdraw",
+        "points": 15,
+        "description": "Supply liquidity and withdraw with accrued interest. Balance tracking correct."
+      },
+      {
+        "criterion": "Borrow/Repay",
+        "points": 20,
+        "description": "Collateralized borrowing works. Repayment reduces debt. Collateral ratio enforced."
+      },
+      {
+        "criterion": "Interest Rate Model",
+        "points": 25,
+        "description": "Kinked rate model calculates correct rates. Cumulative index updates per block."
+      },
+      {
+        "criterion": "Liquidation",
+        "points": 25,
+        "description": "Under-collateralized positions liquidatable. Discount applied. Debt and collateral updated."
+      },
+      {
+        "criterion": "Multi-Token Support",
+        "points": 15,
+        "description": "Multiple tokens supported. Cross-token borrowing works with price oracle."
+      }
+    ]
+  },
+  {
+    "problem_id": "blockchain_rust_20",
+    "problem_topic": "Blockchain Rust",
+    "problem_time_required": "120 minutes",
+    "problem_difficulty": "hard",
+    "problem_description": "Implement a complete simplified blockchain node in Rust that integrates all core components. The node should include: (1) a UTXO-based transaction model with signature verification, (2) block creation with Merkle tree transaction root, (3) Proof of Work consensus with adjustable difficulty, (4) a mempool for pending transactions ordered by fee, (5) chain validation and reorganization on receiving a longer valid chain, (6) a simple peer-to-peer layer using tokio TCP for block and transaction propagation between at least 3 nodes, and (7) a JSON-RPC API (using a simple HTTP server) with methods: get_block(hash), get_transaction(hash), get_balance(address), send_transaction(raw_tx), get_mempool, and get_chain_info. The node should handle concurrent mining, transaction reception, and peer communication. Include a difficulty adjustment algorithm that targets one block every 10 seconds, adjusting every 5 blocks.",
+    "problem_hints": [
+      "Structure the node with separate modules: chain (block/tx storage), miner (PoW loop in a spawned task), mempool (pending tx pool), network (peer connections), and rpc (HTTP API).",
+      "Use tokio::select! to handle mining, incoming peer messages, and RPC requests concurrently. Mining should be cancellable when a new block is received.",
+      "Difficulty adjustment: measure time for last 5 blocks. If < 50s, increase difficulty. If > 50s, decrease. Clamp adjustments to 4x max change per period."
+    ],
+    "problem_rubric": [
+      {
+        "criterion": "Transaction Model",
+        "points": 15,
+        "description": "UTXO model with inputs, outputs, signatures. Validation prevents double-spend."
+      },
+      {
+        "criterion": "Block & Consensus",
+        "points": 20,
+        "description": "Blocks with Merkle root. PoW mining works. Difficulty adjusts to target."
+      },
+      {
+        "criterion": "Chain Management",
+        "points": 20,
+        "description": "Chain validation. Reorganization on longer chain. Orphan handling."
+      },
+      {
+        "criterion": "Networking",
+        "points": 20,
+        "description": "P2P block/tx propagation. 3+ nodes communicate. Gossip works."
+      },
+      {
+        "criterion": "JSON-RPC API",
+        "points": 15,
+        "description": "All RPC methods return correct data. Transactions submittable via API."
+      },
+      {
+        "criterion": "Integration",
+        "points": 10,
+        "description": "All components work together. Concurrent operation without deadlocks."
+      }
+    ]
+  }
+]

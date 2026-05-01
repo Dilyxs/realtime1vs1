@@ -1,0 +1,802 @@
+[
+  {
+    "questionID": 1,
+    "question": "What does HTML stand for?",
+    "options": ["Hyper Text Markup Language", "High Tech Modern Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"],
+    "answer": 0,
+    "topic": "Web Basics",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 2,
+    "question": "In most programming languages, array indexing starts at 0.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Data Structures",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 3,
+    "question": "Which data structure operates on a LIFO (Last In, First Out) principle?",
+    "options": ["Queue", "Stack", "Array", "Linked List"],
+    "answer": 1,
+    "topic": "Data Structures",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 4,
+    "question": "What is the time complexity of accessing an element by index in an array?",
+    "options": ["O(n)", "O(1)", "O(log n)", "O(n^2)"],
+    "answer": 1,
+    "topic": "Algorithms",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 5,
+    "question": "CSS stands for Cascading Style Sheets.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Web Basics",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 6,
+    "question": "Which of the following is NOT a JavaScript primitive type?",
+    "options": ["string", "boolean", "array", "number"],
+    "answer": 2,
+    "topic": "JavaScript",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 7,
+    "question": "What does SQL stand for?",
+    "options": ["Structured Query Language", "Simple Query Language", "Standard Query Logic", "Sequential Query Language"],
+    "answer": 0,
+    "topic": "Databases",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 8,
+    "question": "HTTP is a stateless protocol.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Networking",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 9,
+    "question": "Which keyword is used to define a constant in JavaScript (ES6+)?",
+    "options": ["var", "let", "const", "static"],
+    "answer": 2,
+    "topic": "JavaScript",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 10,
+    "question": "What does API stand for?",
+    "options": ["Application Programming Interface", "Applied Program Integration", "Automated Protocol Interface", "Application Process Interaction"],
+    "answer": 0,
+    "topic": "General",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 11,
+    "question": "A boolean variable can hold more than two possible values.",
+    "options": ["True", "False"],
+    "answer": 1,
+    "topic": "General",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 12,
+    "question": "Which of the following is used for version control?",
+    "options": ["Docker", "Git", "Node.js", "Webpack"],
+    "answer": 1,
+    "topic": "Tools",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 13,
+    "question": "What does the 'return' keyword do in a function?",
+    "options": ["Prints a value to the console", "Exits the function and optionally sends back a value", "Declares a variable", "Loops through the function again"],
+    "answer": 1,
+    "topic": "General",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 14,
+    "question": "JSON stands for JavaScript Object Notation.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Web Basics",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 15,
+    "question": "Which HTTP method is typically used to retrieve data from a server?",
+    "options": ["POST", "PUT", "GET", "DELETE"],
+    "answer": 2,
+    "topic": "Networking",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 16,
+    "question": "What is the correct file extension for a Python file?",
+    "options": [".pt", ".pyt", ".py", ".python"],
+    "answer": 2,
+    "topic": "Python",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 17,
+    "question": "In CSS, the 'id' selector is denoted by a '#' symbol.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Web Basics",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 18,
+    "question": "Which of the following is a valid way to declare a variable in Python?",
+    "options": ["int x = 5;", "var x = 5", "x = 5", "let x = 5"],
+    "answer": 2,
+    "topic": "Python",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 19,
+    "question": "What does 'DOM' stand for in web development?",
+    "options": ["Document Object Model", "Data Object Management", "Digital Output Module", "Document Oriented Middleware"],
+    "answer": 0,
+    "topic": "Web Basics",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 20,
+    "question": "A 'for' loop and a 'while' loop can always accomplish the same task.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "General",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 21,
+    "question": "What is the default port for HTTP?",
+    "options": ["443", "8080", "80", "3000"],
+    "answer": 2,
+    "topic": "Networking",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 22,
+    "question": "Which data structure uses FIFO (First In, First Out) ordering?",
+    "options": ["Stack", "Queue", "Tree", "Hash Map"],
+    "answer": 1,
+    "topic": "Data Structures",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 23,
+    "question": "In Git, 'git pull' is a combination of 'git fetch' and 'git merge'.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Tools",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 24,
+    "question": "What does the '===' operator do in JavaScript?",
+    "options": ["Assigns a value", "Compares value only", "Compares value and type", "Compares reference only"],
+    "answer": 2,
+    "topic": "JavaScript",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 25,
+    "question": "Which of the following is NOT a valid HTTP status code category?",
+    "options": ["1xx Informational", "2xx Success", "6xx Server Overload", "4xx Client Error"],
+    "answer": 2,
+    "topic": "Networking",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 26,
+    "question": "What is the purpose of a constructor in object-oriented programming?",
+    "options": ["To destroy an object", "To initialize an object when it is created", "To copy an object", "To compare two objects"],
+    "answer": 1,
+    "topic": "OOP",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 27,
+    "question": "NULL and undefined are the same thing in JavaScript.",
+    "options": ["True", "False"],
+    "answer": 1,
+    "topic": "JavaScript",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 28,
+    "question": "Which SQL command is used to retrieve data from a database?",
+    "options": ["GET", "FETCH", "SELECT", "RETRIEVE"],
+    "answer": 2,
+    "topic": "Databases",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 29,
+    "question": "What does 'IDE' stand for?",
+    "options": ["Integrated Development Environment", "Internal Data Engine", "Interactive Design Editor", "Intelligent Debug Engine"],
+    "answer": 0,
+    "topic": "Tools",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 30,
+    "question": "Recursion is when a function calls itself.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "General",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 31,
+    "question": "What is the worst-case time complexity of binary search?",
+    "options": ["O(n)", "O(n^2)", "O(log n)", "O(1)"],
+    "answer": 2,
+    "topic": "Algorithms",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 32,
+    "question": "Which of the following sorting algorithms has the best average-case time complexity?",
+    "options": ["Bubble Sort O(n^2)", "Merge Sort O(n log n)", "Selection Sort O(n^2)", "Insertion Sort O(n^2)"],
+    "answer": 1,
+    "topic": "Algorithms",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 33,
+    "question": "In a relational database, a foreign key in one table references a primary key in another table.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Databases",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 34,
+    "question": "What is a closure in programming?",
+    "options": ["A way to close a file", "A function that retains access to its outer scope's variables", "A method to terminate a program", "A type of loop structure"],
+    "answer": 1,
+    "topic": "General",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 35,
+    "question": "Which protocol is used for secure communication over the web?",
+    "options": ["HTTP", "FTP", "HTTPS", "SMTP"],
+    "answer": 2,
+    "topic": "Networking",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 36,
+    "question": "In OOP, 'encapsulation' means bundling data and methods that operate on that data within a single unit.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "OOP",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 37,
+    "question": "What is the purpose of the 'this' keyword in JavaScript?",
+    "options": ["It refers to the previous function call", "It refers to the global object always", "It refers to the object that is executing the current function", "It creates a new variable scope"],
+    "answer": 2,
+    "topic": "JavaScript",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 38,
+    "question": "Which of these is NOT a pillar of Object-Oriented Programming?",
+    "options": ["Encapsulation", "Compilation", "Inheritance", "Polymorphism"],
+    "answer": 1,
+    "topic": "OOP",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 39,
+    "question": "TCP guarantees delivery of packets in order, while UDP does not.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Networking",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 40,
+    "question": "What is a hash table's average time complexity for insertion and lookup?",
+    "options": ["O(n)", "O(log n)", "O(1)", "O(n log n)"],
+    "answer": 2,
+    "topic": "Data Structures",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 41,
+    "question": "What does the 'async' keyword do in JavaScript?",
+    "options": ["Makes a function synchronous", "Declares a function that returns a Promise", "Stops execution of a function", "Creates a new thread"],
+    "answer": 1,
+    "topic": "JavaScript",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 42,
+    "question": "A linked list provides O(1) time complexity for accessing an element by index.",
+    "options": ["True", "False"],
+    "answer": 1,
+    "topic": "Data Structures",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 43,
+    "question": "Which design pattern ensures a class has only one instance?",
+    "options": ["Factory", "Observer", "Singleton", "Decorator"],
+    "answer": 2,
+    "topic": "Design Patterns",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 44,
+    "question": "What is the difference between '==' and '===' in JavaScript?",
+    "options": ["No difference", "'==' compares with type coercion, '===' compares without type coercion", "'===' compares with type coercion, '==' does not", "'==' is for strings, '===' is for numbers"],
+    "answer": 1,
+    "topic": "JavaScript",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 45,
+    "question": "REST APIs should be stateless, meaning each request must contain all information needed to process it.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Networking",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 46,
+    "question": "What does CORS stand for?",
+    "options": ["Cross-Origin Resource Sharing", "Client-Origin Request System", "Cross-Object Reference Standard", "Centralized Origin Resource Service"],
+    "answer": 0,
+    "topic": "Web Basics",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 47,
+    "question": "Which of the following is an example of a NoSQL database?",
+    "options": ["PostgreSQL", "MySQL", "MongoDB", "Oracle"],
+    "answer": 2,
+    "topic": "Databases",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 48,
+    "question": "In Git, a 'branch' is a lightweight movable pointer to a commit.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Tools",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 49,
+    "question": "What is the purpose of a 'try-catch' block?",
+    "options": ["To repeat code multiple times", "To handle exceptions and prevent crashes", "To optimize code performance", "To define a new function"],
+    "answer": 1,
+    "topic": "General",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 50,
+    "question": "Which HTTP status code means 'Not Found'?",
+    "options": ["200", "301", "404", "500"],
+    "answer": 2,
+    "topic": "Networking",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 51,
+    "question": "What is Big O notation used for?",
+    "options": ["Measuring file sizes", "Describing the performance or complexity of an algorithm", "Counting lines of code", "Defining variable types"],
+    "answer": 1,
+    "topic": "Algorithms",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 52,
+    "question": "An interface in OOP defines a contract that implementing classes must follow.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "OOP",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 53,
+    "question": "What is the output of: typeof null in JavaScript?",
+    "options": ["'null'", "'undefined'", "'object'", "'boolean'"],
+    "answer": 2,
+    "topic": "JavaScript",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 54,
+    "question": "Which of the following is true about a binary search tree?",
+    "options": ["Left child is always greater than parent", "Right child is always less than parent", "Left child is less than parent, right child is greater", "Children are always equal to parent"],
+    "answer": 2,
+    "topic": "Data Structures",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 55,
+    "question": "Docker containers and virtual machines are the same thing.",
+    "options": ["True", "False"],
+    "answer": 1,
+    "topic": "DevOps",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 56,
+    "question": "What does 'DRY' stand for in software development?",
+    "options": ["Don't Repeat Yourself", "Data Retrieval Yield", "Document Read Yearly", "Direct Reference Yielding"],
+    "answer": 0,
+    "topic": "Best Practices",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 57,
+    "question": "Which of the following is a strongly typed language?",
+    "options": ["JavaScript", "Python", "TypeScript", "PHP"],
+    "answer": 2,
+    "topic": "General",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 58,
+    "question": "A deadlock occurs when two or more processes are waiting for each other to release resources.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Operating Systems",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 59,
+    "question": "What is the purpose of an index in a database?",
+    "options": ["To store backup copies of data", "To speed up data retrieval queries", "To encrypt sensitive data", "To normalize tables"],
+    "answer": 1,
+    "topic": "Databases",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 60,
+    "question": "Which command is used to install dependencies from a package.json file?",
+    "options": ["npm start", "npm install", "npm build", "npm init"],
+    "answer": 1,
+    "topic": "Tools",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 61,
+    "question": "What is a race condition?",
+    "options": ["A competition between two programs to finish first", "A bug where the system's behavior depends on the timing of uncontrollable events", "A type of sorting algorithm", "A method for parallel data processing"],
+    "answer": 1,
+    "topic": "Operating Systems",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 62,
+    "question": "Polymorphism allows objects of different classes to be treated as objects of a common parent class.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "OOP",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 63,
+    "question": "Which of the following is NOT a valid JavaScript data type?",
+    "options": ["Symbol", "BigInt", "Float", "undefined"],
+    "answer": 2,
+    "topic": "JavaScript",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 64,
+    "question": "What does 'CI/CD' stand for?",
+    "options": ["Continuous Integration / Continuous Deployment", "Code Integration / Code Delivery", "Compiled Interface / Compiled Distribution", "Central Instance / Central Database"],
+    "answer": 0,
+    "topic": "DevOps",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 65,
+    "question": "A graph data structure can contain cycles.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Data Structures",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 66,
+    "question": "What is the purpose of the 'await' keyword in JavaScript?",
+    "options": ["It creates a delay in code execution", "It pauses execution until a Promise is resolved or rejected", "It runs a function in a separate thread", "It declares a variable as asynchronous"],
+    "answer": 1,
+    "topic": "JavaScript",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 67,
+    "question": "Which of the following best describes 'abstraction' in OOP?",
+    "options": ["Hiding complex implementation details and exposing only necessary interfaces", "Creating multiple copies of an object", "Inheriting from multiple parent classes", "Converting objects to JSON format"],
+    "answer": 0,
+    "topic": "OOP",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 68,
+    "question": "The SOLID principles include the Single Responsibility Principle.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Best Practices",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 69,
+    "question": "What is the space complexity of a hash map?",
+    "options": ["O(1)", "O(log n)", "O(n)", "O(n^2)"],
+    "answer": 2,
+    "topic": "Data Structures",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 70,
+    "question": "Which of the following is true about WebSockets?",
+    "options": ["They are unidirectional like HTTP", "They provide full-duplex communication channels", "They can only send text data", "They require a new connection for each message"],
+    "answer": 1,
+    "topic": "Networking",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 71,
+    "question": "What is memoization?",
+    "options": ["Writing notes about code", "An optimization technique that caches results of expensive function calls", "A type of memory allocation", "A debugging strategy"],
+    "answer": 1,
+    "topic": "Algorithms",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 72,
+    "question": "In a relational database, ACID stands for Atomicity, Consistency, Isolation, Durability.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Databases",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 73,
+    "question": "Which traversal visits the root node first, then left subtree, then right subtree?",
+    "options": ["In-order", "Pre-order", "Post-order", "Level-order"],
+    "answer": 1,
+    "topic": "Data Structures",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 74,
+    "question": "What is the primary purpose of DNS?",
+    "options": ["To encrypt web traffic", "To translate domain names to IP addresses", "To route email messages", "To compress data for faster transfer"],
+    "answer": 1,
+    "topic": "Networking",
+    "difficulty": "easy"
+  },
+  {
+    "questionID": 75,
+    "question": "Garbage collection automatically frees memory that is no longer referenced by the program.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "General",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 76,
+    "question": "What does the 'O' in SOLID stand for?",
+    "options": ["Object Principle", "Open/Closed Principle", "Override Principle", "Ordered Principle"],
+    "answer": 1,
+    "topic": "Best Practices",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 77,
+    "question": "Which of the following best describes a microservice architecture?",
+    "options": ["A single large application handling all functionality", "An application split into small, independently deployable services", "A desktop application framework", "A database optimization technique"],
+    "answer": 1,
+    "topic": "Architecture",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 78,
+    "question": "In JavaScript, 'let' and 'var' have the same scoping rules.",
+    "options": ["True", "False"],
+    "answer": 1,
+    "topic": "JavaScript",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 79,
+    "question": "What is a JWT (JSON Web Token) primarily used for?",
+    "options": ["Database queries", "Authentication and authorization", "CSS styling", "File compression"],
+    "answer": 1,
+    "topic": "Security",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 80,
+    "question": "Which algorithm is commonly used for finding the shortest path in a weighted graph?",
+    "options": ["Bubble Sort", "Dijkstra's Algorithm", "Binary Search", "Quick Sort"],
+    "answer": 1,
+    "topic": "Algorithms",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 81,
+    "question": "A pure function always returns the same output for the same input and has no side effects.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "General",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 82,
+    "question": "What is the worst-case time complexity of Quick Sort?",
+    "options": ["O(n)", "O(n log n)", "O(n^2)", "O(log n)"],
+    "answer": 2,
+    "topic": "Algorithms",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 83,
+    "question": "Which of the following is an example of an event-driven architecture?",
+    "options": ["A simple for-loop script", "Node.js event loop", "A static HTML page", "A compiled C binary"],
+    "answer": 1,
+    "topic": "Architecture",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 84,
+    "question": "In networking, a subnet mask is used to divide an IP address into network and host portions.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Networking",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 85,
+    "question": "What is the difference between a process and a thread?",
+    "options": ["They are the same thing", "A thread is a lightweight unit of execution within a process", "A process runs inside a thread", "Threads cannot share memory"],
+    "answer": 1,
+    "topic": "Operating Systems",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 86,
+    "question": "Which SQL clause is used to filter grouped results?",
+    "options": ["WHERE", "HAVING", "FILTER", "GROUP BY"],
+    "answer": 1,
+    "topic": "Databases",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 87,
+    "question": "An AVL tree is a self-balancing binary search tree.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Data Structures",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 88,
+    "question": "What is the Observer design pattern used for?",
+    "options": ["Creating copies of objects", "Defining a one-to-many dependency so that when one object changes state, all dependents are notified", "Restricting object instantiation to one", "Providing a simplified interface to a complex subsystem"],
+    "answer": 1,
+    "topic": "Design Patterns",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 89,
+    "question": "What is 'hoisting' in JavaScript?",
+    "options": ["Moving elements up in the DOM", "The behavior where variable and function declarations are moved to the top of their scope during compilation", "Uploading code to a server", "An optimization technique for loops"],
+    "answer": 1,
+    "topic": "JavaScript",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 90,
+    "question": "In database normalization, Third Normal Form (3NF) eliminates transitive dependencies.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Databases",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 91,
+    "question": "What does CAP theorem state about distributed systems?",
+    "options": ["A system can guarantee Consistency, Availability, and Partition tolerance simultaneously", "A system can only guarantee two out of three: Consistency, Availability, and Partition tolerance", "All distributed systems are eventually consistent", "CAP only applies to SQL databases"],
+    "answer": 1,
+    "topic": "Architecture",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 92,
+    "question": "What is the time complexity of inserting an element at the beginning of a singly linked list?",
+    "options": ["O(n)", "O(log n)", "O(1)", "O(n^2)"],
+    "answer": 2,
+    "topic": "Data Structures",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 93,
+    "question": "In JavaScript, the event loop handles asynchronous callbacks by placing them in a callback queue.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "JavaScript",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 94,
+    "question": "What is a memory leak?",
+    "options": ["When memory is too fast for the CPU", "When a program allocates memory but fails to release it after it's no longer needed", "When RAM physically degrades", "When data is accidentally sent to the wrong server"],
+    "answer": 1,
+    "topic": "General",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 95,
+    "question": "Which of the following is a benefit of using TypeScript over plain JavaScript?",
+    "options": ["Faster runtime execution", "Static type checking at compile time", "Smaller bundle sizes", "No need for a build step"],
+    "answer": 1,
+    "topic": "General",
+    "difficulty": "medium"
+  },
+  {
+    "questionID": 96,
+    "question": "The 'Liskov Substitution Principle' states that objects of a superclass should be replaceable with objects of a subclass without breaking the program.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Best Practices",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 97,
+    "question": "What is XSS (Cross-Site Scripting)?",
+    "options": ["A CSS framework", "A vulnerability where attackers inject malicious scripts into trusted websites", "A method for cross-browser testing", "A technique for responsive design"],
+    "answer": 1,
+    "topic": "Security",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 98,
+    "question": "What is the difference between horizontal and vertical scaling?",
+    "options": ["Horizontal adds more machines; vertical adds more power to existing machines", "Vertical adds more machines; horizontal adds more power", "They are the same thing", "Horizontal is for databases; vertical is for servers"],
+    "answer": 0,
+    "topic": "Architecture",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 99,
+    "question": "Dynamic programming solves problems by breaking them into overlapping subproblems and storing their solutions.",
+    "options": ["True", "False"],
+    "answer": 0,
+    "topic": "Algorithms",
+    "difficulty": "hard"
+  },
+  {
+    "questionID": 100,
+    "question": "Which of the following correctly describes a B-tree?",
+    "options": ["A binary tree where each node has at most 2 children", "A self-balancing tree that maintains sorted data and allows searches, insertions, and deletions in logarithmic time, with nodes that can have more than 2 children", "A tree where all leaf nodes are at the same depth and each node has exactly 2 children", "A tree structure used exclusively for string matching"],
+    "answer": 1,
+    "topic": "Data Structures",
+    "difficulty": "hard"
+  }
+]

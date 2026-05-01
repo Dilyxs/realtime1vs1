@@ -267,6 +267,9 @@ func (msg GameHasStarted) ToJSON() []byte {
 	return res
 }
 
+// for testing purposes let's just make it 1 min
+const DefaultGameDuration = 1 * time.Minute
+
 func (q *QuestionManager) Run() {
 	GeneralQuestionChan := make(chan UserQuestionResult, 100)
 	go q.AskQuestions(GeneralQuestionChan)
@@ -275,7 +278,7 @@ func (q *QuestionManager) Run() {
 InfiniteLoop:
 	for {
 		select {
-		case <-time.After(15 * time.Minute):
+		case <-time.After(DefaultGameDuration):
 			break InfiniteLoop
 		case request := <-q.Chan:
 			switch cmd := request.(type) {
@@ -385,10 +388,9 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 		q.WebsocketChan <- formattedquestion
 		result := make(map[bool][]PlayerAndOption)
 
-		timerChan := time.NewTicker(100 * time.Second)
+		timerChan := time.NewTicker(DefaultAnswerPeriodTime * time.Second)
 	InfiniteLoop:
 		for {
-			fmt.Println("in loop")
 			select {
 			case <-timerChan.C:
 				break InfiniteLoop
@@ -411,7 +413,6 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 				req.Chan <- QuestionGeneralAnswerResult{ID: randomhelper.GetMessageID(), Registered: true}
 			}
 		}
-		fmt.Println("out loop")
 		// Now just send it to Websocket AS a final output!
 		var res QuestionGeneralWebsocketOutput
 		res.SuccessfulPlayers = result[true]
@@ -433,7 +434,10 @@ func (q *QuestionManager) AskQuestions(localChan <-chan UserQuestionResult) {
 	}
 }
 
-const DefaultQuestionCoolDownPeriod = 45
+const (
+	DefaultQuestionCoolDownPeriod = 45
+	DefaultAnswerPeriodTime       = 7
+)
 
 func AnswerQuestionGeneral(roomID int, username string, questionID, optionChosen int, QDistrub *QuestionDistributor) (QuestionGeneralAnswerResult, error) {
 	localChan := make(chan QuestionResult, 1)
